@@ -42,7 +42,7 @@ If you want to get tokens for your testcase, please just ask in one of the commu
     ├── node                    # Source code files
     │   ├── app                 # Node main files 
     │   ├── hdgen               # HD generator
-    │   ├── iipfs               # IPFS intarface
+    │   ├── iipfs               # IPFS wrapper
     │   └── ...
     └── README.md
 
