@@ -1,4 +1,4 @@
-# EVEN Node Reference Go Implementation
+# even-go: EVEN node service implementation on Go
 
 The even-go repository is the node sevice implementation on Go and the embodiment of the EVEN network specification. 
 
