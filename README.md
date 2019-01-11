@@ -27,8 +27,6 @@ If you want to get tokens for your testcase, please just ask in one of the commu
 ## How it work
 > Simple EVEN Network architecture illustration
 
-<!-- ![](https://github.com/evenfound/even-network/blob/develop/doc/even-node.png) -->
-<!-- <div style="text-align:center"><img src ="https://github.com/evenfound/even-network/blob/develop/doc/even-node.png" /></div> -->
 <p align="center">
   <img src="https://github.com/evenfound/even-network/blob/develop/doc/even-node.png">
 </p>
@@ -41,18 +39,11 @@ If you want to get tokens for your testcase, please just ask in one of the commu
 
     .
     ├── build                   # Compiled files
-    ├── src                     # Source code files
-    │   ├── node                # Node inteface files 
-    │   │   └── go              # GO implementation  
-    │   │   │   └── module      # package (shared code) files  
-    │   │   │   └── cli         # executable app files  
-    │   │   └── ...
-    │   ├── ui                  # UI inteface files 
-    │   │   └── flutter         # Flutter implementation  
-    │   │   └── ...
-    │   └── wallet              # HD Wallet source files 
-    │       └── go              # GO implementation
-    │       └── ...
+    ├── node                    # Source code files
+    │   ├── app                 # Node main files 
+    │   ├── hdgen               # HD generator
+    │   ├── iipfs               # IPFS intarface
+    │   └── ...
     └── README.md
 
 > Use short lowercase names at least for the top-level files and folders except  `README.md`
