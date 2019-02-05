@@ -13,6 +13,14 @@ cd () {
         fi
         cdir=$(dirname "$cdir")
     done
+    cdir=$PWD
+    while [ "$cdir" != "/" ]; do
+        if [ -e "$cdir/.gobin" ]; then
+            export PATH=$PATH:$cdir
+            break
+        fi
+        cdir=$(dirname "$cdir")
+    done
 }
 
 to ~/.bash_profile end;
@@ -25,4 +33,14 @@ go get -u github.com/evenfound/even-go
 
 in his root running;
 
-8.
+8. For developers: change the git url in the .git/config [remote "origin"] as:
+url = git@github.com:evenfound/even-go.git
+
+9. Make fork ipfs refactored repository as:
+
+mkdir $GOPATH/src/github.com/ipfs
+git clone git@github.com:OpenBazaar/go-ipfs.git
+
+10. Install godep:
+go get github.com/tools/godep
+ 
