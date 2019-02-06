@@ -36,11 +36,23 @@ in his root running;
 8. For developers: change the git url in the .git/config [remote "origin"] as:
 url = git@github.com:evenfound/even-go.git
 
-9. Make fork ipfs refactored repository as:
-
-mkdir $GOPATH/src/github.com/ipfs
-git clone git@github.com:OpenBazaar/go-ipfs.git
-
-10. Install godep:
+9. Install godep:
 go get github.com/tools/godep
+
+
+10. Install ipfs and gx (automatically). For windows (on 10 sample show) need run follow:
+- Type "secpol.msc" in RUN dialog box and press Enter. It'll open Local Security Policy.
+- Now go to "Local Policies -> Security Options". In right-side pane, scroll down to last and you'll see following options related to UAC:
+- User Account Control: Admin Approval Mode for the Built-in Administrator account;
+- Tap "Enable"; 
+- Restart Windows;
+After that run in Msys2 console
+
+$ go get -u -d github.com/ipfs/go-ipfs
+$ cd $GOPATH/src/github.com/ipfs/go-ipfs
+$ make install
+
+11. Enter to even-go/node root and run command:
+godep get
+godep save 
  

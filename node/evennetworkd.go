@@ -6,9 +6,11 @@ import (
 	"os/signal"
 	"path/filepath"
 
-	"github.com/OpenBazaar/openbazaar-go/cmd"
-	"github.com/OpenBazaar/openbazaar-go/core"
+	"github.com/evenfound/even-go/node/cmd"
+	"github.com/evenfound/even-go/node/core"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
+	flags "github.com/jessevdk/go-flags"
+	logging "github.com/op/go-logging"
 )
 
 var log = logging.MustGetLogger("main")
@@ -34,7 +36,7 @@ func main() {
 	go func() {
 		for sig := range c {
 			log.Noticef("Received %s\n", sig)
-			log.Info("OpenBazaar Server shutting down...")
+			log.Info("Event Network Server shutting down...")
 			if core.Node != nil {
 				if core.Node.MessageRetriever != nil {
 					core.Node.RecordAgingNotifier.Stop()
@@ -70,12 +72,12 @@ func main() {
 		"The API password field in the config file takes a SHA256 hash of the password. This command will generate the hash for you and save it to the config file.",
 		&cmd.SetAPICreds{})
 	parser.AddCommand("start",
-		"start the OpenBazaar-Server",
-		"The start command starts the OpenBazaar-Server",
+		"start the EvenNetwork-Server",
+		"The start command starts the EvenNetwork-Server",
 		&cmd.Start{})
 	parser.AddCommand("stop",
 		"shutdown the server and disconnect",
-		"The stop command disconnects from peers and shuts down OpenBazaar-Server",
+		"The stop command disconnects from peers and shuts down EvenNetwork-Server",
 		&stopServer)
 	parser.AddCommand("restart",
 		"restart the server",
