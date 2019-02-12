@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/OpenBazaar/openbazaar-go/net/repointer"
+	"github.com/evenfound/even-go/node/net/repointer"
 )
 
 // StartPointerRepublisher - setup republisher for IPNS

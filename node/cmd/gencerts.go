@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/OpenBazaar/openbazaar-go/repo"
+	"github.com/evenfound/even-go/node/repo"
 )
 
 type GenerateCertificates struct {

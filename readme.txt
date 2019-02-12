@@ -52,6 +52,9 @@ $ go get -u -d github.com/ipfs/go-ipfs
 $ cd $GOPATH/src/github.com/ipfs/go-ipfs
 $ make install
 
+After first installation that update gx repo link make type 
+gx install --global
+
 11. Enter to even-go/node root and run command:
 godep get
 godep save 

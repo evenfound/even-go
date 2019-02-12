@@ -5,12 +5,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/evenfound/even-go/node/core"
+	"github.com/evenfound/even-go/node/repo"
+	"github.com/evenfound/even-go/node/test/factory"
 	"github.com/OpenBazaar/wallet-interface"
 	"github.com/golang/protobuf/ptypes"
-
-	"github.com/OpenBazaar/openbazaar-go/core"
-	"github.com/OpenBazaar/openbazaar-go/repo"
-	"github.com/OpenBazaar/openbazaar-go/test/factory"
 )
 
 func TestReleaseFundsAfterTimeoutErrors(t *testing.T) {

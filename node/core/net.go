@@ -1,17 +1,16 @@
 package core
 
 import (
+	"errors"
 	peer "gx/ipfs/QmZoWKhxUmZ2seW4BzX6fJkNR8hh9PsGModr7q171yq2SS/go-libp2p-peer"
 	multihash "gx/ipfs/QmZyZDi491cCNTLfAhwcaDii2Kg4pwKRkhqQzURGDvY6ua/go-multihash"
 	libp2p "gx/ipfs/QmaPbCnUMBohSGo3KnxEa2bHqyJVVeEEcwtqJAYxerieBo/go-libp2p-crypto"
-
-	"errors"
 	"gx/ipfs/QmcZfnkapfECQGcLZaf9B79NRg7cRa9EnZh4LSbkCzwNvY/go-cid"
 	"sync"
 	"time"
 
-	"github.com/OpenBazaar/openbazaar-go/ipfs"
-	"github.com/OpenBazaar/openbazaar-go/pb"
+	"github.com/evenfound/even-go/node/ipfs"
+	"github.com/evenfound/even-go/node/pb"
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/any"
@@ -35,13 +34,15 @@ func (n *OpenBazaarNode) sendMessage(peerID string, k *libp2p.PubKey, message pb
 	if err != nil {
 		return err
 	}
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), n.OfflineMessageFailoverTimeout)
 	defer cancel()
 	err = n.Service.SendMessage(ctx, p, &message)
 	if err != nil {
-		if err := n.SendOfflineMessage(p, k, &message); err != nil {
-			return err
-		}
+		go func() {
+			if err := n.SendOfflineMessage(p, k, &message); err != nil {
+				log.Errorf("Error sending offline message %s", err.Error())
+			}
+		}()
 	}
 	return nil
 }
@@ -65,6 +66,7 @@ func (n *OpenBazaarNode) SendOfflineMessage(p peer.ID, k *libp2p.PubKey, m *pb.M
 	if merr != nil {
 		return merr
 	}
+	// TODO: this function blocks if the recipient's public key is not on the local machine
 	ciphertext, cerr := n.EncryptMessage(p, k, messageBytes)
 	if cerr != nil {
 		return cerr
@@ -261,7 +263,7 @@ func (n *OpenBazaarNode) SendOrder(peerID string, contract *pb.RicardianContract
 		return resp, err
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), n.OfflineMessageFailoverTimeout)
 	defer cancel()
 	any, err := ptypes.MarshalAny(contract)
 	if err != nil {
@@ -301,7 +303,7 @@ func (n *OpenBazaarNode) SendOrderConfirmation(peerID string, contract *pb.Ricar
 	return n.sendMessage(peerID, &k, m)
 }
 
-// SendCancel - send order cancelled msg to peer
+// SendCancel - send order canceled msg to peer
 func (n *OpenBazaarNode) SendCancel(peerID, orderID string) error {
 	a := &any.Any{Value: []byte(orderID)}
 	m := pb.Message{
@@ -309,7 +311,7 @@ func (n *OpenBazaarNode) SendCancel(peerID, orderID string) error {
 		Payload:     a,
 	}
 	//try to get public key from order
-	order, _, _, _, _, err := n.Datastore.Purchases().GetByOrderId(orderID)
+	order, _, _, _, _, _, err := n.Datastore.Purchases().GetByOrderId(orderID)
 	var kp *libp2p.PubKey
 	if err != nil { //probably implies we can't find the order in the Datastore
 		kp = nil //instead SendOfflineMessage can try to get the key from the peerId
@@ -335,7 +337,7 @@ func (n *OpenBazaarNode) SendReject(peerID string, rejectMessage *pb.OrderReject
 	}
 	var kp *libp2p.PubKey
 	//try to get public key from order
-	order, _, _, _, _, err := n.Datastore.Sales().GetByOrderId(rejectMessage.OrderID)
+	order, _, _, _, _, _, err := n.Datastore.Sales().GetByOrderId(rejectMessage.OrderID)
 	if err != nil { //probably implies we can't find the order in the Datastore
 		kp = nil //instead SendOfflineMessage can try to get the key from the peerId
 	} else {
@@ -635,16 +637,20 @@ func (n *OpenBazaarNode) SendStore(peerID string, ids []cid.Cid) error {
 		return err
 	}
 	if len(resp.Cids) == 0 {
-		log.Debugf("Peer %s requested no blocks", peerID)
+		log.Debugf("peer %s requested no blocks", peerID)
 		return nil
 	}
 	log.Debugf("Sending %d blocks to %s", len(resp.Cids), peerID)
 	for _, id := range resp.Cids {
 		decoded, err := cid.Decode(id)
 		if err != nil {
+			log.Debugf("failed decoding store block (%s) for peer (%s)", id, peerID)
 			continue
 		}
-		n.SendBlock(peerID, *decoded)
+		if err := n.SendBlock(peerID, *decoded); err != nil {
+			log.Debugf("failed sending store block (%s) to peer (%s)", id, peerID)
+			continue
+		}
 	}
 	return nil
 }

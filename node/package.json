@@ -1,0 +1,13 @@
+{
+  "name": "node",
+  "author": "DEV-STATION-WIN\\smart",
+  "version": "0.0.0",
+  "releaseCmd": "git commit -a -m \"gx publish $VERSION\"",
+  "language": "english",
+  "license": "",
+  "bugs": {
+    "url": "127.0.0.1:8808"
+  },
+  "gxVersion": "0.12.1"
+}
+

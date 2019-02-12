@@ -1,0 +1,68 @@
+syntax = "proto3";
+option go_package = "pb";
+
+
+import "contracts.proto";
+import "orders.proto";
+import "profile.proto";
+import "google/protobuf/timestamp.proto";
+
+// This schema is used for the /ob/listing api call structure
+// We use protobuf for this instead of a basic struct because
+// the listing object is in protobuf and we can't mix types. Also
+// we want to avoid putting fields in the contract that are only
+// used by the api.
+
+message Coupon {
+    string hash = 1;
+    string code = 2;
+}
+
+message OrderRespApi {
+    RicardianContract contract                            = 1;
+    OrderState state                                      = 2;
+    bool read                                             = 3;
+    bool funded                                           = 4;
+    uint64 unreadChatMessages                             = 5;
+    repeated TransactionRecord paymentAddressTransactions = 6;
+    TransactionRecord refundAddressTransaction            = 7;
+}
+
+message CaseRespApi {
+    google.protobuf.Timestamp timestamp            = 1;
+    RicardianContract buyerContract                = 2;
+    RicardianContract vendorContract               = 3;
+    repeated string buyerContractValidationErrors  = 4;
+    repeated string vendorContractValidationErrors = 5;
+    OrderState state                               = 6;
+    bool read                                      = 7;
+    bool buyerOpened                               = 8;
+    string claim                                   = 9;
+    uint64 unreadChatMessages                      = 10;
+    DisputeResolution resolution                   = 11;
+}
+
+message TransactionRecord {
+    string txid                         = 1;
+    int64 value                         = 2;
+    uint32 confirmations                = 3;
+    uint32 height                       = 4;
+    google.protobuf.Timestamp timestamp = 5;
+}
+
+message PeerAndProfile {
+    string peerId   = 1;
+    Profile profile = 2;
+}
+
+message PeerAndProfileWithID {
+    string id       = 1;
+    string peerId   = 2;
+    Profile profile = 3;
+}
+
+message RatingWithID {
+    string id       = 1;
+    string ratingId = 2;
+    Rating rating   = 3;
+}
