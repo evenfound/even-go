@@ -15,10 +15,10 @@ import (
 // which is listened by websocket API, while adding specific handling for
 // each received object.
 type notificationManager struct {
-	node *core.OpenBazaarNode
+	node *core.EvenNode
 }
 
-func manageNotifications(node *core.OpenBazaarNode, out chan []byte) chan repo.Notifier {
+func manageNotifications(node *core.EvenNode, out chan []byte) chan repo.Notifier {
 	manager := &notificationManager{node: node}
 	nodeBroadcast := make(chan repo.Notifier)
 	go func() {
@@ -85,7 +85,7 @@ func (notifier *smtpNotifier) notify(n repo.Notifier) error {
 		"To: %s",
 		"MIME-Version: 1.0",
 		"Content-Type: text/html; charset=UTF-8",
-		"Subject: [OpenBazaar] %s\r\n",
+		"Subject: [EvenNetwork] %s\r\n",
 		"%s\r\n",
 	}, "\r\n")
 	head, body, ok := n.GetSMTPTitleAndBody()

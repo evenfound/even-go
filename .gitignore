@@ -1,4 +1,4 @@
 build/
-node/##backup
+##backup/
 gx-packages.list
 packages.txt

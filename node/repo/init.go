@@ -13,8 +13,8 @@ import (
 	"github.com/ipfs/go-ipfs/core"
 	"github.com/ipfs/go-ipfs/namesys"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
-	"github.com/op/go-logging"
-	"github.com/tyler-smith/go-bip39"
+	logging "github.com/op/go-logging"
+	bip39 "github.com/tyler-smith/go-bip39"
 )
 
 const RepoVersion = "17"
@@ -68,7 +68,7 @@ func DoInit(repoRoot string, nBitsForKeypair int, testnet bool, password string,
 		return err
 	}
 
-	log.Infof("Initializing OpenBazaar node at %s\n", repoRoot)
+	log.Infof("Initializing EvenNetwork node at %s\n", repoRoot)
 	if err := fsrepo.Init(repoRoot, conf); err != nil {
 		return err
 	}

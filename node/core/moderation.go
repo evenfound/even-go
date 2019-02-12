@@ -37,7 +37,7 @@ func init() {
 }
 
 // IsModerator - Am I a moderator?
-func (n *OpenBazaarNode) IsModerator() bool {
+func (n *EvenNode) IsModerator() bool {
 	profile, err := n.GetProfile()
 	if err != nil {
 		return false
@@ -46,7 +46,7 @@ func (n *OpenBazaarNode) IsModerator() bool {
 }
 
 // SetSelfAsModerator - set self as a moderator
-func (n *OpenBazaarNode) SetSelfAsModerator(moderator *pb.Moderator) error {
+func (n *EvenNode) SetSelfAsModerator(moderator *pb.Moderator) error {
 	if moderator != nil {
 		if moderator.Fee == nil {
 			return errors.New("Moderator must have a fee set")
@@ -107,7 +107,7 @@ func (n *OpenBazaarNode) SetSelfAsModerator(moderator *pb.Moderator) error {
 }
 
 // RemoveSelfAsModerator - relinquish moderatorship
-func (n *OpenBazaarNode) RemoveSelfAsModerator() error {
+func (n *EvenNode) RemoveSelfAsModerator() error {
 	// Update profile
 	profile, err := n.GetProfile()
 	if err != nil {
@@ -128,7 +128,7 @@ func (n *OpenBazaarNode) RemoveSelfAsModerator() error {
 }
 
 // GetModeratorFee - fetch moderator fee
-func (n *OpenBazaarNode) GetModeratorFee(transactionTotal uint64, paymentCoin, currencyCode string) (uint64, error) {
+func (n *EvenNode) GetModeratorFee(transactionTotal uint64, paymentCoin, currencyCode string) (uint64, error) {
 	file, err := ioutil.ReadFile(path.Join(n.RepoPath, "root", "profile.json"))
 	if err != nil {
 		return 0, err
@@ -179,7 +179,7 @@ func (n *OpenBazaarNode) GetModeratorFee(transactionTotal uint64, paymentCoin, c
 }
 
 // SetModeratorsOnListings - set moderators for a listing
-func (n *OpenBazaarNode) SetModeratorsOnListings(moderators []string) error {
+func (n *EvenNode) SetModeratorsOnListings(moderators []string) error {
 	absPath, err := filepath.Abs(path.Join(n.RepoPath, "root", "listings"))
 	if err != nil {
 		return err
@@ -261,7 +261,7 @@ func (n *OpenBazaarNode) SetModeratorsOnListings(moderators []string) error {
 }
 
 // NotifyModerators - notify moderators(peers)
-func (n *OpenBazaarNode) NotifyModerators(moderators []string) error {
+func (n *EvenNode) NotifyModerators(moderators []string) error {
 	settings, err := n.Datastore.Settings().Get()
 	if err != nil {
 		return err

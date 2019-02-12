@@ -27,7 +27,7 @@ const KeyCachePrefix = "/pubkey/"
 var ErrorProfileNotFound = errors.New("profile not found")
 
 // GetProfile - fetch user profile
-func (n *OpenBazaarNode) GetProfile() (pb.Profile, error) {
+func (n *EvenNode) GetProfile() (pb.Profile, error) {
 	var profile pb.Profile
 	f, err := os.Open(path.Join(n.RepoPath, "root", "profile.json"))
 	if err != nil {
@@ -42,7 +42,7 @@ func (n *OpenBazaarNode) GetProfile() (pb.Profile, error) {
 }
 
 // FetchProfile - fetch peer's profile
-func (n *OpenBazaarNode) FetchProfile(peerID string, useCache bool) (pb.Profile, error) {
+func (n *EvenNode) FetchProfile(peerID string, useCache bool) (pb.Profile, error) {
 	var pro pb.Profile
 	b, err := n.IPNSResolveThenCat(ipnspath.FromString(path.Join(peerID, "profile.json")), time.Minute, useCache)
 	if err != nil || len(b) == 0 {
@@ -56,7 +56,7 @@ func (n *OpenBazaarNode) FetchProfile(peerID string, useCache bool) (pb.Profile,
 }
 
 // UpdateProfile - update user profile
-func (n *OpenBazaarNode) UpdateProfile(profile *pb.Profile) error {
+func (n *EvenNode) UpdateProfile(profile *pb.Profile) error {
 	mPubkey, err := n.MasterPrivateKey.ECPubKey()
 	if err != nil {
 		return err
@@ -115,7 +115,7 @@ func (n *OpenBazaarNode) UpdateProfile(profile *pb.Profile) error {
 }
 
 // PatchProfile - patch user profile
-func (n *OpenBazaarNode) PatchProfile(patch map[string]interface{}) error {
+func (n *EvenNode) PatchProfile(patch map[string]interface{}) error {
 	profilePath := path.Join(n.RepoPath, "root", "profile.json")
 
 	// Read stored profile data
@@ -175,7 +175,7 @@ func (n *OpenBazaarNode) PatchProfile(patch map[string]interface{}) error {
 	return n.UpdateProfile(p)
 }
 
-func (n *OpenBazaarNode) appendCountsToProfile(profile *pb.Profile) (*pb.Profile, bool) {
+func (n *EvenNode) appendCountsToProfile(profile *pb.Profile) (*pb.Profile, bool) {
 	if profile.Stats == nil {
 		profile.Stats = new(pb.Profile_Stats)
 	}
@@ -209,7 +209,7 @@ func (n *OpenBazaarNode) appendCountsToProfile(profile *pb.Profile) (*pb.Profile
 	return profile, changed
 }
 
-func (n *OpenBazaarNode) updateProfileCounts() error {
+func (n *EvenNode) updateProfileCounts() error {
 	profilePath := path.Join(n.RepoPath, "root", "profile.json")
 	profile := new(pb.Profile)
 	_, ferr := os.Stat(profilePath)
@@ -234,7 +234,7 @@ func (n *OpenBazaarNode) updateProfileCounts() error {
 	return nil
 }
 
-func (n *OpenBazaarNode) updateProfileRatings(newRating *pb.Rating) error {
+func (n *EvenNode) updateProfileRatings(newRating *pb.Rating) error {
 	profilePath := path.Join(n.RepoPath, "root", "profile.json")
 	profile := new(pb.Profile)
 	_, ferr := os.Stat(profilePath)

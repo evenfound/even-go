@@ -44,7 +44,7 @@ var ErrCloseFailureNoOutpoints = errors.New("unable to close case with missing o
 var ErrOpenFailureOrderExpired = errors.New("unable to open case because order is too old to dispute")
 
 // OpenDispute - open a dispute
-func (n *OpenBazaarNode) OpenDispute(orderID string, contract *pb.RicardianContract, records []*wallet.TransactionRecord, claim string) error {
+func (n *EvenNode) OpenDispute(orderID string, contract *pb.RicardianContract, records []*wallet.TransactionRecord, claim string) error {
 	if !n.verifyEscrowFundsAreDisputeable(contract, records) {
 		return ErrOpenFailureOrderExpired
 	}
@@ -137,7 +137,7 @@ func (n *OpenBazaarNode) OpenDispute(orderID string, contract *pb.RicardianContr
 	return nil
 }
 
-func (n *OpenBazaarNode) verifyEscrowFundsAreDisputeable(contract *pb.RicardianContract, records []*wallet.TransactionRecord) bool {
+func (n *EvenNode) verifyEscrowFundsAreDisputeable(contract *pb.RicardianContract, records []*wallet.TransactionRecord) bool {
 	confirmationsForTimeout := contract.VendorListings[0].Metadata.EscrowTimeoutHours * ConfirmationsPerHour
 	wal, err := n.Multiwallet.WalletForCurrencyCode(contract.BuyerOrder.Payment.Coin)
 	if err != nil {
@@ -163,7 +163,7 @@ func (n *OpenBazaarNode) verifyEscrowFundsAreDisputeable(contract *pb.RicardianC
 }
 
 // SignDispute - sign the dispute
-func (n *OpenBazaarNode) SignDispute(contract *pb.RicardianContract) (*pb.RicardianContract, error) {
+func (n *EvenNode) SignDispute(contract *pb.RicardianContract) (*pb.RicardianContract, error) {
 	serializedDispute, err := proto.Marshal(contract.Dispute)
 	if err != nil {
 		return contract, err
@@ -183,7 +183,7 @@ func (n *OpenBazaarNode) SignDispute(contract *pb.RicardianContract) (*pb.Ricard
 }
 
 // VerifySignatureOnDisputeOpen - verify signatures in an open dispute
-func (n *OpenBazaarNode) VerifySignatureOnDisputeOpen(contract *pb.RicardianContract, peerID string) error {
+func (n *EvenNode) VerifySignatureOnDisputeOpen(contract *pb.RicardianContract, peerID string) error {
 	var pubkey []byte
 	deser := new(pb.RicardianContract)
 	err := proto.Unmarshal(contract.Dispute.SerializedContract, deser)
@@ -223,7 +223,7 @@ func (n *OpenBazaarNode) VerifySignatureOnDisputeOpen(contract *pb.RicardianCont
 }
 
 // ProcessDisputeOpen - process an open dispute
-func (n *OpenBazaarNode) ProcessDisputeOpen(rc *pb.RicardianContract, peerID string) error {
+func (n *EvenNode) ProcessDisputeOpen(rc *pb.RicardianContract, peerID string) error {
 	DisputeWg.Add(1)
 	defer DisputeWg.Done()
 
@@ -433,7 +433,7 @@ func (n *OpenBazaarNode) ProcessDisputeOpen(rc *pb.RicardianContract, peerID str
 }
 
 // CloseDispute - close a dispute
-func (n *OpenBazaarNode) CloseDispute(orderID string, buyerPercentage, vendorPercentage float32, resolution string, paymentCoinHint *repo.CurrencyCode) error {
+func (n *EvenNode) CloseDispute(orderID string, buyerPercentage, vendorPercentage float32, resolution string, paymentCoinHint *repo.CurrencyCode) error {
 	var payDivision = repo.PayoutRatio{Buyer: buyerPercentage, Vendor: vendorPercentage}
 	if err := payDivision.Validate(); err != nil {
 		return err
@@ -719,7 +719,7 @@ func (n *OpenBazaarNode) CloseDispute(orderID string, buyerPercentage, vendorPer
 }
 
 // SignDisputeResolution - add signature to DisputeResolution
-func (n *OpenBazaarNode) SignDisputeResolution(contract *pb.RicardianContract) (*pb.RicardianContract, error) {
+func (n *EvenNode) SignDisputeResolution(contract *pb.RicardianContract) (*pb.RicardianContract, error) {
 	serializedDR, err := proto.Marshal(contract.DisputeResolution)
 	if err != nil {
 		return contract, err
@@ -739,7 +739,7 @@ func (n *OpenBazaarNode) SignDisputeResolution(contract *pb.RicardianContract) (
 }
 
 // ValidateCaseContract - validate contract details
-func (n *OpenBazaarNode) ValidateCaseContract(contract *pb.RicardianContract) []string {
+func (n *EvenNode) ValidateCaseContract(contract *pb.RicardianContract) []string {
 	var validationErrors []string
 
 	// Contract should have a listing and order to make it to this point
@@ -921,7 +921,7 @@ func (n *OpenBazaarNode) ValidateCaseContract(contract *pb.RicardianContract) []
 }
 
 // ValidateDisputeResolution - validate dispute resolution
-func (n *OpenBazaarNode) ValidateDisputeResolution(contract *pb.RicardianContract) error {
+func (n *EvenNode) ValidateDisputeResolution(contract *pb.RicardianContract) error {
 	err := n.verifySignatureOnDisputeResolution(contract)
 	if err != nil {
 		return err
@@ -942,7 +942,7 @@ func (n *OpenBazaarNode) ValidateDisputeResolution(contract *pb.RicardianContrac
 	return nil
 }
 
-func (n *OpenBazaarNode) verifyPaymentDestinationIsInWallet(output *pb.DisputeResolution_Payout_Output, wal wallet.Wallet) error {
+func (n *EvenNode) verifyPaymentDestinationIsInWallet(output *pb.DisputeResolution_Payout_Output, wal wallet.Wallet) error {
 	addr, err := pb.DisputeResolutionPayoutOutputToAddress(wal, output)
 	if err != nil {
 		return err
@@ -954,7 +954,7 @@ func (n *OpenBazaarNode) verifyPaymentDestinationIsInWallet(output *pb.DisputeRe
 	return nil
 }
 
-func (n *OpenBazaarNode) verifySignatureOnDisputeResolution(contract *pb.RicardianContract) error {
+func (n *EvenNode) verifySignatureOnDisputeResolution(contract *pb.RicardianContract) error {
 
 	moderatorID, err := peer.IDB58Decode(contract.BuyerOrder.Payment.Moderator)
 	if err != nil {
@@ -994,7 +994,7 @@ func (n *OpenBazaarNode) verifySignatureOnDisputeResolution(contract *pb.Ricardi
 }
 
 // ReleaseFunds - release funds
-func (n *OpenBazaarNode) ReleaseFunds(contract *pb.RicardianContract, records []*wallet.TransactionRecord) error {
+func (n *EvenNode) ReleaseFunds(contract *pb.RicardianContract, records []*wallet.TransactionRecord) error {
 	// Create inputs
 	var inputs []wallet.TransactionInput
 	for _, o := range contract.DisputeResolution.Payout.Inputs {

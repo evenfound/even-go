@@ -10,8 +10,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+	"os/exec"
+	"path"
+	"runtime"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/OpenBazaar/spvwallet"
-	"github.com/OpenBazaar/wallet-interface"
+	"github.com/OpenBazaar/spvwallet/exchangerates"
+	wallet "github.com/OpenBazaar/wallet-interface"
 	"github.com/btcsuite/btcd/blockchain"
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/btcsuite/btcd/chaincfg"
@@ -24,23 +33,15 @@ import (
 	hd "github.com/btcsuite/btcutil/hdkeychain"
 	"github.com/btcsuite/btcutil/txsort"
 	"github.com/btcsuite/btcwallet/wallet/txrules"
-	"github.com/op/go-logging"
+	logging "github.com/op/go-logging"
 	b39 "github.com/tyler-smith/go-bip39"
-	"os"
-	"os/exec"
-	"path"
-	"runtime"
-	"strconv"
-	"strings"
-	"time"
-	"github.com/OpenBazaar/spvwallet/exchangerates"
 	"golang.org/x/net/proxy"
 )
 
 var log = logging.MustGetLogger("bitcoind")
 
 const (
-	Account = "OpenBazaar"
+	Account = "EvenNetwork"
 )
 
 type BitcoindWallet struct {
@@ -131,7 +132,7 @@ func GetCredentials(repoPath string) (username, password string, err error) {
 		}
 		password := base64.StdEncoding.EncodeToString(r)
 
-		user := fmt.Sprintf(`rpcuser=%s`, "OpenBazaar")
+		user := fmt.Sprintf(`rpcuser=%s`, "EvenNetwork")
 		pass := fmt.Sprintf(`rpcpassword=%s`, password)
 
 		f, err := os.Create(p)
@@ -143,7 +144,7 @@ func GetCredentials(repoPath string) (username, password string, err error) {
 		fmt.Fprintln(wr, user)
 		fmt.Fprintln(wr, pass)
 		wr.Flush()
-		return "OpenBazaar", password, nil
+		return "EvenNetwork", password, nil
 	} else {
 		file, err := os.Open(p)
 		if err != nil {

@@ -15,7 +15,7 @@ import (
 )
 
 // NewOrderConfirmation - add order confirmation to the contract
-func (n *OpenBazaarNode) NewOrderConfirmation(contract *pb.RicardianContract, addressRequest, calculateNewTotal bool) (*pb.RicardianContract, error) {
+func (n *EvenNode) NewOrderConfirmation(contract *pb.RicardianContract, addressRequest, calculateNewTotal bool) (*pb.RicardianContract, error) {
 	oc := new(pb.OrderConfirmation)
 	// Calculate order ID
 	orderID, err := n.CalcOrderID(contract.BuyerOrder)
@@ -95,7 +95,7 @@ func (n *OpenBazaarNode) NewOrderConfirmation(contract *pb.RicardianContract, ad
 }
 
 // ConfirmOfflineOrder - confirm offline order
-func (n *OpenBazaarNode) ConfirmOfflineOrder(contract *pb.RicardianContract, records []*wallet.TransactionRecord) error {
+func (n *EvenNode) ConfirmOfflineOrder(contract *pb.RicardianContract, records []*wallet.TransactionRecord) error {
 	contract, err := n.NewOrderConfirmation(contract, false, false)
 	if err != nil {
 		return err
@@ -165,7 +165,7 @@ func (n *OpenBazaarNode) ConfirmOfflineOrder(contract *pb.RicardianContract, rec
 }
 
 // RejectOfflineOrder - reject offline order
-func (n *OpenBazaarNode) RejectOfflineOrder(contract *pb.RicardianContract, records []*wallet.TransactionRecord) error {
+func (n *EvenNode) RejectOfflineOrder(contract *pb.RicardianContract, records []*wallet.TransactionRecord) error {
 	orderID, err := n.CalcOrderID(contract.BuyerOrder)
 	if err != nil {
 		return fmt.Errorf("generate order id: %s", err.Error())
@@ -256,7 +256,7 @@ func (n *OpenBazaarNode) RejectOfflineOrder(contract *pb.RicardianContract, reco
 }
 
 // ValidateOrderConfirmation - validate address and signatures for order confirmation
-func (n *OpenBazaarNode) ValidateOrderConfirmation(contract *pb.RicardianContract, validateAddress bool) error {
+func (n *EvenNode) ValidateOrderConfirmation(contract *pb.RicardianContract, validateAddress bool) error {
 	orderID, err := n.CalcOrderID(contract.BuyerOrder)
 	if err != nil {
 		return err
@@ -315,7 +315,7 @@ func (n *OpenBazaarNode) ValidateOrderConfirmation(contract *pb.RicardianContrac
 }
 
 // SignOrderConfirmation - sign the added order confirmation
-func (n *OpenBazaarNode) SignOrderConfirmation(contract *pb.RicardianContract) (*pb.RicardianContract, error) {
+func (n *EvenNode) SignOrderConfirmation(contract *pb.RicardianContract) (*pb.RicardianContract, error) {
 	serializedOrderConf, err := proto.Marshal(contract.VendorOrderConfirmation)
 	if err != nil {
 		return contract, err

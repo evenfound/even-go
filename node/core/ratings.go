@@ -116,7 +116,7 @@ func ValidateRating(rating *pb.Rating) (bool, error) {
 }
 
 // GetRatingCounts - fetch rating count
-func (n *OpenBazaarNode) GetRatingCounts() (uint32, float32, error) {
+func (n *EvenNode) GetRatingCounts() (uint32, float32, error) {
 	indexPath := path.Join(n.RepoPath, "root", "ratings.json")
 
 	var index []SavedRating

@@ -10,7 +10,7 @@ import (
   as well as adds the current follow, following, and listing counts to the profile.
   We only do this when a user updates his node to avoid needing to make network calls
   each time a new follower or unfollow request comes in. */
-func (n *OpenBazaarNode) UpdateFollow() error {
+func (n *EvenNode) UpdateFollow() error {
 	followPath := path.Join(n.RepoPath, "root", "followers.json")
 	followingPath := path.Join(n.RepoPath, "root", "following.json")
 

@@ -58,7 +58,7 @@ type SavedRating struct {
 }
 
 // CompleteOrder - complete the order
-func (n *OpenBazaarNode) CompleteOrder(orderRatings *OrderRatings, contract *pb.RicardianContract, records []*wallet.TransactionRecord) error {
+func (n *EvenNode) CompleteOrder(orderRatings *OrderRatings, contract *pb.RicardianContract, records []*wallet.TransactionRecord) error {
 
 	orderID, err := n.CalcOrderID(contract.BuyerOrder)
 	if err != nil {
@@ -282,7 +282,7 @@ var (
 )
 
 // DisputeIsActive - check if the dispute is active
-func (n *OpenBazaarNode) DisputeIsActive(contract *pb.RicardianContract) (bool, error) {
+func (n *EvenNode) DisputeIsActive(contract *pb.RicardianContract) (bool, error) {
 	var (
 		dispute         = contract.GetDispute()
 		disputeDuration = time.Duration(repo.DisputeTotalDurationHours) * time.Hour
@@ -305,7 +305,7 @@ func (n *OpenBazaarNode) DisputeIsActive(contract *pb.RicardianContract) (bool, 
 }
 
 // ReleaseFundsAfterTimeout - release funds
-func (n *OpenBazaarNode) ReleaseFundsAfterTimeout(contract *pb.RicardianContract, records []*wallet.TransactionRecord) error {
+func (n *EvenNode) ReleaseFundsAfterTimeout(contract *pb.RicardianContract, records []*wallet.TransactionRecord) error {
 	if active, err := n.DisputeIsActive(contract); err != nil {
 		return err
 	} else if active {
@@ -391,7 +391,7 @@ func (n *OpenBazaarNode) ReleaseFundsAfterTimeout(contract *pb.RicardianContract
 }
 
 // SignOrderCompletion - sign order on completion
-func (n *OpenBazaarNode) SignOrderCompletion(contract *pb.RicardianContract) (*pb.RicardianContract, error) {
+func (n *EvenNode) SignOrderCompletion(contract *pb.RicardianContract) (*pb.RicardianContract, error) {
 	serializedOrderFulfil, err := proto.Marshal(contract.BuyerOrderCompletion)
 	if err != nil {
 		return contract, err
@@ -411,7 +411,7 @@ func (n *OpenBazaarNode) SignOrderCompletion(contract *pb.RicardianContract) (*p
 }
 
 // ValidateOrderCompletion - validate order signatures on completion
-func (n *OpenBazaarNode) ValidateOrderCompletion(contract *pb.RicardianContract) error {
+func (n *EvenNode) ValidateOrderCompletion(contract *pb.RicardianContract) error {
 	if err := verifySignaturesOnOrderCompletion(contract); err != nil {
 		return err
 	}
@@ -422,7 +422,7 @@ func (n *OpenBazaarNode) ValidateOrderCompletion(contract *pb.RicardianContract)
 }
 
 // ValidateAndSaveRating - validates rating
-func (n *OpenBazaarNode) ValidateAndSaveRating(contract *pb.RicardianContract) (retErr error) {
+func (n *EvenNode) ValidateAndSaveRating(contract *pb.RicardianContract) (retErr error) {
 	for _, rating := range contract.BuyerOrderCompletion.Ratings {
 		valid, err := ValidateRating(rating)
 		if !valid || err != nil {
@@ -502,7 +502,7 @@ func (n *OpenBazaarNode) ValidateAndSaveRating(contract *pb.RicardianContract) (
 	return retErr
 }
 
-func (n *OpenBazaarNode) updateRatingIndex(rating *pb.Rating, ratingPath string) error {
+func (n *EvenNode) updateRatingIndex(rating *pb.Rating, ratingPath string) error {
 	indexPath := path.Join(n.RepoPath, "root", "ratings.json")
 
 	var index []SavedRating

@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
+	wallet "github.com/OpenBazaar/wallet-interface"
 	"github.com/evenfound/even-go/node/repo"
-	"github.com/OpenBazaar/wallet-interface"
-	"github.com/op/go-logging"
+	logging "github.com/op/go-logging"
 )
 
 var log = logging.MustGetLogger("cmd")
@@ -55,13 +55,13 @@ func (x *Init) Execute(args []string) error {
 			if err != nil {
 				return err
 			}
-			fmt.Printf("OpenBazaar repo initialized at %s\n", repoPath)
+			fmt.Printf("EvenNetwork repo initialized at %s\n", repoPath)
 			return nil
 		}
 		return nil
 	} else if err != nil {
 		return err
 	}
-	fmt.Printf("OpenBazaar repo initialized at %s\n", repoPath)
+	fmt.Printf("EvenNetwork repo initialized at %s\n", repoPath)
 	return nil
 }

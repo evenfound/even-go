@@ -5,8 +5,8 @@ import (
 )
 
 // StartMessageRetriever will collect the required options from the
-// OpenBazaarNode and begin the MessageRetriever in the background
-func (n *OpenBazaarNode) StartMessageRetriever() {
+// EvenNode and begin the MessageRetriever in the background
+func (n *EvenNode) StartMessageRetriever() {
 	config := net.MRConfig{
 		Db:        n.Datastore,
 		IPFSNode:  n.IpfsNode,
@@ -24,7 +24,7 @@ func (n *OpenBazaarNode) StartMessageRetriever() {
 
 // WaitForMessageRetrieverCompletion will return once the MessageRetriever
 // has finished processing messages
-func (n *OpenBazaarNode) WaitForMessageRetrieverCompletion() {
+func (n *EvenNode) WaitForMessageRetrieverCompletion() {
 	if n.MessageRetriever == nil {
 		return
 	}

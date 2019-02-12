@@ -68,7 +68,7 @@ func FormatRFC3339PB(ts google_protobuf.Timestamp) string {
 }
 
 // BuildTransactionRecords - Used by the GET order API to build transaction records suitable to be included in the order response
-func (n *OpenBazaarNode) BuildTransactionRecords(contract *pb.RicardianContract, records []*wallet.TransactionRecord, state pb.OrderState) ([]*pb.TransactionRecord, *pb.TransactionRecord, error) {
+func (n *EvenNode) BuildTransactionRecords(contract *pb.RicardianContract, records []*wallet.TransactionRecord, state pb.OrderState) ([]*pb.TransactionRecord, *pb.TransactionRecord, error) {
 	paymentRecords := []*pb.TransactionRecord{}
 	payments := make(map[string]*pb.TransactionRecord)
 	wal, err := n.Multiwallet.WalletForCurrencyCode(contract.BuyerOrder.Payment.Coin)
@@ -158,7 +158,7 @@ func NormalizeCurrencyCode(currencyCode string) string {
 	return c.String()
 }
 
-func (n *OpenBazaarNode) ValidateMultiwalletHasPreferredCurrencies(data repo.SettingsData) error {
+func (n *EvenNode) ValidateMultiwalletHasPreferredCurrencies(data repo.SettingsData) error {
 	if data.PreferredCurrencies == nil {
 		return nil
 	}

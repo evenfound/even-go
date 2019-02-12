@@ -73,7 +73,7 @@ const (
 )
 
 // Purchase - add ricardian contract
-func (n *OpenBazaarNode) Purchase(data *PurchaseData) (orderID string, paymentAddress string, paymentAmount uint64, vendorOnline bool, err error) {
+func (n *EvenNode) Purchase(data *PurchaseData) (orderID string, paymentAddress string, paymentAmount uint64, vendorOnline bool, err error) {
 	contract, err := n.createContractWithOrder(data)
 	if err != nil {
 		return "", "", 0, false, err
@@ -397,7 +397,7 @@ func extractErrorMessage(m *pb.Message) error {
 
 }
 
-func (n *OpenBazaarNode) createContractWithOrder(data *PurchaseData) (*pb.RicardianContract, error) {
+func (n *EvenNode) createContractWithOrder(data *PurchaseData) (*pb.RicardianContract, error) {
 	var (
 		contract = new(pb.RicardianContract)
 		order    = new(pb.Order)
@@ -671,7 +671,7 @@ func validateCryptocurrencyOrderItem(item *pb.Order_Item) error {
 }
 
 // EstimateOrderTotal - returns order total in satoshi/wei
-func (n *OpenBazaarNode) EstimateOrderTotal(data *PurchaseData) (uint64, error) {
+func (n *EvenNode) EstimateOrderTotal(data *PurchaseData) (uint64, error) {
 	contract, err := n.createContractWithOrder(data)
 	if err != nil {
 		return 0, err
@@ -683,7 +683,7 @@ func (n *OpenBazaarNode) EstimateOrderTotal(data *PurchaseData) (uint64, error) 
 }
 
 // CancelOfflineOrder - cancel order
-func (n *OpenBazaarNode) CancelOfflineOrder(contract *pb.RicardianContract, records []*wallet.TransactionRecord) error {
+func (n *EvenNode) CancelOfflineOrder(contract *pb.RicardianContract, records []*wallet.TransactionRecord) error {
 	orderID, err := n.CalcOrderID(contract.BuyerOrder)
 	if err != nil {
 		return err
@@ -755,7 +755,7 @@ func (n *OpenBazaarNode) CancelOfflineOrder(contract *pb.RicardianContract, reco
 }
 
 // CalcOrderID - return b58 encoded orderID
-func (n *OpenBazaarNode) CalcOrderID(order *pb.Order) (string, error) {
+func (n *EvenNode) CalcOrderID(order *pb.Order) (string, error) {
 	ser, err := proto.Marshal(order)
 	if err != nil {
 		return "", err
@@ -768,7 +768,7 @@ func (n *OpenBazaarNode) CalcOrderID(order *pb.Order) (string, error) {
 }
 
 // CalculateOrderTotal - calculate the total in satoshi/wei
-func (n *OpenBazaarNode) CalculateOrderTotal(contract *pb.RicardianContract) (uint64, error) {
+func (n *EvenNode) CalculateOrderTotal(contract *pb.RicardianContract) (uint64, error) {
 	wal, err := n.Multiwallet.WalletForCurrencyCode(contract.BuyerOrder.Payment.Coin)
 	if err != nil {
 		return 0, err
@@ -882,7 +882,7 @@ func (n *OpenBazaarNode) CalculateOrderTotal(contract *pb.RicardianContract) (ui
 	return total, nil
 }
 
-func (n *OpenBazaarNode) calculateShippingTotalForListings(contract *pb.RicardianContract, listings map[string]*pb.Listing) (uint64, error) {
+func (n *EvenNode) calculateShippingTotalForListings(contract *pb.RicardianContract, listings map[string]*pb.Listing) (uint64, error) {
 	type itemShipping struct {
 		primary               uint64
 		secondary             uint64
@@ -1012,7 +1012,7 @@ func quantityForItem(version uint32, item *pb.Order_Item) uint64 {
 	}
 }
 
-func (n *OpenBazaarNode) getPriceInSatoshi(paymentCoin, currencyCode string, amount uint64) (uint64, error) {
+func (n *EvenNode) getPriceInSatoshi(paymentCoin, currencyCode string, amount uint64) (uint64, error) {
 	if NormalizeCurrencyCode(currencyCode) == NormalizeCurrencyCode(paymentCoin) || "T"+NormalizeCurrencyCode(currencyCode) == NormalizeCurrencyCode(paymentCoin) {
 		return amount, nil
 	}
@@ -1036,7 +1036,7 @@ func (n *OpenBazaarNode) getPriceInSatoshi(paymentCoin, currencyCode string, amo
 	return uint64(satoshis), nil
 }
 
-func (n *OpenBazaarNode) getMarketPriceInSatoshis(pricingCurrency, currencyCode string, amount uint64) (uint64, error) {
+func (n *EvenNode) getMarketPriceInSatoshis(pricingCurrency, currencyCode string, amount uint64) (uint64, error) {
 	wal, err := n.Multiwallet.WalletForCurrencyCode(pricingCurrency)
 	if err != nil {
 		return 0, err
@@ -1089,7 +1089,7 @@ func verifySignaturesOnOrder(contract *pb.RicardianContract) error {
 }
 
 // ValidateOrder - check the order validity wrt signatures etc
-func (n *OpenBazaarNode) ValidateOrder(contract *pb.RicardianContract, checkInventory bool) error {
+func (n *EvenNode) ValidateOrder(contract *pb.RicardianContract, checkInventory bool) error {
 	listingMap := make(map[string]*pb.Listing)
 
 	// Check order contains all required fields
@@ -1331,7 +1331,7 @@ collectListings:
 	return nil
 }
 
-func (n *OpenBazaarNode) hasKnownListings(contract *pb.RicardianContract) bool {
+func (n *EvenNode) hasKnownListings(contract *pb.RicardianContract) bool {
 	for _, listing := range contract.VendorListings {
 		if !n.IsItemForSale(listing) {
 			return false
@@ -1341,7 +1341,7 @@ func (n *OpenBazaarNode) hasKnownListings(contract *pb.RicardianContract) bool {
 }
 
 // ValidateDirectPaymentAddress - validate address
-func (n *OpenBazaarNode) ValidateDirectPaymentAddress(order *pb.Order) error {
+func (n *EvenNode) ValidateDirectPaymentAddress(order *pb.Order) error {
 	chaincode, err := hex.DecodeString(order.Payment.Chaincode)
 	if err != nil {
 		return err
@@ -1376,7 +1376,7 @@ func (n *OpenBazaarNode) ValidateDirectPaymentAddress(order *pb.Order) error {
 }
 
 // ValidateModeratedPaymentAddress - validate moderator address
-func (n *OpenBazaarNode) ValidateModeratedPaymentAddress(order *pb.Order, timeout time.Duration) error {
+func (n *EvenNode) ValidateModeratedPaymentAddress(order *pb.Order, timeout time.Duration) error {
 	wal, err := n.Multiwallet.WalletForCurrencyCode(order.Payment.Coin)
 	if err != nil {
 		return err
@@ -1437,7 +1437,7 @@ func (n *OpenBazaarNode) ValidateModeratedPaymentAddress(order *pb.Order, timeou
 }
 
 // SignOrder - add signature to the order
-func (n *OpenBazaarNode) SignOrder(contract *pb.RicardianContract) (*pb.RicardianContract, error) {
+func (n *EvenNode) SignOrder(contract *pb.RicardianContract) (*pb.RicardianContract, error) {
 	serializedOrder, err := proto.Marshal(contract.BuyerOrder)
 	if err != nil {
 		return contract, err
@@ -1495,7 +1495,7 @@ func validateVersionNumber(listing *pb.Listing) error {
 }
 
 // ValidatePaymentAmount - validate amount requested
-func (n *OpenBazaarNode) ValidatePaymentAmount(requestedAmount, paymentAmount uint64) bool {
+func (n *EvenNode) ValidatePaymentAmount(requestedAmount, paymentAmount uint64) bool {
 	settings, _ := n.Datastore.Settings().Get()
 	bufferPercent := float32(0)
 	if settings.MisPaymentBuffer != nil {

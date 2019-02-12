@@ -30,7 +30,7 @@ We need to take care to observe the Tor preference.
 */
 
 // IPNSResolveThenCat - find the record in the DHT
-func (n *OpenBazaarNode) IPNSResolveThenCat(ipnsPath ipfspath.Path, timeout time.Duration, usecache bool) ([]byte, error) {
+func (n *EvenNode) IPNSResolveThenCat(ipnsPath ipfspath.Path, timeout time.Duration, usecache bool) ([]byte, error) {
 	var ret []byte
 	hash, err := n.IPNSResolve(ipnsPath.Segments()[0], timeout, usecache)
 	if err != nil {
@@ -49,7 +49,7 @@ func (n *OpenBazaarNode) IPNSResolveThenCat(ipnsPath ipfspath.Path, timeout time
 }
 
 // IPNSResolve - try fetching the record from an API
-func (n *OpenBazaarNode) IPNSResolve(peerID string, timeout time.Duration, usecache bool) (string, error) {
+func (n *EvenNode) IPNSResolve(peerID string, timeout time.Duration, usecache bool) (string, error) {
 	pid, err := peer.IDB58Decode(peerID)
 	if err != nil {
 		return "", err

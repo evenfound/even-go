@@ -297,7 +297,7 @@ const inventoryUpdateJSON = `[{
 //
 
 const moderatorValidJSON = `{
-	"description": "Long time OpenBazaar moderator located in Chicago",
+	"description": "Long time EvenNetwork moderator located in Chicago",
 	"termsAndConditions": "Will moderate anything and everything",
 	"languages": ["English", "Spanish"],
 	"fee": {

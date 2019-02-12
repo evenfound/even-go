@@ -50,7 +50,7 @@ func (result notifierSummary) String() string {
 }
 
 // StartRecordAgingNotifier - start the notifier
-func (n *OpenBazaarNode) StartRecordAgingNotifier() {
+func (n *EvenNode) StartRecordAgingNotifier() {
 	n.RecordAgingNotifier = &recordAgingNotifier{
 		datastore:     n.Datastore,
 		broadcast:     n.Broadcast,
@@ -60,7 +60,7 @@ func (n *OpenBazaarNode) StartRecordAgingNotifier() {
 	go n.RecordAgingNotifier.Run()
 }
 
-func (n *OpenBazaarNode) intervalDelay() time.Duration {
+func (n *EvenNode) intervalDelay() time.Duration {
 	if n.TestnetEnable {
 		return notifierTestingInterval
 	}

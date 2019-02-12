@@ -5,7 +5,7 @@ import (
 )
 
 // StartPointerRepublisher - setup republisher for IPNS
-func (n *OpenBazaarNode) StartPointerRepublisher() {
+func (n *EvenNode) StartPointerRepublisher() {
 	n.PointerRepublisher = net.NewPointerRepublisher(n.IpfsNode, n.Datastore, n.PushNodes, n.IsModerator)
 	go n.PointerRepublisher.Run()
 }

@@ -83,14 +83,14 @@ func (x *GenerateCertificates) Execute(args []string) error {
 		IPAddresses:  ipAddresses,
 		DNSNames:     dnsNames,
 		Subject: pkix.Name{
-			Organization: []string{"OpenBazaar"},
+			Organization: []string{"EvenNetwork"},
 		},
 		NotBefore:             notBefore,
 		NotAfter:              notAfter,
 		KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
 		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
 		BasicConstraintsValid: true,
-		IsCA: true,
+		IsCA:                  true,
 	}
 
 	// Create certificate

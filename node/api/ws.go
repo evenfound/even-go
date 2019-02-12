@@ -70,7 +70,7 @@ type wsHandler struct {
 	logger        *logging.Logger
 }
 
-func newWSAPIHandler(node *core.OpenBazaarNode, authCookie http.Cookie, config schema.APIConfig) *wsHandler {
+func newWSAPIHandler(node *core.EvenNode, authCookie http.Cookie, config schema.APIConfig) *wsHandler {
 	hub := newHub()
 	go hub.run()
 	allowedIps := make(map[string]bool)

@@ -40,7 +40,7 @@ type SpendResponse struct {
 
 // Spend will attempt to move funds from the node to the destination address described in the
 // SpendRequest for the amount indicated.
-func (n *OpenBazaarNode) Spend(args *SpendRequest) (*SpendResponse, error) {
+func (n *EvenNode) Spend(args *SpendRequest) (*SpendResponse, error) {
 	var feeLevel wallet.FeeLevel
 
 	wal, err := n.Multiwallet.WalletForCurrencyCode(args.Wallet)
@@ -125,7 +125,7 @@ func (n *OpenBazaarNode) Spend(args *SpendRequest) (*SpendResponse, error) {
 	}, nil
 }
 
-func (n *OpenBazaarNode) getOrderContractBySpendRequest(args *SpendRequest) (*pb.RicardianContract, error) {
+func (n *EvenNode) getOrderContractBySpendRequest(args *SpendRequest) (*pb.RicardianContract, error) {
 	var errorStr = "unable to find order from order id or spend address"
 	if args.OrderID != "" {
 		contract, _, _, _, _, _, err := n.Datastore.Purchases().GetByOrderId(args.OrderID)

@@ -23,7 +23,7 @@ import (
 )
 
 // SetAvatarImages - set avatar image from the base64 encoded image string
-func (n *OpenBazaarNode) SetAvatarImages(base64ImageData string) (*pb.Profile_Image, error) {
+func (n *EvenNode) SetAvatarImages(base64ImageData string) (*pb.Profile_Image, error) {
 	imageHashes, err := n.resizeImage(base64ImageData, "avatar", 60, 60)
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (n *OpenBazaarNode) SetAvatarImages(base64ImageData string) (*pb.Profile_Im
 }
 
 // SetHeaderImages - set header image from the base64 encoded string
-func (n *OpenBazaarNode) SetHeaderImages(base64ImageData string) (*pb.Profile_Image, error) {
+func (n *EvenNode) SetHeaderImages(base64ImageData string) (*pb.Profile_Image, error) {
 	imageHashes, err := n.resizeImage(base64ImageData, "header", 315, 90)
 	if err != nil {
 		return nil, err
@@ -64,11 +64,11 @@ func (n *OpenBazaarNode) SetHeaderImages(base64ImageData string) (*pb.Profile_Im
 
 // SetProductImages - use the original image ina base64 string format and generate tiny,
 // small, medium and large images for the product
-func (n *OpenBazaarNode) SetProductImages(base64ImageData, filename string) (*pb.Profile_Image, error) {
+func (n *EvenNode) SetProductImages(base64ImageData, filename string) (*pb.Profile_Image, error) {
 	return n.resizeImage(base64ImageData, filename, 120, 120)
 }
 
-func (n *OpenBazaarNode) resizeImage(base64ImageData, filename string, baseWidth, baseHeight uint) (*pb.Profile_Image, error) {
+func (n *EvenNode) resizeImage(base64ImageData, filename string, baseWidth, baseHeight uint) (*pb.Profile_Image, error) {
 	img, imgCfg, err := decodeImageData(base64ImageData)
 	if err != nil {
 		return nil, err
@@ -100,7 +100,7 @@ func (n *OpenBazaarNode) resizeImage(base64ImageData, filename string, baseWidth
 	return &pb.Profile_Image{Tiny: t, Small: s, Medium: m, Large: l, Original: o}, nil
 }
 
-func (n *OpenBazaarNode) addImage(img image.Image, imgPath string) (string, error) {
+func (n *EvenNode) addImage(img image.Image, imgPath string) (string, error) {
 	out, err := os.Create(imgPath)
 	if err != nil {
 		return "", err
@@ -110,7 +110,7 @@ func (n *OpenBazaarNode) addImage(img image.Image, imgPath string) (string, erro
 	return ipfs.AddFile(n.IpfsNode, imgPath)
 }
 
-func (n *OpenBazaarNode) addResizedImage(img image.Image, imgCfg *image.Config, w, h uint, imgPath string) (string, error) {
+func (n *EvenNode) addResizedImage(img image.Image, imgCfg *image.Config, w, h uint, imgPath string) (string, error) {
 	width, height := getImageAttributes(w, h, uint(imgCfg.Width), uint(imgCfg.Height))
 	newImg := resize.Resize(width, height, img, resize.Lanczos3)
 	return n.addImage(newImg, imgPath)
@@ -145,17 +145,17 @@ func getImageAttributes(targetWidth, targetHeight, imgWidth, imgHeight uint) (wi
 }
 
 // FetchAvatar - fetch image avatar from ipfs
-func (n *OpenBazaarNode) FetchAvatar(peerID string, size string, useCache bool) (io.DagReader, error) {
+func (n *EvenNode) FetchAvatar(peerID string, size string, useCache bool) (io.DagReader, error) {
 	return n.FetchImage(peerID, "avatar", size, useCache)
 }
 
 // FetchHeader - fetch image header from ipfs
-func (n *OpenBazaarNode) FetchHeader(peerID string, size string, useCache bool) (io.DagReader, error) {
+func (n *EvenNode) FetchHeader(peerID string, size string, useCache bool) (io.DagReader, error) {
 	return n.FetchImage(peerID, "header", size, useCache)
 }
 
 // FetchImage - fetch ipfs image
-func (n *OpenBazaarNode) FetchImage(peerID string, imageType string, size string, useCache bool) (io.DagReader, error) {
+func (n *EvenNode) FetchImage(peerID string, imageType string, size string, useCache bool) (io.DagReader, error) {
 	query := "/" + peerID + "/images/" + size + "/" + imageType
 	b, err := n.IPNSResolveThenCat(ipnspath.FromString(query), time.Minute, useCache)
 	if err != nil {
@@ -165,7 +165,7 @@ func (n *OpenBazaarNode) FetchImage(peerID string, imageType string, size string
 }
 
 // GetBase64Image - fetch the image and return it as base64 encoded string
-func (n *OpenBazaarNode) GetBase64Image(url string) (base64ImageData, filename string, err error) {
+func (n *EvenNode) GetBase64Image(url string) (base64ImageData, filename string, err error) {
 	dial := net.Dial
 	if n.TorDialer != nil {
 		dial = n.TorDialer.Dial

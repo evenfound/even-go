@@ -130,7 +130,7 @@ type postImage struct {
 }
 
 //GeneratePostSlug  [Create a slug for the post based on the status, if a slug is missing]
-func (n *OpenBazaarNode) GeneratePostSlug(status string) (string, error) {
+func (n *EvenNode) GeneratePostSlug(status string) (string, error) {
 	status = strings.Replace(status, "/", "", -1)
 	counter := 1
 	slugBase := createSlugFor(status)
@@ -148,7 +148,7 @@ func (n *OpenBazaarNode) GeneratePostSlug(status string) (string, error) {
 }
 
 //SignPost  [Add the peer's identity to the post and sign it]
-func (n *OpenBazaarNode) SignPost(post *pb.Post) (*pb.SignedPost, error) {
+func (n *EvenNode) SignPost(post *pb.Post) (*pb.SignedPost, error) {
 
 	sp := new(pb.SignedPost)
 
@@ -204,7 +204,7 @@ func (n *OpenBazaarNode) SignPost(post *pb.Post) (*pb.SignedPost, error) {
 }
 
 //UpdatePostIndex  [Update the posts index]
-func (n *OpenBazaarNode) UpdatePostIndex(post *pb.SignedPost) error {
+func (n *EvenNode) UpdatePostIndex(post *pb.SignedPost) error {
 	ld, err := n.extractpostData(post)
 	if err != nil {
 		return err
@@ -217,7 +217,7 @@ func (n *OpenBazaarNode) UpdatePostIndex(post *pb.SignedPost) error {
 }
 
 //extractpostData  [Extract data from the post, used to make postData and in GETPosts]
-func (n *OpenBazaarNode) extractpostData(post *pb.SignedPost) (postData, error) {
+func (n *EvenNode) extractpostData(post *pb.SignedPost) (postData, error) {
 	postPath := path.Join(n.RepoPath, "root", "posts", post.Post.Slug+".json")
 
 	// Get the hash of the post's file and add to postHash variable
@@ -278,7 +278,7 @@ func makeUnique(src []string, maxLength int) []string {
 }
 
 //getPostIndex  [Get the post's index]
-func (n *OpenBazaarNode) getPostIndex() ([]postData, error) {
+func (n *EvenNode) getPostIndex() ([]postData, error) {
 	indexPath := path.Join(n.RepoPath, "root", "posts.json")
 
 	var index []postData
@@ -299,7 +299,7 @@ func (n *OpenBazaarNode) getPostIndex() ([]postData, error) {
 }
 
 //updatePostOnDisk  [Update the posts.json file in the posts directory]
-func (n *OpenBazaarNode) updatePostOnDisk(index []postData, ld postData) error {
+func (n *EvenNode) updatePostOnDisk(index []postData, ld postData) error {
 	indexPath := path.Join(n.RepoPath, "root", "posts.json")
 	// Check to see if the post we are adding already exists in the list. If so delete it.
 	for i, d := range index {
@@ -336,7 +336,7 @@ func (n *OpenBazaarNode) updatePostOnDisk(index []postData, ld postData) error {
 }
 
 //UpdatePostHashes  [Update the hashes in the posts.json file]
-func (n *OpenBazaarNode) UpdatePostHashes(hashes map[string]string) error {
+func (n *EvenNode) UpdatePostHashes(hashes map[string]string) error {
 	indexPath := path.Join(n.RepoPath, "root", "posts.json")
 
 	var index []postData
@@ -382,7 +382,7 @@ func (n *OpenBazaarNode) UpdatePostHashes(hashes map[string]string) error {
 }
 
 //GetPostCount  [Return the current number of posts]
-func (n *OpenBazaarNode) GetPostCount() int {
+func (n *EvenNode) GetPostCount() int {
 	indexPath := path.Join(n.RepoPath, "root", "posts.json")
 
 	// Read existing file
@@ -400,7 +400,7 @@ func (n *OpenBazaarNode) GetPostCount() int {
 }
 
 //DeletePost  [Deletes the post directory, and removes the post from the index]
-func (n *OpenBazaarNode) DeletePost(slug string) error {
+func (n *EvenNode) DeletePost(slug string) error {
 	toDelete := path.Join(n.RepoPath, "root", "posts", slug+".json")
 	err := os.Remove(toDelete)
 	if err != nil {
@@ -454,7 +454,7 @@ func (n *OpenBazaarNode) DeletePost(slug string) error {
 }
 
 //GetPosts  [Get a list of the posts]
-func (n *OpenBazaarNode) GetPosts() ([]byte, error) {
+func (n *EvenNode) GetPosts() ([]byte, error) {
 	indexPath := path.Join(n.RepoPath, "root", "posts.json")
 	file, err := ioutil.ReadFile(indexPath)
 	if os.IsNotExist(err) {
@@ -475,7 +475,7 @@ func (n *OpenBazaarNode) GetPosts() ([]byte, error) {
 }
 
 //GetPostFromHash  [Get a post based on the hash]
-func (n *OpenBazaarNode) GetPostFromHash(hash string) (*pb.SignedPost, error) {
+func (n *EvenNode) GetPostFromHash(hash string) (*pb.SignedPost, error) {
 	// Read posts.json
 	indexPath := path.Join(n.RepoPath, "root", "posts.json")
 	file, err := ioutil.ReadFile(indexPath)
@@ -506,7 +506,7 @@ func (n *OpenBazaarNode) GetPostFromHash(hash string) (*pb.SignedPost, error) {
 }
 
 //GetPostFromSlug  [Get a post based on the slug]
-func (n *OpenBazaarNode) GetPostFromSlug(slug string) (*pb.SignedPost, error) {
+func (n *EvenNode) GetPostFromSlug(slug string) (*pb.SignedPost, error) {
 	// Read post file
 	postPath := path.Join(n.RepoPath, "root", "posts", slug+".json")
 	file, err := ioutil.ReadFile(postPath)

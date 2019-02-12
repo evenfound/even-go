@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/OpenBazaar/multiwallet"
+	"github.com/btcsuite/btcutil/hdkeychain"
 	"github.com/evenfound/even-go/node/ipfs"
 	"github.com/evenfound/even-go/node/namesys"
 	"github.com/evenfound/even-go/node/net"
@@ -22,10 +23,9 @@ import (
 	ret "github.com/evenfound/even-go/node/net/retriever"
 	"github.com/evenfound/even-go/node/repo"
 	sto "github.com/evenfound/even-go/node/storage"
-	"github.com/btcsuite/btcutil/hdkeychain"
 	"github.com/ipfs/go-ipfs/core"
 	"github.com/kennygrant/sanitize"
-	"github.com/op/go-logging"
+	logging "github.com/op/go-logging"
 	"golang.org/x/net/context"
 	"golang.org/x/net/proxy"
 )
@@ -40,12 +40,12 @@ const (
 var log = logging.MustGetLogger("core")
 
 // Node - ob node
-var Node *OpenBazaarNode
+var Node *EvenNode
 
 var inflightPublishRequests int
 
-// OpenBazaarNode - represent ob node which encapsulates ipfsnode, wallet etc
-type OpenBazaarNode struct {
+// EvenNode - represent ob node which encapsulates ipfsnode, wallet etc
+type EvenNode struct {
 	// IPFS node object
 	IpfsNode *core.IpfsNode
 
@@ -57,7 +57,7 @@ type OpenBazaarNode struct {
 	// The path to the openbazaar repo in the file system
 	RepoPath string
 
-	// The OpenBazaar network service for direct communication between peers
+	// The EvenNetwork network service for direct communication between peers
 	Service net.NetworkService
 
 	// Database for storing node specific data
@@ -83,7 +83,7 @@ type OpenBazaarNode struct {
 	// A service that periodically republishes active pointers
 	PointerRepublisher *rep.PointerRepublisher
 
-	// Used to resolve domains to OpenBazaar IDs
+	// Used to resolve domains to EvenNetwork IDs
 	NameSystem *namesys.NameSystem
 
 	// A service that periodically fetches and caches the bitcoin exchange rates
@@ -129,13 +129,13 @@ var seedLock sync.Mutex
 var InitalPublishComplete bool // = false
 
 // TestNetworkEnabled indicates whether the node is operating with test parameters
-func (n *OpenBazaarNode) TestNetworkEnabled() bool { return n.TestnetEnable }
+func (n *EvenNode) TestNetworkEnabled() bool { return n.TestnetEnable }
 
 // RegressionNetworkEnabled indicates whether the node is operating with regression parameters
-func (n *OpenBazaarNode) RegressionNetworkEnabled() bool { return n.RegressionTestEnable }
+func (n *EvenNode) RegressionNetworkEnabled() bool { return n.RegressionTestEnable }
 
 // SeedNode - publish to IPNS
-func (n *OpenBazaarNode) SeedNode() error {
+func (n *EvenNode) SeedNode() error {
 	seedLock.Lock()
 	ipfs.UnPinDir(n.IpfsNode, n.RootHash)
 	var aerr error
@@ -160,7 +160,7 @@ func (n *OpenBazaarNode) SeedNode() error {
 	return nil
 }
 
-func (n *OpenBazaarNode) publish(hash string) {
+func (n *EvenNode) publish(hash string) {
 	// Multiple publishes may have been queued
 	// We only need to publish the most recent
 	PublishLock.Lock()
@@ -193,7 +193,7 @@ func (n *OpenBazaarNode) publish(hash string) {
 	}
 }
 
-func (n *OpenBazaarNode) sendToPushNodes(hash string) error {
+func (n *EvenNode) sendToPushNodes(hash string) error {
 	id, err := cid.Decode(hash)
 	if err != nil {
 		return err
@@ -231,7 +231,7 @@ func (n *OpenBazaarNode) sendToPushNodes(hash string) error {
 	return nil
 }
 
-func (n *OpenBazaarNode) retryableSeedStoreToPeer(pid peer.ID, graphHash string, graph []cid.Cid) {
+func (n *EvenNode) retryableSeedStoreToPeer(pid peer.ID, graphHash string, graph []cid.Cid) {
 	var retryTimeout = 2 * time.Second
 	for {
 		if graphHash != n.RootHash {
@@ -254,7 +254,7 @@ func (n *OpenBazaarNode) retryableSeedStoreToPeer(pid peer.ID, graphHash string,
 }
 
 // SetUpRepublisher - periodic publishing to IPNS
-func (n *OpenBazaarNode) SetUpRepublisher(interval time.Duration) {
+func (n *EvenNode) SetUpRepublisher(interval time.Duration) {
 	if interval == 0 {
 		return
 	}
@@ -270,7 +270,7 @@ func (n *OpenBazaarNode) SetUpRepublisher(interval time.Duration) {
 /*EncryptMessage This is a placeholder until the libsignal is operational.
   For now we will just encrypt outgoing offline messages with the long lived identity key.
   Optionally you may provide a public key, to avoid doing an IPFS lookup */
-func (n *OpenBazaarNode) EncryptMessage(peerID peer.ID, peerKey *libp2p.PubKey, message []byte) (ct []byte, rerr error) {
+func (n *EvenNode) EncryptMessage(peerID peer.ID, peerKey *libp2p.PubKey, message []byte) (ct []byte, rerr error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	if peerKey == nil {
@@ -303,7 +303,7 @@ func (n *OpenBazaarNode) EncryptMessage(peerID peer.ID, peerKey *libp2p.PubKey, 
 }
 
 // IPFSIdentityString - IPFS identifier
-func (n *OpenBazaarNode) IPFSIdentityString() string {
+func (n *EvenNode) IPFSIdentityString() string {
 	return n.IpfsNode.Identity.Pretty()
 }
 

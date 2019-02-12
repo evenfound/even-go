@@ -22,7 +22,7 @@ import (
 const bufferSize = 5
 
 // ImportListings - upload/read listings
-func (n *OpenBazaarNode) ImportListings(r io.ReadCloser) error {
+func (n *EvenNode) ImportListings(r io.ReadCloser) error {
 	reader := csv.NewReader(r)
 	columns, err := reader.Read()
 	if err != nil {

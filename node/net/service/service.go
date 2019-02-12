@@ -31,12 +31,12 @@ type OpenBazaarService struct {
 	ctx       context.Context
 	broadcast chan repo.Notifier
 	datastore repo.Datastore
-	node      *core.OpenBazaarNode
+	node      *core.EvenNode
 	sender    map[peer.ID]*messageSender
 	senderlk  sync.Mutex
 }
 
-func New(node *core.OpenBazaarNode, datastore repo.Datastore) *OpenBazaarService {
+func New(node *core.EvenNode, datastore repo.Datastore) *OpenBazaarService {
 	service := &OpenBazaarService{
 		host:      node.IpfsNode.PeerHost.(host.Host),
 		self:      node.IpfsNode.Identity,

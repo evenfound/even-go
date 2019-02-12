@@ -28,15 +28,15 @@ import (
 	"time"
 
 	"github.com/OpenBazaar/jsonpb"
+	"github.com/OpenBazaar/spvwallet"
+	wallet "github.com/OpenBazaar/wallet-interface"
+	"github.com/btcsuite/btcd/chaincfg/chainhash"
+	"github.com/btcsuite/btcutil/base58"
 	"github.com/evenfound/even-go/node/core"
 	"github.com/evenfound/even-go/node/ipfs"
 	"github.com/evenfound/even-go/node/pb"
 	"github.com/evenfound/even-go/node/repo"
 	"github.com/evenfound/even-go/node/schema"
-	"github.com/OpenBazaar/spvwallet"
-	"github.com/OpenBazaar/wallet-interface"
-	"github.com/btcsuite/btcd/chaincfg/chainhash"
-	"github.com/btcsuite/btcutil/base58"
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/ipfs/go-ipfs/core/coreunix"
@@ -58,10 +58,10 @@ type JSONAPIConfig struct {
 
 type jsonAPIHandler struct {
 	config JSONAPIConfig
-	node   *core.OpenBazaarNode
+	node   *core.EvenNode
 }
 
-func newJSONAPIHandler(node *core.OpenBazaarNode, authCookie http.Cookie, config schema.APIConfig) *jsonAPIHandler {
+func newJSONAPIHandler(node *core.EvenNode, authCookie http.Cookie, config schema.APIConfig) *jsonAPIHandler {
 	allowedIPs := make(map[string]bool)
 	for _, ip := range config.AllowedIPs {
 		allowedIPs[ip] = true
@@ -1708,7 +1708,7 @@ func (i *jsonAPIHandler) GETOrder(w http.ResponseWriter, r *http.Request) {
 
 func (i *jsonAPIHandler) POSTShutdown(w http.ResponseWriter, r *http.Request) {
 	shutdown := func() {
-		log.Info("OpenBazaar Server shutting down...")
+		log.Info("EvenNetwork Server shutting down...")
 		time.Sleep(time.Second)
 		if core.Node != nil {
 			core.Node.Datastore.Close()

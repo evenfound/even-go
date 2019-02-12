@@ -12,7 +12,7 @@ import (
 )
 
 // RefundOrder - refund buyer
-func (n *OpenBazaarNode) RefundOrder(contract *pb.RicardianContract, records []*wallet.TransactionRecord) error {
+func (n *EvenNode) RefundOrder(contract *pb.RicardianContract, records []*wallet.TransactionRecord) error {
 	refundMsg := new(pb.Refund)
 	orderID, err := n.CalcOrderID(contract.BuyerOrder)
 	if err != nil {
@@ -114,7 +114,7 @@ func (n *OpenBazaarNode) RefundOrder(contract *pb.RicardianContract, records []*
 }
 
 // SignRefund - add signature to refund
-func (n *OpenBazaarNode) SignRefund(contract *pb.RicardianContract) (*pb.RicardianContract, error) {
+func (n *EvenNode) SignRefund(contract *pb.RicardianContract) (*pb.RicardianContract, error) {
 	serializedRefund, err := proto.Marshal(contract.Refund)
 	if err != nil {
 		return contract, err
@@ -134,7 +134,7 @@ func (n *OpenBazaarNode) SignRefund(contract *pb.RicardianContract) (*pb.Ricardi
 }
 
 // VerifySignaturesOnRefund - verify signatures on refund
-func (n *OpenBazaarNode) VerifySignaturesOnRefund(contract *pb.RicardianContract) error {
+func (n *EvenNode) VerifySignaturesOnRefund(contract *pb.RicardianContract) error {
 	if err := verifyMessageSignature(
 		contract.Refund,
 		contract.VendorListings[0].VendorID.Pubkeys.Identity,

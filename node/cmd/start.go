@@ -39,6 +39,10 @@ import (
 	"time"
 
 	bstk "github.com/OpenBazaar/go-blockstackclient"
+	wi "github.com/OpenBazaar/wallet-interface"
+	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/btcsuite/btcutil/base58"
+	"github.com/btcsuite/btcutil/hdkeychain"
 	"github.com/evenfound/even-go/node/api"
 	"github.com/evenfound/even-go/node/core"
 	"github.com/evenfound/even-go/node/ipfs"
@@ -55,10 +59,6 @@ import (
 	"github.com/evenfound/even-go/node/wallet"
 	lis "github.com/evenfound/even-go/node/wallet/listeners"
 	"github.com/evenfound/even-go/node/wallet/resync"
-	wi "github.com/OpenBazaar/wallet-interface"
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcutil/base58"
-	"github.com/btcsuite/btcutil/hdkeychain"
 	"github.com/fatih/color"
 	"github.com/ipfs/go-ipfs/commands"
 	ipfscore "github.com/ipfs/go-ipfs/core"
@@ -70,8 +70,8 @@ import (
 	"github.com/ipfs/go-ipfs/repo/config"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
 	"github.com/natefinch/lumberjack"
-	"github.com/op/go-logging"
-	"github.com/tyler-smith/go-bip39"
+	logging "github.com/op/go-logging"
+	bip39 "github.com/tyler-smith/go-bip39"
 	"golang.org/x/crypto/ssh/terminal"
 	"golang.org/x/net/proxy"
 )
@@ -675,8 +675,8 @@ func (x *Start) Execute(args []string) error {
 	subscriber := ipfs.NewPubsubSubscriber(context.Background(), nd.PeerHost, nd.Routing, nd.Repo.Datastore(), nd.Floodsub)
 	ps := ipfs.Pubsub{Publisher: publisher, Subscriber: subscriber}
 
-	// OpenBazaar node setup
-	core.Node = &core.OpenBazaarNode{
+	// EvenNetwork node setup
+	core.Node = &core.EvenNode{
 		AcceptStoreRequests:           dataSharing.AcceptStoreRequests,
 		BanManager:                    bm,
 		Datastore:                     sqliteDB,
@@ -686,14 +686,14 @@ func (x *Start) Execute(args []string) error {
 		Multiwallet:                   mw,
 		NameSystem:                    ns,
 		OfflineMessageFailoverTimeout: 30 * time.Second,
-		Pubsub:               ps,
-		PushNodes:            pushNodes,
-		RegressionTestEnable: x.Regtest,
-		RepoPath:             repoPath,
-		RootHash:             ipath.Path(e.Value).String(),
-		TestnetEnable:        x.Testnet,
-		TorDialer:            torDialer,
-		UserAgent:            core.USERAGENT,
+		Pubsub:                        ps,
+		PushNodes:                     pushNodes,
+		RegressionTestEnable:          x.Regtest,
+		RepoPath:                      repoPath,
+		RootHash:                      ipath.Path(e.Value).String(),
+		TestnetEnable:                 x.Testnet,
+		TorDialer:                     torDialer,
+		UserAgent:                     core.USERAGENT,
 	}
 	core.PublishLock.Lock()
 
@@ -855,7 +855,7 @@ func (d *DummyListener) Close() error {
 }
 
 // Collects options, creates listener, prints status message and starts serving requests
-func newHTTPGateway(node *core.OpenBazaarNode, ctx commands.Context, authCookie http.Cookie, config schema.APIConfig, noLogFiles bool) (*api.Gateway, error) {
+func newHTTPGateway(node *core.EvenNode, ctx commands.Context, authCookie http.Cookie, config schema.APIConfig, noLogFiles bool) (*api.Gateway, error) {
 	// Get API configuration
 	cfg, err := ctx.GetConfig()
 	if err != nil {
@@ -1046,7 +1046,7 @@ func printSplashScreen(verbose bool) {
 	blue.DisableColor()
 	white.DisableColor()
 	fmt.Println("")
-	fmt.Println("OpenBazaar Server v" + core.VERSION)
+	fmt.Println("EvenNetwork Server v" + core.VERSION)
 	if !verbose {
 		fmt.Println("[Press Ctrl+C to exit]")
 	}

@@ -23,7 +23,7 @@ func TestReleaseFundsAfterTimeoutErrors(t *testing.T) {
 	} else {
 		sale.Contract.Dispute.Timestamp = disputeStart
 	}
-	node := &core.OpenBazaarNode{}
+	node := &core.EvenNode{}
 
 	err = node.ReleaseFundsAfterTimeout(sale.Contract, []*wallet.TransactionRecord{})
 	if err == nil {

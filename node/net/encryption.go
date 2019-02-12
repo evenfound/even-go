@@ -55,7 +55,7 @@ var (
 	BoxDecryptionError = errors.New("Failed to decrypt curve25519")
 
 	// Satic salt used in the hdkf
-	Salt = []byte("OpenBazaar Encryption Algorithm")
+	Salt = []byte("EvenNetwork Encryption Algorithm")
 )
 
 func Encrypt(pubKey libp2p.PubKey, plaintext []byte) ([]byte, error) {

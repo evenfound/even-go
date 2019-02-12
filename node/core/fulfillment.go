@@ -19,7 +19,7 @@ var (
 )
 
 // FulfillOrder - fulfill the order
-func (n *OpenBazaarNode) FulfillOrder(fulfillment *pb.OrderFulfillment, contract *pb.RicardianContract, records []*wallet.TransactionRecord) error {
+func (n *EvenNode) FulfillOrder(fulfillment *pb.OrderFulfillment, contract *pb.RicardianContract, records []*wallet.TransactionRecord) error {
 	if fulfillment.Slug == "" && len(contract.VendorListings) == 1 {
 		fulfillment.Slug = contract.VendorListings[0].Slug
 	} else if fulfillment.Slug == "" && len(contract.VendorListings) > 1 {
@@ -170,7 +170,7 @@ func (n *OpenBazaarNode) FulfillOrder(fulfillment *pb.OrderFulfillment, contract
 }
 
 // SignOrderFulfillment - add signature to order fulfillment
-func (n *OpenBazaarNode) SignOrderFulfillment(contract *pb.RicardianContract) (*pb.RicardianContract, error) {
+func (n *EvenNode) SignOrderFulfillment(contract *pb.RicardianContract) (*pb.RicardianContract, error) {
 	serializedOrderFulfil, err := proto.Marshal(contract.VendorOrderFulfillment[0])
 	if err != nil {
 		return contract, err
@@ -190,7 +190,7 @@ func (n *OpenBazaarNode) SignOrderFulfillment(contract *pb.RicardianContract) (*
 }
 
 // ValidateOrderFulfillment - validate order details
-func (n *OpenBazaarNode) ValidateOrderFulfillment(fulfillment *pb.OrderFulfillment, contract *pb.RicardianContract) error {
+func (n *EvenNode) ValidateOrderFulfillment(fulfillment *pb.OrderFulfillment, contract *pb.RicardianContract) error {
 	if err := verifySignaturesOnOrderFulfilment(contract); err != nil {
 		return err
 	}
@@ -319,6 +319,6 @@ func validateCryptocurrencyFulfillment(fulfillment *pb.OrderFulfillment) error {
 }
 
 // IsFulfilled - check is order is fulfilled
-func (n *OpenBazaarNode) IsFulfilled(contract *pb.RicardianContract) bool {
+func (n *EvenNode) IsFulfilled(contract *pb.RicardianContract) bool {
 	return len(contract.VendorOrderFulfillment) >= len(contract.VendorListings)
 }

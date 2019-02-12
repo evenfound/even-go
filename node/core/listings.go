@@ -105,7 +105,7 @@ var (
 )
 
 // GenerateSlug - slugify the title of the listing
-func (n *OpenBazaarNode) GenerateSlug(title string) (string, error) {
+func (n *EvenNode) GenerateSlug(title string) (string, error) {
 	title = strings.Replace(title, "/", "", -1)
 	counter := 1
 	slugBase := createSlugFor(title)
@@ -123,7 +123,7 @@ func (n *OpenBazaarNode) GenerateSlug(title string) (string, error) {
 }
 
 // SignListing Add our identity to the listing and sign it
-func (n *OpenBazaarNode) SignListing(listing *pb.Listing) (*pb.SignedListing, error) {
+func (n *EvenNode) SignListing(listing *pb.Listing) (*pb.SignedListing, error) {
 	// Set inventory to the default as it's not part of the contract
 	for _, s := range listing.Item.Skus {
 		s.Quantity = 0
@@ -258,7 +258,7 @@ func (n *OpenBazaarNode) SignListing(listing *pb.Listing) (*pb.SignedListing, er
 
 /*SetListingInventory Sets the inventory for the listing in the database. Does some basic validation
   to make sure the inventory uses the correct variants. */
-func (n *OpenBazaarNode) SetListingInventory(listing *pb.Listing) error {
+func (n *EvenNode) SetListingInventory(listing *pb.Listing) error {
 	err := validateListingSkus(listing)
 	if err != nil {
 		return err
@@ -308,7 +308,7 @@ func (n *OpenBazaarNode) SetListingInventory(listing *pb.Listing) error {
 }
 
 // CreateListing - add a listing
-func (n *OpenBazaarNode) CreateListing(listing *pb.Listing) error {
+func (n *EvenNode) CreateListing(listing *pb.Listing) error {
 	exists, err := n.listingExists(listing.Slug)
 	if err != nil {
 		return err
@@ -329,7 +329,7 @@ func (n *OpenBazaarNode) CreateListing(listing *pb.Listing) error {
 }
 
 // UpdateListing - update the listing
-func (n *OpenBazaarNode) UpdateListing(listing *pb.Listing) error {
+func (n *EvenNode) UpdateListing(listing *pb.Listing) error {
 	exists, err := n.listingExists(listing.Slug)
 	if err != nil {
 		return err
@@ -342,7 +342,7 @@ func (n *OpenBazaarNode) UpdateListing(listing *pb.Listing) error {
 	return n.saveListing(listing)
 }
 
-func (n *OpenBazaarNode) saveListing(listing *pb.Listing) error {
+func (n *EvenNode) saveListing(listing *pb.Listing) error {
 	if len(listing.Moderators) == 0 {
 		sd, err := n.Datastore.Settings().Get()
 		if err == nil && sd.StoreModerators != nil {
@@ -403,7 +403,7 @@ func (n *OpenBazaarNode) saveListing(listing *pb.Listing) error {
 	return nil
 }
 
-func (n *OpenBazaarNode) listingExists(slug string) (bool, error) {
+func (n *EvenNode) listingExists(slug string) (bool, error) {
 	if slug == "" {
 		return false, nil
 	}
@@ -420,11 +420,11 @@ func (n *OpenBazaarNode) listingExists(slug string) (bool, error) {
 	return true, nil
 }
 
-func (n *OpenBazaarNode) getPathForListingSlug(slug string) string {
+func (n *EvenNode) getPathForListingSlug(slug string) string {
 	return path.Join(n.RepoPath, "root", "listings", slug+".json")
 }
 
-func (n *OpenBazaarNode) updateListingIndex(listing *pb.SignedListing) error {
+func (n *EvenNode) updateListingIndex(listing *pb.SignedListing) error {
 	ld, err := n.extractListingData(listing)
 	if err != nil {
 		return err
@@ -443,7 +443,7 @@ func setCryptocurrencyListingDefaults(listing *pb.Listing) {
 	listing.Metadata.Format = pb.Listing_Metadata_MARKET_PRICE
 }
 
-func (n *OpenBazaarNode) extractListingData(listing *pb.SignedListing) (ListingData, error) {
+func (n *EvenNode) extractListingData(listing *pb.SignedListing) (ListingData, error) {
 	listingPath := path.Join(n.RepoPath, "root", "listings", listing.Listing.Slug+".json")
 
 	listingHash, err := ipfs.GetHashOfFile(n.IpfsNode, listingPath)
@@ -504,7 +504,7 @@ func (n *OpenBazaarNode) extractListingData(listing *pb.SignedListing) (ListingD
 	return ld, nil
 }
 
-func (n *OpenBazaarNode) getListingIndex() ([]ListingData, error) {
+func (n *EvenNode) getListingIndex() ([]ListingData, error) {
 	indexPath := path.Join(n.RepoPath, "root", "listings.json")
 
 	var index []ListingData
@@ -525,7 +525,7 @@ func (n *OpenBazaarNode) getListingIndex() ([]ListingData, error) {
 }
 
 // Update the listings.json file in the listings directory
-func (n *OpenBazaarNode) updateListingOnDisk(index []ListingData, ld ListingData, updateRatings bool) error {
+func (n *EvenNode) updateListingOnDisk(index []ListingData, ld ListingData, updateRatings bool) error {
 	indexPath := path.Join(n.RepoPath, "root", "listings.json")
 	// Check to see if the listing we are adding already exists in the list. If so delete it.
 	var avgRating float32
@@ -569,7 +569,7 @@ func (n *OpenBazaarNode) updateListingOnDisk(index []ListingData, ld ListingData
 	return nil
 }
 
-func (n *OpenBazaarNode) updateRatingInListingIndex(rating *pb.Rating) error {
+func (n *EvenNode) updateRatingInListingIndex(rating *pb.Rating) error {
 	index, err := n.getListingIndex()
 	if err != nil {
 		return err
@@ -596,7 +596,7 @@ func (n *OpenBazaarNode) updateRatingInListingIndex(rating *pb.Rating) error {
 // UpdateEachListingOnIndex will visit each listing in the index and execute the function
 // with a pointer to the listing passed as the argument. The function should return
 // an error to further processing.
-func (n *OpenBazaarNode) UpdateEachListingOnIndex(updateListing func(*ListingData) error) error {
+func (n *EvenNode) UpdateEachListingOnIndex(updateListing func(*ListingData) error) error {
 	indexPath := path.Join(n.RepoPath, "root", "listings.json")
 
 	var index []ListingData
@@ -639,7 +639,7 @@ func (n *OpenBazaarNode) UpdateEachListingOnIndex(updateListing func(*ListingDat
 }
 
 // GetListingCount Return the current number of listings
-func (n *OpenBazaarNode) GetListingCount() int {
+func (n *EvenNode) GetListingCount() int {
 	indexPath := path.Join(n.RepoPath, "root", "listings.json")
 
 	// Read existing file
@@ -658,7 +658,7 @@ func (n *OpenBazaarNode) GetListingCount() int {
 
 // IsItemForSale Check to see we are selling the given listing. Used when validating an order.
 // FIXME: This won't scale well. We will need to store the hash of active listings in a db to do an indexed search.
-func (n *OpenBazaarNode) IsItemForSale(listing *pb.Listing) bool {
+func (n *EvenNode) IsItemForSale(listing *pb.Listing) bool {
 	var log = logging.MustGetLogger("core")
 	serializedListing, err := proto.Marshal(listing)
 	if err != nil {
@@ -705,7 +705,7 @@ func (n *OpenBazaarNode) IsItemForSale(listing *pb.Listing) bool {
 }
 
 // DeleteListing Deletes the listing directory, removes the listing from the index, and deletes the inventory
-func (n *OpenBazaarNode) DeleteListing(slug string) error {
+func (n *EvenNode) DeleteListing(slug string) error {
 	toDelete := path.Join(n.RepoPath, "root", "listings", slug+".json")
 	err := os.Remove(toDelete)
 	if err != nil {
@@ -769,7 +769,7 @@ func (n *OpenBazaarNode) DeleteListing(slug string) error {
 }
 
 // GetListings - fetch all listings
-func (n *OpenBazaarNode) GetListings() ([]byte, error) {
+func (n *EvenNode) GetListings() ([]byte, error) {
 	indexPath := path.Join(n.RepoPath, "root", "listings.json")
 	file, err := ioutil.ReadFile(indexPath)
 	if os.IsNotExist(err) {
@@ -790,7 +790,7 @@ func (n *OpenBazaarNode) GetListings() ([]byte, error) {
 }
 
 // GetListingFromHash - fetch listing for the specified hash
-func (n *OpenBazaarNode) GetListingFromHash(hash string) (*pb.SignedListing, error) {
+func (n *EvenNode) GetListingFromHash(hash string) (*pb.SignedListing, error) {
 	// Read listings.json
 	indexPath := path.Join(n.RepoPath, "root", "listings.json")
 	file, err := ioutil.ReadFile(indexPath)
@@ -821,7 +821,7 @@ func (n *OpenBazaarNode) GetListingFromHash(hash string) (*pb.SignedListing, err
 }
 
 // GetListingFromSlug - fetch listing for the specified slug
-func (n *OpenBazaarNode) GetListingFromSlug(slug string) (*pb.SignedListing, error) {
+func (n *EvenNode) GetListingFromSlug(slug string) (*pb.SignedListing, error) {
 	// Read listing file
 	listingPath := path.Join(n.RepoPath, "root", "listings", slug+".json")
 	file, err := ioutil.ReadFile(listingPath)
@@ -857,7 +857,7 @@ func (n *OpenBazaarNode) GetListingFromSlug(slug string) (*pb.SignedListing, err
 /* Performs a ton of checks to make sure the listing is formatted correctly. We should not allow
    invalid listings to be saved or purchased as it can lead to ambiguity when moderating a dispute
    or possible attacks. This function needs to be maintained in conjunction with contracts.proto */
-func (n *OpenBazaarNode) validateListing(listing *pb.Listing, testnet bool) (err error) {
+func (n *EvenNode) validateListing(listing *pb.Listing, testnet bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			switch x := r.(type) {
@@ -1278,7 +1278,7 @@ func validatePhysicalListing(listing *pb.Listing) error {
 	return nil
 }
 
-func (n *OpenBazaarNode) validateCryptocurrencyListing(listing *pb.Listing) error {
+func (n *EvenNode) validateCryptocurrencyListing(listing *pb.Listing) error {
 	switch {
 	case len(listing.Coupons) > 0:
 		return ErrCryptocurrencyListingIllegalField("coupons")

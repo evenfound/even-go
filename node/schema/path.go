@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/mitchellh/go-homedir"
+	homedir "github.com/mitchellh/go-homedir"
 )
 
 func defaultDataPath() (path string) {
@@ -28,7 +28,7 @@ func GenerateTempPath() string {
 
 // DefaultPathTransform accepts a string path representing the location where
 // application data can be stored and returns a string representing the location
-// where OpenBazaar prefers to store its schema on the filesystem relative to that
+// where EvenNetwork prefers to store its schema on the filesystem relative to that
 // path. If the path cannot be transformed, an error will be returned
 func OpenbazaarPathTransform(basePath string, testModeEnabled bool) (path string, err error) {
 	path, err = homedir.Expand(filepath.Join(basePath, directoryName(testModeEnabled)))

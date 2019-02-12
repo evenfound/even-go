@@ -26,7 +26,7 @@ type InventoryListing struct {
 type Inventory map[string]*InventoryListing
 
 // GetLocalInventory gets the inventory from the database
-func (n *OpenBazaarNode) GetLocalInventory() (Inventory, error) {
+func (n *EvenNode) GetLocalInventory() (Inventory, error) {
 	listings, err := n.Datastore.Inventory().GetAll()
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (n *OpenBazaarNode) GetLocalInventory() (Inventory, error) {
 }
 
 // GetLocalInventoryForSlug gets the local inventory for the given slug
-func (n *OpenBazaarNode) GetLocalInventoryForSlug(slug string) (*InventoryListing, error) {
+func (n *EvenNode) GetLocalInventoryForSlug(slug string) (*InventoryListing, error) {
 	variants, err := n.Datastore.Inventory().Get(slug)
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (n *OpenBazaarNode) GetLocalInventoryForSlug(slug string) (*InventoryListin
 }
 
 // PublishInventory stores an inventory on IPFS
-func (n *OpenBazaarNode) PublishInventory() error {
+func (n *EvenNode) PublishInventory() error {
 	inventory, err := n.GetLocalInventory()
 	if err != nil {
 		return err
@@ -99,7 +99,7 @@ func (n *OpenBazaarNode) PublishInventory() error {
 
 // GetPublishedInventoryBytes gets a byte slice representing the given peer's
 // inventory that it published to IPFS
-func (n *OpenBazaarNode) GetPublishedInventoryBytes(p peer.ID, useCache bool) ([]byte, error) {
+func (n *EvenNode) GetPublishedInventoryBytes(p peer.ID, useCache bool) ([]byte, error) {
 	var cacheLength time.Duration
 	if useCache {
 		cacheLength = ipfsInventoryCacheMaxDuration
@@ -109,7 +109,7 @@ func (n *OpenBazaarNode) GetPublishedInventoryBytes(p peer.ID, useCache bool) ([
 
 // GetPublishedInventoryBytesForSlug gets a byte slice representing the given
 // slug's inventory from IPFS
-func (n *OpenBazaarNode) GetPublishedInventoryBytesForSlug(p peer.ID, slug string, useCache bool) ([]byte, error) {
+func (n *EvenNode) GetPublishedInventoryBytesForSlug(p peer.ID, slug string, useCache bool) ([]byte, error) {
 	bytes, err := n.GetPublishedInventoryBytes(p, useCache)
 	if err != nil {
 		return nil, err
