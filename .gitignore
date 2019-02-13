@@ -1,4 +1,4 @@
 build/
-##backup/
+_backup/
 gx-packages.list
 packages.txt
