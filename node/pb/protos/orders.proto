@@ -1,0 +1,55 @@
+syntax = "proto3";
+option go_package = "pb";
+
+
+enum OrderState {
+    // Order has been funded and sent to the vendor but vendor has not yet responded
+    PENDING              = 0;
+
+    // Waiting for the buyer to fund the payment address
+    AWAITING_PAYMENT     = 1;
+
+    // Waiting for the customer to pick up the order (customer pickup option only)
+    AWAITING_PICKUP      = 2;
+
+    // Order has been fully funded and we're waiting for the vendor to fulfill
+    AWAITING_FULFILLMENT = 3;
+
+    // Vendor has fulfilled part of the order
+    PARTIALLY_FULFILLED  = 4;
+
+    // Vendor has fulfilled the order
+    FULFILLED            = 5;
+
+    // Buyer has completed the order and left a review
+    COMPLETED            = 6;
+
+    // Buyer canceled the order (offline order only)
+    CANCELED             = 7;
+
+    // Vendor declined to confirm the order (offline order only)
+    DECLINED             = 8;
+
+    // Vendor refunded the order
+    REFUNDED             = 9;
+
+    // Contract is under active dispute
+    DISPUTED             = 10;
+
+    // The moderator has resolved the dispute and we are waiting for the winning party to
+    // accept the payout.
+    DECIDED              = 11;
+
+    // The winning party has accepted the dispute and it is now complete. After the buyer
+    // leaves a review the state should be set to COMPLETE.
+    RESOLVED             = 12;
+
+    // Escrow has been released after waiting the timeout period. After the buyer
+    // leaves a review the state should be set to COMPLETE.
+    PAYMENT_FINALIZED    = 13;
+
+    // We screwed up and produced a order which didn't validate. This state is only used for offline orders. If a processing
+    // error occurred with an open connection between buyer and vendor the vendor just rejects the order on the spot neither party
+    // commits the order to the database.
+    PROCESSING_ERROR     = 14;
+}

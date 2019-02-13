@@ -1,3 +1,6 @@
 
 build/
 .idea/
+_backup/
+gx-packages.list
+packages.txt
