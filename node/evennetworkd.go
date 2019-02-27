@@ -75,6 +75,22 @@ func main() {
 		"start the EvenNetwork-Server",
 		"The start command starts the EvenNetwork-Server",
 		&cmd.Start{})
+	parser.AddCommand("newwallet",
+		"Creating a new wallet",
+		"The newwallet command creates a new wallet",
+		&cmd.CreateWallet{})
+	parser.AddCommand("listaccounts",
+		"Creating a account",
+		"The listaccounts command creates a new account in the wallet",
+		&cmd.ListAccounts{})
+	parser.AddCommand("newaccount",
+		"Creating a account",
+		"The newaccount command creates a new account in the wallet",
+		&cmd.CreateAccount{})
+	parser.AddCommand("newaddress",
+		"Generating addresses",
+		"The newaddress command generates addresses based on level and index",
+		&cmd.NewAddress{})
 	parser.AddCommand("stop",
 		"shutdown the server and disconnect",
 		"The stop command disconnects from peers and shuts down EvenNetwork-Server",
