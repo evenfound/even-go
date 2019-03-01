@@ -7,19 +7,17 @@ import (
 	"net/http"
 )
 
-type NewAccountResponse struct {
-	Account string `json:"account"`
-	Coin    string `json:"coin"`
-	Id      uint32 `json:"id"`
-}
-
 type AccountResponse struct {
-	Name string `json:"name"`
-	Id   uint32 `json:"id"`
+	Account string `json:"account"`
+	Id      uint32 `json:"id"`
 }
 
 type ListAccountResponse []AccountResponse
 
+type NewAccountResponse struct {
+	AccountResponse
+	Coin string `json:"coin"`
+}
 
 // Creating a new wallet
 func NewWallet(w http.ResponseWriter, r *http.Request) *ErrorResponse {
@@ -84,11 +82,13 @@ func NewAccount(w http.ResponseWriter, r *http.Request) *ErrorResponse {
 		return generateError(err.Error(), 0)
 	}
 
-	jsoned, err := json.Marshal(NewAccountResponse{
-		Account: data.AccountName,
-		Coin:    hdwallet.AvailableCoinTypes[data.Coin],
-		Id:      accountID,
-	})
+	var newAccountResponse = new(NewAccountResponse)
+
+	newAccountResponse.Account = data.AccountName
+	newAccountResponse.Coin = hdwallet.AvailableCoinTypes[data.Coin]
+	newAccountResponse.Id = accountID
+
+	jsoned, err := json.Marshal(newAccountResponse)
 
 	if err != nil {
 		return generateError(err.Error(), 0)
@@ -101,8 +101,6 @@ func NewAccount(w http.ResponseWriter, r *http.Request) *ErrorResponse {
 
 // Getting list accounts of wallet by coin
 func ListAccounts(w http.ResponseWriter, r *http.Request) *ErrorResponse {
-
-
 
 	decoder := json.NewDecoder(r.Body)
 
@@ -132,8 +130,8 @@ func ListAccounts(w http.ResponseWriter, r *http.Request) *ErrorResponse {
 
 	for _, raw := range accounts.Accounts {
 		response = append(response, AccountResponse{
-			Name: raw.AccountName,
-			Id:   raw.AccountNumber,
+			Account: raw.AccountName,
+			Id:      raw.AccountNumber,
 		})
 	}
 
