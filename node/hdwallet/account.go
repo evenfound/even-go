@@ -12,11 +12,11 @@ import (
 
 type AccountManager struct {
 	WalletAuth
-	AccountName string `short:"a" long:"account" description:"Account name"`
+	AccountName string `short:"a" long:"account" description:"Account name" json:"account"`
 }
 
 var (
-	AccountNamespaceKey = []byte("accounts")
+	AccountNamespaceKey = []byte("waddrmgr")
 )
 
 // This function creates a new account based on wallet and already specified name
@@ -48,6 +48,8 @@ func (generator AccountManager) NewAccount(wallet btcWallet.Wallet) (uint32, err
 		}
 
 		manager, err := wallet.Manager.FetchScopedKeyManager(scope)
+
+		defer manager.Close()
 
 		if err != nil {
 			return err

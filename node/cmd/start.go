@@ -53,6 +53,7 @@ import (
 	"github.com/evenfound/even-go/node/repo/db"
 	"github.com/evenfound/even-go/node/repo/migrations"
 	"github.com/evenfound/even-go/node/schema"
+	"github.com/evenfound/even-go/node/server"
 	sto "github.com/evenfound/even-go/node/storage"
 	"github.com/evenfound/even-go/node/storage/dropbox"
 	"github.com/evenfound/even-go/node/storage/selfhosted"
@@ -108,6 +109,10 @@ type Start struct {
 	Storage              string   `long:"storage" description:"set the outgoing message storage option [self-hosted, dropbox] default=self-hosted"`
 	BitcoinCash          bool     `long:"bitcoincash" description:"use a Bitcoin Cash wallet in a dedicated data directory"`
 	ZCash                string   `long:"zcash" description:"use a ZCash wallet in a dedicated data directory. To use this you must pass in the location of the zcashd binary."`
+	ListenRpc            bool     `long:"listenrpc" description:"Listening for  RPC server "`
+	ListenHTTP           bool     `long:"listenhttp" description:"Listening for  HTTP server "`
+	RpcPort              string   `long:"rpcport" description:"Listening for  RPC <port> "`
+	HttpPort             string   `long:"httpport" description:"Listening for  HTTP <port> "`
 }
 
 func (x *Start) Execute(args []string) error {
@@ -127,6 +132,16 @@ func (x *Start) Execute(args []string) error {
 	}
 	if x.BitcoinCash && x.ZCash != "" {
 		return errors.New("Bitcoin Cash and ZCash cannot be used at the same time")
+	}
+
+	var httpServer = server.Server{}
+
+	if x.ListenRpc {
+		go httpServer.ListenRPC(x.RpcPort)
+	}
+
+	if x.ListenHTTP {
+		go httpServer.ListenHTTP(x.HttpPort)
 	}
 
 	// Set repo path

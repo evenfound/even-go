@@ -22,7 +22,7 @@ const (
 var AvailableCoinTypes = []string{"BTC", "LTC", "ETH"}
 
 type HDWallet struct {
-	SeedPhrase string `short:"s" long:"seed" description:"Seed phrase of the  wallet"`
+	SeedPhrase string `json:"seed" short:"s" long:"seed" description:"Seed phrase of the  wallet"`
 	WalletAuth
 }
 
