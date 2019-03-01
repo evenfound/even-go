@@ -6,10 +6,10 @@ import (
 )
 
 type WalletAuth struct {
-	WalletName string `short:"n" long:"name" description:"Name of the wallet"`
-	Password   string `short:"p" long:"password" description:"Password of the wallet"`
-	Coin       uint32 `short:"c" long:"coin" description:"Coin type"`
-	TestNet    bool   `short:"t" long:"testnet" description:"TesNet network"`
+	WalletName string `short:"n" long:"name" description:"Name of the wallet" json:"wallet"`
+	Password   string `short:"p" long:"password" description:"Password of the wallet" json:"password"`
+	Coin       uint32 `short:"c" long:"coin" description:"Coin type" json:"coin"`
+	TestNet    bool   `short:"t" long:"testnet" description:"TesNet network" json:"testnet"`
 }
 
 // This function will authorize wallet based on name and password

@@ -7,7 +7,7 @@ import (
 )
 
 type AddressManager struct {
-	Account string `short:"a" long:"account" description:"Account name"`
+	Account string `short:"a" long:"account" description:"Account name" json:"account"` 
 
 	WalletAuth
 
@@ -25,24 +25,25 @@ func (am *AddressManager) SetWallet(wallet *btcdWallet.Wallet) {
 
 // This function generates a new address based an account and the wallet
 // Also considering coin type
-func (am *AddressManager) NewAddress() error {
+func (am *AddressManager) NewAddress() (addresses []string, err error) {
 
 	var (
 		address string
-		err     error
 		w       = am.wallet
 	)
+
 	err = walletdb.Update(w.Database(), func(tx walletdb.ReadWriteTx) error {
 		addrmgrNs := tx.ReadWriteBucket(AccountNamespaceKey)
 		address, _, err = am.address(addrmgrNs)
+		addresses = append(addresses, address)
 		return err
 	})
 
 	if err != nil {
-		return err
+		return
 	}
 
-	return nil
+	return
 }
 
 // This function generates an address.
@@ -69,6 +70,7 @@ func (am *AddressManager) address(addrmgrNs walletdb.ReadWriteBucket) (string, *
 
 	// Get next address from wallet.
 	addrs, err := manager.NextExternalAddresses(addrmgrNs, account, 1)
+
 	if err != nil {
 		return "", nil, err
 	}
