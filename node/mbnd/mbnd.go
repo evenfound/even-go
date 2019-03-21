@@ -1,10 +1,11 @@
-// Copyright (C) 2017-2018 The Even Network Developers
+// Copyright (C) 2017-2019 The Even Network Developers
 
 package mbnd
 
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"syscall"
 
 	"runtime"
@@ -12,17 +13,16 @@ import (
 )
 
 // winServiceMain is only invoked on Windows.
-// It detects when mbcd is running as a service and reacts accordingly.
+// It detects when mbnd is running as a service and reacts accordingly.
 var winServiceMain func() (bool, error)
 
-// mbc demon is the true entry point for mbc service.
+// Multi-Blockchain Network Demon is the entry point for start external micro-services.
 // Required by defers created in the top-level scope of a main method aren't executed if os.Exit() is called.
-func main() error {
+func mbnd() error {
 
 	// Load configuration and parse command line.
 	// This function also initializes logging and configures it accordingly.
 	_, _, err := loadConfig()
-
 	if err != nil {
 		return err
 	}
@@ -37,17 +37,16 @@ func main() error {
 		return nil
 	}
 
-	//@todo in future will move this list to configuration file
-	argv := []string{
-		"--testnet",
-	}
-
-	attr := &os.ProcAttr{
-		//@todo in future will move this option to configuration file
-		Dir:   os.Getenv("GOPATH"),
+	procAttr := &os.ProcAttr{
+		Dir:   os.TempDir(),
 		Env:   os.Environ(),
 		Files: []*os.File{os.Stdin, os.Stdout, os.Stderr},
 		Sys:   &syscall.SysProcAttr{},
+	}
+
+	//@todo in future will move this options to configuration file
+	procArgv := []string{
+		"--testnet",
 	}
 
 	//@todo in future will move this list to configuration file
@@ -56,22 +55,27 @@ func main() error {
 		"ltcd",
 	}
 
-	for _, net := range bcNets {
+	for _, bcNet := range bcNets {
 
-		//@todo need refactoring this HARDCODE
-		process, err := os.StartProcess("bin/"+net+".exe", argv, attr)
-
-		if err != nil {
-			panic(err)
-			return err
+		binFilePath, lookErr := exec.LookPath(bcNet)
+		if lookErr != nil {
+			panic(lookErr)
 		}
 
-		defer process.Kill()
+		fmt.Printf("Start %s form %v ...\n", bcNet, binFilePath)
+
+		process, err := os.StartProcess(binFilePath, procArgv, procAttr)
+		if err != nil {
+			panic(err)
+		}
 
 		err = process.Release()
 		if err != nil {
 			panic(err)
 		}
+
+		defer process.Kill()
+
 	}
 
 	return nil
@@ -102,7 +106,7 @@ func Start() {
 	}
 
 	// Work around defer not working after os.Exit()
-	if err := main(); err != nil {
+	if err := mbnd(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}

@@ -1,6 +1,6 @@
 // Copyright (c) 2013-2016 The btcsuite developers
-// Use of this source code is governed by an ISC
-// license that can be found in the LICENSE file.
+// Copyright (C) 2017-2019 The Even Network Developers
+// Use of this source code is governed by an ISC license that can be found in the LICENSE file.
 
 package mbnd
 
@@ -16,12 +16,12 @@ import (
 )
 
 const (
-	// svcName is the name of mbcd service.
-	svcName = "mbcdsvc"
+	// svcName is the name of mbnd service.
+	svcName = "mbndsvc"
 
 	// svcDisplayName is the service name that will be shown in the windows services list.
 	// Not the svcName is the "real" name which is used to control the service.  This is only for display purposes.
-	svcDisplayName = "MBCD-Service"
+	svcDisplayName = "mbnd-Service"
 
 	// svcDesc is the description of the service.
 	svcDesc = "Downloads and stays synchronized with the bitcoin block chain and provides chain services to applications."
@@ -30,12 +30,12 @@ const (
 // elog is used to send messages to the Windows event log.
 var elog *eventlog.Log
 
-// mbcdService houses the main service handler which handles all service updates and launching btcdMain.
-type mbcdService struct{}
+// mbndService houses the main service handler which handles all service updates and launching btcdMain.
+type mbndService struct{}
 
 // Execute is the main entry point the winsvc package calls when receiving information from the Windows service control manager.
-// It launches the long-running btcdMain (which is the real meat of mbcd), handles service change requests, and notifies the service control manager of changes.
-func (s *mbcdService) Execute(args []string, r <-chan svc.ChangeRequest, changes chan<- svc.Status) (bool, uint32) {
+// It launches the long-running btcdMain (which is the real meat of mbnd), handles service change requests, and notifies the service control manager of changes.
+func (s *mbndService) Execute(args []string, r <-chan svc.ChangeRequest, changes chan<- svc.Status) (bool, uint32) {
 	// Service start is pending.
 	const cmdsAccepted = svc.AcceptStop | svc.AcceptShutdown
 
@@ -47,7 +47,7 @@ func (s *mbcdService) Execute(args []string, r <-chan svc.ChangeRequest, changes
 	doneChan := make(chan error)
 
 	go func() {
-		err := main()
+		err := mbnd()
 		doneChan <- err
 	}()
 
@@ -91,7 +91,7 @@ loop:
 	return false, 0
 }
 
-// installService attempts to install the mbcd service.
+// installService attempts to install the mbnd service.
 // Typically this should be done by the msi installer, but it is provided here since it can be useful for development.
 func installService() error {
 	// Get the path of the current executable.
@@ -144,7 +144,7 @@ func installService() error {
 	return eventlog.InstallAsEventCreate(svcName, eventsSupported)
 }
 
-// removeService attempts to uninstall the mbcd service.
+// removeService attempts to uninstall the mbnd service.
 // Typically this should be done by the msi uninstaller, but it is provided here since it can be useful for development.
 // Not the eventlog entry is intentionally not removed since it would invalidate any existing event log messages.
 func removeService() error {
@@ -170,7 +170,7 @@ func removeService() error {
 	return service.Delete()
 }
 
-// startService attempts to start the mbcd service.
+// startService attempts to start the mbnd service.
 func startService() error {
 	// Connect to the windows service manager.
 	serviceManager, err := mgr.Connect()
@@ -292,7 +292,7 @@ func serviceMain() (bool, error) {
 
 	defer elog.Close()
 
-	err = svc.Run(svcName, &mbcdService{})
+	err = svc.Run(svcName, &mbndService{})
 
 	if err != nil {
 		elog.Error(1, fmt.Sprintf("Service start failed: %v", err))

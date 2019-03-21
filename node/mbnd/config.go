@@ -1,6 +1,6 @@
 // Copyright (c) 2013-2017 The btcsuite developers
-// Use of this source code is governed by an ISC
-// license that can be found in the LICENSE file.
+// Copyright (C) 2017-2019 The Even Network Developers
+// Use of this source code is governed by an ISC license that can be found in the LICENSE file.
 
 package mbnd
 
@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	defaultConfigFilename = "mbcd.conf"
+	defaultConfigFilename = "mbnd.conf"
 	defaultDataDirname    = "data"
 	defaultLogLevel       = "info"
 	defaultLogDirname     = "logs"
@@ -25,7 +25,7 @@ const (
 )
 
 var (
-	defaultHomeDir     = btcutil.AppDataDir("mbcd", false)
+	defaultHomeDir     = btcutil.AppDataDir("mbnd", false)
 	defaultConfigFile  = filepath.Join(defaultHomeDir, defaultConfigFilename)
 	defaultDataDir     = filepath.Join(defaultHomeDir, defaultDataDirname)
 	defaultRPCKeyFile  = filepath.Join(defaultHomeDir, "rpc.key")
@@ -37,7 +37,7 @@ var (
 // to parse and execute service commands specified via the -s flag.
 var runServiceCommand func(string) error
 
-// config defines the configuration options for mbcd.
+// config defines the configuration options for mbnd.
 // See loadConfig for details on the configuration load process.
 type config struct {
 	ShowVersion       bool     `short:"V" long:"version" description:"Display version information and exit"`
@@ -94,7 +94,7 @@ func newConfigParser(cfg *config, so *serviceOptions, options flags.Options) *fl
 // 	3) Load configuration file overwriting defaults with any specified options
 // 	4) Parse CLI options and overwrite/add any specified options
 //
-// The above results in mbcd functioning properly without any config settings while still allowing the user to override
+// The above results in mbnd functioning properly without any config settings while still allowing the user to override
 // settings with config files and command line options.  Command line options always take precedence.
 func loadConfig() (*config, []string, error) {
 
