@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2016 The btcsuite developers
 // Use of this source code is governed by an ISC license that can be found in the LICENSE file.
 
-package mbnd
+package main
 
 import (
 	"fmt"
@@ -31,10 +31,10 @@ func interruptListener() <-chan struct{} {
 		// Listen for initial shutdown signal and close the returned channel to notify the caller.
 		select {
 		case sig := <-interruptChannel:
-			fmt.Printf("\n[INF] SGNL: Received signal (%s).\nShutting down...\n", sig)
+			fmt.Printf("\n[INF] SGNL: Received signal (%s).\n", sig)
 
 		case <-shutdownRequestChannel:
-			fmt.Println("\n[INF] SGNL: Shutdown requested.\nShutting down...")
+			fmt.Println("\n[INF] SGNL: Shutdown requested. Shutting down...")
 		}
 
 		close(c)

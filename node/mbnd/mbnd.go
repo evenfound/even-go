@@ -78,6 +78,9 @@ func mbnd() error {
 
 	}
 
+	// Wait until the interrupt signal is received from an OS signal or shutdown
+	// is requested through one of the subsystems such as the RPC server.
+	<-interrupt
 	return nil
 }
 

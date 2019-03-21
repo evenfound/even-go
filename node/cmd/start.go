@@ -87,7 +87,7 @@ var fileLogFormat = logging.MustStringFormatter(
 )
 
 var (
-	ErrNoGateways = errors.New("No gateway addresses configured")
+	ErrNoGateways = errors.New("No gateway addresses configured ")
 )
 
 type Start struct {
@@ -118,6 +118,7 @@ type Start struct {
 }
 
 func (x *Start) Execute(args []string) error {
+
 	printSplashScreen(x.Verbose)
 
 	if x.Testnet && x.Regtest {
@@ -147,7 +148,7 @@ func (x *Start) Execute(args []string) error {
 	}
 
 	if x.Mbndstart {
-		mbnd.Start()
+		go mbnd.Start()
 	}
 
 	// Set repo path
@@ -174,7 +175,9 @@ func (x *Start) Execute(args []string) error {
 		MaxBackups: 3,
 		MaxAge:     30, // Days
 	}
+
 	var backendStdoutFormatter logging.Backend
+
 	if x.Verbose {
 		backendStdout := logging.NewLogBackend(os.Stdout, "", 0)
 		backendStdoutFormatter = logging.NewBackendFormatter(backendStdout, stdoutLogFormat)
@@ -200,6 +203,7 @@ func (x *Start) Execute(args []string) error {
 	}
 
 	var level logging.Level
+
 	switch strings.ToLower(x.LogLevel) {
 	case "debug":
 		level = logging.DEBUG
@@ -718,6 +722,8 @@ func (x *Start) Execute(args []string) error {
 	}
 	core.PublishLock.Lock()
 
+	return nil
+
 	// Offline messaging storage
 	var storage sto.OfflineMessagingStorage
 	if x.Storage == "self-hosted" || x.Storage == "" {
@@ -815,6 +821,7 @@ func (x *Start) Execute(args []string) error {
 	if err != nil {
 		log.Error(err)
 	}
+	defer gateway.Close()
 
 	return nil
 }
