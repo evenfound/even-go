@@ -6,25 +6,26 @@ import (
 	"errors"
 	"fmt"
 	"github.com/evenfound/even-go/node/mbnd"
-	addrutil "gx/ipfs/QmNSWW3Sb4eju4o2djPQ1L1c2Zj9XN9sMYJL8r1cbxdc6b/go-addr-util"
+	"github.com/evenfound/even-go/node/server"
+	"gx/ipfs/QmNSWW3Sb4eju4o2djPQ1L1c2Zj9XN9sMYJL8r1cbxdc6b/go-addr-util"
 	p2pbhost "gx/ipfs/QmNh1kGFFdsPu79KNSaL4NUKUPb4Eiz4KHdMtFY6664RDp/go-libp2p/p2p/host/basic"
 	p2phost "gx/ipfs/QmNmJZL7FQySMtE2BQuLMuZg2EB2CLEunJJUSVSc9YnnbV/go-libp2p-host"
-	manet "gx/ipfs/QmRK2LxanhK2gZq6k6R7vk5ZoYZk8ULSSTB7FzDsMUX6CB/go-multiaddr-net"
-	dht "gx/ipfs/QmRaVcGchmC1stHHK7YhcgEuTk5k1JiGS568pfYWMgT91H/go-libp2p-kad-dht"
+	"gx/ipfs/QmRK2LxanhK2gZq6k6R7vk5ZoYZk8ULSSTB7FzDsMUX6CB/go-multiaddr-net"
+	"gx/ipfs/QmRaVcGchmC1stHHK7YhcgEuTk5k1JiGS568pfYWMgT91H/go-libp2p-kad-dht"
 	dhtutil "gx/ipfs/QmRaVcGchmC1stHHK7YhcgEuTk5k1JiGS568pfYWMgT91H/go-libp2p-kad-dht/util"
 	ipfslogging "gx/ipfs/QmSpJByNKFX1sCsHBEp3R73FL4NF6FnQTEGyNAXHm2GS52/go-log"
-	swarm "gx/ipfs/QmSwZMWwFZSUpe5muU2xgTUwppH24KfMwdPXiwbEp2c6G5/go-libp2p-swarm"
-	routing "gx/ipfs/QmTiWLZ6Fo5j4KcTVutZJ5KWRRJrbxzmxA4td8NfEdrPh7/go-libp2p-routing"
-	dshelp "gx/ipfs/QmTmqJGRQfuH8eKWD1FjThwPRipt1QhqJQNZ8MpzmfAAxo/go-ipfs-ds-help"
+	"gx/ipfs/QmSwZMWwFZSUpe5muU2xgTUwppH24KfMwdPXiwbEp2c6G5/go-libp2p-swarm"
+	"gx/ipfs/QmTiWLZ6Fo5j4KcTVutZJ5KWRRJrbxzmxA4td8NfEdrPh7/go-libp2p-routing"
+	"gx/ipfs/QmTmqJGRQfuH8eKWD1FjThwPRipt1QhqJQNZ8MpzmfAAxo/go-ipfs-ds-help"
 	recpb "gx/ipfs/QmUpttFinNDmNPgFwKN8sZK6BUtBmA68Y4KdSBDXa8t9sJ/go-libp2p-record/pb"
 	ma "gx/ipfs/QmWWQ2Txc2c6tqjsBpzg5Ar652cHPGNsQQp2SejkNmkUMb/go-multiaddr"
 	ds "gx/ipfs/QmXRKBQA4wXP7xWbFiZsR1GP4HV6wMDQ1aWFxZZ4uBcPX9/go-datastore"
 	pstore "gx/ipfs/QmXauCuJzmzapetmC6W4TuDJLL1yFFrVzSHoWv8YdbmnxH/go-libp2p-peerstore"
 	smux "gx/ipfs/QmY9JXR3FupnYAYJWK9aMr9bCpqWKcToQ1tz8DVGTrHpHw/go-stream-muxer"
-	proto "gx/ipfs/QmZ4Qi3GaRbjcx28Sme5eMH7RQjGkt8wHxt2a65oLaeFEV/gogo-protobuf/proto"
-	ipnet "gx/ipfs/QmZPrWxuM8GHr4cGKbyF5CCT11sFUP9hgqpeUHALvx2nUr/go-libp2p-interface-pnet"
-	peer "gx/ipfs/QmZoWKhxUmZ2seW4BzX6fJkNR8hh9PsGModr7q171yq2SS/go-libp2p-peer"
-	metrics "gx/ipfs/QmdeBtQGXjSt7cb97nx9JyLHHv5va2LyEAue7Q5tDFzpLy/go-libp2p-metrics"
+	"gx/ipfs/QmZ4Qi3GaRbjcx28Sme5eMH7RQjGkt8wHxt2a65oLaeFEV/gogo-protobuf/proto"
+	"gx/ipfs/QmZPrWxuM8GHr4cGKbyF5CCT11sFUP9hgqpeUHALvx2nUr/go-libp2p-interface-pnet"
+	"gx/ipfs/QmZoWKhxUmZ2seW4BzX6fJkNR8hh9PsGModr7q171yq2SS/go-libp2p-peer"
+	"gx/ipfs/QmdeBtQGXjSt7cb97nx9JyLHHv5va2LyEAue7Q5tDFzpLy/go-libp2p-metrics"
 	oniontp "gx/ipfs/Qmdh86HZtNap3ktHvjyiVhBnp4uRpQWMCRAASieh8fDH8J/go-onion-transport"
 	"io"
 	"io/ioutil"
@@ -54,7 +55,6 @@ import (
 	"github.com/evenfound/even-go/node/repo/db"
 	"github.com/evenfound/even-go/node/repo/migrations"
 	"github.com/evenfound/even-go/node/schema"
-	"github.com/evenfound/even-go/node/server"
 	sto "github.com/evenfound/even-go/node/storage"
 	"github.com/evenfound/even-go/node/storage/dropbox"
 	"github.com/evenfound/even-go/node/storage/selfhosted"
@@ -72,8 +72,8 @@ import (
 	"github.com/ipfs/go-ipfs/repo/config"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
 	"github.com/natefinch/lumberjack"
-	logging "github.com/op/go-logging"
-	bip39 "github.com/tyler-smith/go-bip39"
+	"github.com/op/go-logging"
+	"github.com/tyler-smith/go-bip39"
 	"golang.org/x/crypto/ssh/terminal"
 	"golang.org/x/net/proxy"
 )
@@ -110,10 +110,7 @@ type Start struct {
 	Storage              string   `long:"storage" description:"set the outgoing message storage option [self-hosted, dropbox] default=self-hosted"`
 	BitcoinCash          bool     `long:"bitcoincash" description:"use a Bitcoin Cash wallet in a dedicated data directory"`
 	ZCash                string   `long:"zcash" description:"use a ZCash wallet in a dedicated data directory. To use this you must pass in the location of the zcashd binary."`
-	ListenRpc            bool     `long:"listenrpc" description:"Listening for  RPC server "`
-	ListenHTTP           bool     `long:"listenhttp" description:"Listening for  HTTP server "`
-	RpcPort              string   `long:"rpcport" description:"Listening for  RPC <port> "`
-	HttpPort             string   `long:"httpport" description:"Listening for  HTTP <port> "`
+	RpcPort              int      `long:"rpcport" description:"Listening for  RPC <port> "`
 	Mbndstart            bool     `long:"mbnd" description:"Will start a multi blockchain demon with a multi-wallet functionality for supported tokens of blockchain-networks."`
 }
 
@@ -137,15 +134,13 @@ func (x *Start) Execute(args []string) error {
 		return errors.New("Bitcoin Cash and ZCash cannot be used at the same time")
 	}
 
-	var httpServer = server.Server{}
+	var rpcPort = 8090
 
-	if x.ListenRpc {
-		go httpServer.ListenRPC(x.RpcPort)
+	if x.RpcPort != 0 {
+		rpcPort = x.RpcPort
 	}
 
-	if x.ListenHTTP {
-		go httpServer.ListenHTTP(x.HttpPort)
-	}
+	go server.Run(rpcPort)
 
 	if x.Mbndstart {
 		go mbnd.Start()
