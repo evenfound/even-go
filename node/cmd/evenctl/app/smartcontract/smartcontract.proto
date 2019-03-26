@@ -1,0 +1,16 @@
+// smartcontract.proto
+syntax = "proto3";
+
+package smartcontract;
+
+service SmartContract {
+    rpc Call(ContractUri) returns (ContractResult) {}
+}
+
+message ContractUri {
+    string uri = 1;
+}
+
+message ContractResult {
+    string result = 1;
+}
