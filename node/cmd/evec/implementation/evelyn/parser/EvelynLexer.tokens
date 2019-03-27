@@ -1,0 +1,13 @@
+T__0=1
+T__1=2
+T__2=3
+T__3=4
+IDENTIFIER=5
+WS=6
+TERMINATOR=7
+COMMENT=8
+LINE_COMMENT=9
+'contract'=1
+'var'=2
+'='=3
+';'=4
