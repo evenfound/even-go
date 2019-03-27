@@ -2,33 +2,32 @@ package server
 
 import (
 	"fmt"
+	"github.com/evenfound/even-go/node/server/api"
+	"github.com/evenfound/even-go/node/server/handlers"
+	"google.golang.org/grpc"
 	"log"
-	"net/http"
-
-	httpListener "github.com/evenfound/even-go/node/server/http"
-	rpcListener "github.com/evenfound/even-go/node/server/rpc"
+	"net"
 )
 
-const (
-	portFormatter = ":%v"
+// Run function listens gRPC server on specific port
+func Run(port int) {
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 
-	MessageListeningRPCServer  = "Listening RPC server [localhost:%v]"
-	MessageListeningHTTPServer = "Listening HTTP server [localhost:%v]"
-)
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
 
-type Server struct{}
+	var (
+		transactionHandler = handlers.Transaction{}
+		grpcServer         = grpc.NewServer()
+	)
 
-// ListenHTTP function listens http server on specified port
-func (server *Server) ListenHTTP(port string) {
+	api.RegisterTransactionServer(grpcServer, &transactionHandler)
 
-	fmt.Println(fmt.Sprintf(MessageListeningHTTPServer, port))
+	// start the server
+	if err := grpcServer.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %s", err)
+	}
 
-	r := httpListener.NewRouter()
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(portFormatter, port), r))
-}
-
-// ListenRPC function listens rpc server on specified port
-func (server *Server) ListenRPC(port string) {
-	fmt.Println(fmt.Sprintf(MessageListeningRPCServer, port))
-	rpcListener.Serve(port)
+	fmt.Println(fmt.Sprintf("Listening gRPC server on %v port", port))
 }

@@ -1225,10 +1225,6 @@
 			"Rev": "440a840c48279b8bc64fbc88e2af5b0140756959"
 		},
 		{
-			"ImportPath": "gx/ipfs/QmTEmsyNnckEq8rEfALfdhLHjrEHGoSGFDrAYReuetn7MC/go-net/trace",
-			"Rev": "440a840c48279b8bc64fbc88e2af5b0140756959"
-		},
-		{
 			"ImportPath": "gx/ipfs/QmTH6VLu3WXfbH3nuLdmscgPWuiPZv3GMJ2YCdzBS5z91T/go-libp2p-kbucket",
 			"Rev": "440a840c48279b8bc64fbc88e2af5b0140756959"
 		},
