@@ -1,8 +1,11 @@
 package app
 
 import (
-	"github.com/evenfound/even-go/node/cmd/evenctl/config"
 	"os"
+
+	"github.com/evenfound/even-go/node/cmd/evenctl/tool"
+
+	"github.com/evenfound/even-go/node/cmd/evenctl/config"
 
 	"github.com/urfave/cli"
 )
@@ -36,7 +39,13 @@ func Run() error {
 			Action: func(c *cli.Context) error {
 				config.Debug = c.GlobalBool("debug")
 				config.Check()
-				return call()
+				if c.NArg() == 0 {
+					return tool.NewError("no file name")
+				}
+				if c.NArg() > 1 {
+					return tool.NewError("too many file names (only one allowed)")
+				}
+				return call(c.Args()[0])
 			},
 		},
 	}
