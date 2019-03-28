@@ -43,7 +43,7 @@ func runCompiled(data Bytecode) error {
 		return errors.New("invalid bytecode")
 	}
 
-	machine := runtime.NewVM(bc, nil, nil, nil)
+	machine := runtime.NewVM(bc, nil, -1)
 
 	err = machine.Run()
 	if err != nil {

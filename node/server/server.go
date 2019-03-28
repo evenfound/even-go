@@ -1,12 +1,16 @@
 package server
 
+//go:generate protoc --proto_path=proto --go_out=plugins=grpc:api transaction.proto
+//go:generate protoc --proto_path=proto --go_out=plugins=grpc:api smartcontract.proto
+
 import (
 	"fmt"
+	"log"
+	"net"
+
 	"github.com/evenfound/even-go/node/server/api"
 	"github.com/evenfound/even-go/node/server/handlers"
 	"google.golang.org/grpc"
-	"log"
-	"net"
 )
 
 // Run function listens gRPC server on specific port
@@ -19,10 +23,12 @@ func Run(port int) {
 
 	var (
 		transactionHandler = handlers.Transaction{}
+		smartHandler       = handlers.SmartContract{}
 		grpcServer         = grpc.NewServer()
 	)
 
 	api.RegisterTransactionServer(grpcServer, &transactionHandler)
+	api.RegisterSmartContractServer(grpcServer, &smartHandler)
 
 	// start the server
 	if err := grpcServer.Serve(lis); err != nil {

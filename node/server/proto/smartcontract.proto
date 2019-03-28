@@ -1,7 +1,7 @@
 // smartcontract.proto
 syntax = "proto3";
 
-package smartcontract;
+package api;
 
 service SmartContract {
     rpc Call(ContractUri) returns (ContractResult) {}
