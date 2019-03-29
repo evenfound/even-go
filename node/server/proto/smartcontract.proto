@@ -4,13 +4,14 @@ syntax = "proto3";
 package api;
 
 service SmartContract {
-    rpc Call(ContractUri) returns (ContractResult) {}
+    rpc Call(SmartContractInput) returns (SmartContractResult) {}
 }
 
-message ContractUri {
+message SmartContractInput {
     string uri = 1;
+    string entry_func = 2;
 }
 
-message ContractResult {
+message SmartContractResult {
     string result = 1;
 }
