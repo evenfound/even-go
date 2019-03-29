@@ -1,9 +1,12 @@
 package main
 
+//go:generate protoc --proto_path=../../server/proto --go_out=plugins=grpc:rpc/api smartcontract.proto
+
 import (
+	"log"
+
 	"github.com/evenfound/even-go/node/cmd/evenctl/app"
 	"github.com/evenfound/even-go/node/cmd/evenctl/config"
-	"log"
 
 	"github.com/ztrue/tracerr"
 )
