@@ -2,6 +2,7 @@ package evm
 
 // Interface is the abstract interface of the Even VM.
 type Interface interface {
-	Run(bc Bytecode) error
-	Interpret(sc string) error
+	// Run executes the bytecode with call of the entryFunc.
+	// Returns resulting string.
+	Run(bc Bytecode, entryFunc string) (string, error)
 }

@@ -22,7 +22,7 @@ func Run() error {
 	a := cli.NewApp()
 	a.Name = "evenctl"
 	a.Usage = "Even Network control tool"
-	a.Version = "0.0.1"
+	a.Version = "0.13.0"
 
 	a.Flags = []cli.Flag{
 		cli.BoolFlag{

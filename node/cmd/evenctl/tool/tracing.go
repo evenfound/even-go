@@ -6,8 +6,8 @@ import (
 )
 
 // TR (trace) prints it's arguments and the types of arguments.
-func TR(title string, aa ...interface{}) {
-	fmt.Print(title, " ")
+func TR(prefix string, aa ...interface{}) {
+	fmt.Print(prefix)
 	for _, a := range aa {
 		fmt.Print(a, " (", reflect.TypeOf(a), ") ")
 	}

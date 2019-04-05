@@ -6,11 +6,8 @@ import (
 	"time"
 
 	"github.com/evenfound/even-go/node/cmd/evenctl/config"
-
-	"github.com/evenfound/even-go/node/cmd/evenctl/tool"
-
 	pb "github.com/evenfound/even-go/node/cmd/evenctl/rpc/api"
-
+	"github.com/evenfound/even-go/node/cmd/evenctl/tool"
 	"google.golang.org/grpc"
 )
 
@@ -34,7 +31,7 @@ func Call(filename, entryFunc string) error {
 
 	// Create a client
 	scc := pb.NewSmartContractClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	// Make the call
@@ -47,6 +44,11 @@ func Call(filename, entryFunc string) error {
 		return tool.Wrap(err, "SmartContract.Call")
 	}
 
-	log.Printf("Result: %s", r.Result)
+	if r.Ok {
+		log.Printf("Call succeeded with '%s'", r.Result)
+	} else {
+		log.Printf("Call failed with '%s'", r.Result)
+	}
+
 	return nil
 }

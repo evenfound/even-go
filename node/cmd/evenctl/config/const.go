@@ -1,6 +1,9 @@
 package config
 
 const (
+	// DefaultEntryFunction is default name for the entry function.
+	DefaultEntryFunction = "default"
+
 	// RPCAddress is the address of a gRPC server to connect to.
 	RPCAddress = "localhost:8090"
 
@@ -9,7 +12,4 @@ const (
 
 	// IpfsPrefix is the IPFS URI prefix.
 	IpfsPrefix = "/ipfs/"
-
-	// DefaultEntryFunction is the name of SC function which is called if no entry function specified.
-	DefaultEntryFunction = "default"
 )
