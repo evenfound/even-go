@@ -3,11 +3,13 @@ package evelyn
 //go:generate antlr4 -Dlanguage=Go -Werror -package parser -o parser Evelyn.g4
 
 import (
+	"io/ioutil"
+	"path/filepath"
+
 	"github.com/evenfound/even-go/node/cmd/evec/compiler"
 	"github.com/evenfound/even-go/node/cmd/evec/config"
 	"github.com/evenfound/even-go/node/cmd/evec/implementation/evelyn/parser"
 	"github.com/evenfound/even-go/node/cmd/evec/tool"
-	"io/ioutil"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
@@ -16,7 +18,7 @@ import (
 type evelynCompiler struct {
 }
 
-// Compiler translates a source code from a file into binary bytecode.
+// Compile translates a source code from a file into binary bytecode.
 func (e evelynCompiler) Compile(filename string) (compiler.Bytecode, error) {
 	input, err := antlr.NewFileStream(filename)
 	if err != nil {
@@ -48,4 +50,13 @@ func (e evelynCompiler) Compile(filename string) (compiler.Bytecode, error) {
 	antlr.ParseTreeWalkerDefault.Walk(newListener(tmpfile), tree)
 
 	return nil, nil
+}
+
+// TryCompile checks if source code from a file is compilable and returns the source code.
+func (t evelynCompiler) TryCompile(filename string) ([]byte, error) {
+	src, err := ioutil.ReadFile(filepath.Clean(filename))
+	if err != nil {
+		return nil, tool.Wrap(err, "read file")
+	}
+	return src, nil
 }

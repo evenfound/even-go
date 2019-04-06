@@ -1,21 +1,21 @@
 package internal
 
 import (
-	"github.com/evenfound/even-go/node/cmd/evec/compiler"
-	"github.com/evenfound/even-go/node/cmd/evec/tool"
 	"io/ioutil"
 	"path/filepath"
 
 	tengo "github.com/d5/tengo/compiler"
 	tengoParser "github.com/d5/tengo/compiler/parser"
 	tengoSource "github.com/d5/tengo/compiler/source"
+	"github.com/evenfound/even-go/node/cmd/evec/compiler"
+	"github.com/evenfound/even-go/node/cmd/evec/mock/interop"
+	"github.com/evenfound/even-go/node/cmd/evec/tool"
 )
 
 type tengoCompiler struct {
-	//
 }
 
-// Compiler translates a source code from a file into binary bytecode.
+// Compile translates a source code from a file into binary bytecode.
 func (t tengoCompiler) Compile(filename string) (compiler.Bytecode, error) {
 	src, err := ioutil.ReadFile(filepath.Clean(filename))
 	if err != nil {
@@ -33,8 +33,23 @@ func (t tengoCompiler) Compile(filename string) (compiler.Bytecode, error) {
 
 	c := tengo.NewCompiler(srcFile, nil, nil, nil, nil)
 	if err := c.Compile(file); err != nil {
-		return nil, tool.Wrap(err, "tengo compiler")
+		return nil, tool.Wrap(err, "Tengo compiler")
 	}
 
 	return c.Bytecode(), nil
+}
+
+// TryCompile checks if source code from a file is compilable and returns the source code.
+func (t tengoCompiler) TryCompile(filename string) ([]byte, error) {
+	src, err := ioutil.ReadFile(filepath.Clean(filename))
+	if err != nil {
+		return nil, tool.Wrap(err, "read file")
+	}
+
+	_, err = interop.NewEnvironment(src)
+	if err != nil {
+		return nil, err
+	}
+
+	return src, nil
 }

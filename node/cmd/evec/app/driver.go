@@ -1,14 +1,21 @@
 package app
 
 import (
-	"github.com/evenfound/even-go/node/cmd/evec/config"
-	"github.com/evenfound/even-go/node/cmd/evec/implementation"
-	"github.com/evenfound/even-go/node/cmd/evec/tool"
+	"bytes"
+	"compress/gzip"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/evenfound/even-go/node/cmd/evec/config"
+	"github.com/evenfound/even-go/node/cmd/evec/implementation"
+	"github.com/evenfound/even-go/node/cmd/evec/tool"
 	"github.com/urfave/cli"
+)
+
+const (
+	header = "EVEN"
 )
 
 func clean() error {
@@ -42,7 +49,11 @@ func build(filename string) error {
 	basename := filepath.Base(filename)
 	basename = strings.TrimSuffix(basename, filepath.Ext(basename))
 	outputFilename := basename + config.CompiledExt
-	return compile(filename, outputFilename)
+	err := compile(filename, outputFilename)
+	if err == nil {
+		log.Printf("Built %s\n", outputFilename)
+	}
+	return err
 }
 
 func cleanDir(dir, suffix string) error {
@@ -59,8 +70,7 @@ func cleanDir(dir, suffix string) error {
 
 	for _, name := range names {
 		if strings.HasSuffix(name, suffix) {
-			err = os.Remove(filepath.Join(dir, name))
-			if err != nil {
+			if err := os.Remove(filepath.Join(dir, name)); err != nil {
 				return tool.Wrap(err, "file removal")
 			}
 		}
@@ -71,23 +81,40 @@ func cleanDir(dir, suffix string) error {
 
 // compile selects a concrete compiler and performs the compilation.
 func compile(inName, outName string) error {
-	tool.TR("inName", inName)
-	tool.TR("outName", outName)
 	compiler := implementation.New(filepath.Ext(inName))
-	bytecode, err := compiler.Compile(inName)
+	if compiler == nil {
+		return tool.NewError("unknown format of file " + inName)
+	}
+
+	src, err := compiler.TryCompile(inName)
 	if err != nil {
-		return tool.Wrap(err, "compilation")
+		return err // no need to wrap
+	}
+
+	var binary bytes.Buffer
+	zipper := gzip.NewWriter(&binary)
+
+	if _, err := zipper.Write(src); err != nil {
+		return tool.Wrap(err, "compress")
+	}
+	if err := zipper.Flush(); err != nil {
+		return tool.Wrap(err, "flush")
+	}
+	if err := zipper.Close(); err != nil {
+		return tool.Wrap(err, "close")
 	}
 
 	out, err := os.OpenFile(outName, os.O_CREATE|os.O_WRONLY, os.ModePerm)
 	if err != nil {
-		return tool.Wrap(err, "file creation")
+		return tool.Wrap(err, "create file")
 	}
 	defer func() { tool.Must(out.Close()) }()
 
-	err = bytecode.Encode(out)
-	if err != nil {
-		return tool.Wrap(err, "write bytecode to a file")
+	if _, err := out.Write([]byte(header)); err != nil {
+		return tool.Wrap(err, "write to file")
+	}
+	if _, err := out.Write(binary.Bytes()); err != nil {
+		return tool.Wrap(err, "write to file")
 	}
 
 	return nil

@@ -1,10 +1,10 @@
 package app
 
 import (
-	"github.com/evenfound/even-go/node/cmd/evec/config"
-	"github.com/evenfound/even-go/node/cmd/evec/tool"
 	"os"
 
+	"github.com/evenfound/even-go/node/cmd/evec/config"
+	"github.com/evenfound/even-go/node/cmd/evec/tool"
 	"github.com/urfave/cli"
 )
 
@@ -21,7 +21,7 @@ func Run() error {
 	a := cli.NewApp()
 	a.Name = "evec"
 	a.Usage = "Even Smart Contract compiler"
-	a.Version = "0.0.1"
+	a.Version = "0.13.0"
 
 	a.Flags = []cli.Flag{
 		cli.BoolFlag{

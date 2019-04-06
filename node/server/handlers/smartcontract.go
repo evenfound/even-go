@@ -6,12 +6,13 @@ import (
 	"strings"
 
 	"github.com/evenfound/even-go/node/evm"
-
 	"github.com/evenfound/even-go/node/server/api"
 	"golang.org/x/net/context"
 )
 
-const filePrefix = "file://"
+const (
+	filePrefix = "file://"
+)
 
 // SmartContract is a smart contract handler.
 type SmartContract struct{}
@@ -25,16 +26,21 @@ func (sc *SmartContract) Call(ctx context.Context, in *api.SmartContractInput) (
 
 	bytecode, err := ioutil.ReadFile(filepath.Clean(filename))
 	if err != nil {
-		return nil, err
+		return result(false, err.Error()), nil
 	}
 
 	vm := evm.New()
-	err = vm.Run(bytecode)
+	res, err := vm.Run(bytecode, in.EntryFunc)
 	if err != nil {
-		return nil, err
+		return result(false, err.Error()), nil
 	}
 
-	res := &api.SmartContractResult{Result: "OK"}
+	return result(true, res), nil
+}
 
-	return res, nil
+func result(ok bool, msg string) *api.SmartContractResult {
+	return &api.SmartContractResult{
+		Ok:     ok,
+		Result: msg,
+	}
 }

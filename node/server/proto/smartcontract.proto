@@ -13,5 +13,6 @@ message SmartContractInput {
 }
 
 message SmartContractResult {
-    string result = 1;
+    bool ok = 1;
+    string result = 2;
 }

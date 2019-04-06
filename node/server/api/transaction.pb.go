@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -156,6 +158,14 @@ func (c *transactionClient) GetTransactions(ctx context.Context, in *GetTransact
 // TransactionServer is the server API for Transaction service.
 type TransactionServer interface {
 	GetTransactions(context.Context, *GetTransactionRequestMessage) (*GetTransactionResponseMessage, error)
+}
+
+// UnimplementedTransactionServer can be embedded to have forward compatible implementations.
+type UnimplementedTransactionServer struct {
+}
+
+func (*UnimplementedTransactionServer) GetTransactions(ctx context.Context, req *GetTransactionRequestMessage) (*GetTransactionResponseMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTransactions not implemented")
 }
 
 func RegisterTransactionServer(s *grpc.Server, srv TransactionServer) {
