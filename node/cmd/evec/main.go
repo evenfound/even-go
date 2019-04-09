@@ -1,9 +1,10 @@
 package main
 
 import (
+	"log"
+
 	"github.com/evenfound/even-go/node/cmd/evec/app"
 	"github.com/evenfound/even-go/node/cmd/evec/config"
-	"log"
 
 	"github.com/ztrue/tracerr"
 )

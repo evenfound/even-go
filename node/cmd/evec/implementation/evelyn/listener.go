@@ -1,9 +1,10 @@
 package evelyn
 
 import (
+	"io"
+
 	"github.com/evenfound/even-go/node/cmd/evec/implementation/evelyn/parser"
 	"github.com/evenfound/even-go/node/cmd/evec/tool"
-	"io"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )

@@ -1,5 +1,9 @@
 package config
 
+import (
+	"github.com/urfave/cli"
+)
+
 var (
 	// BuildTengo is the state of build command flag "tengo".
 	BuildTengo bool
@@ -16,7 +20,13 @@ var (
 
 // Ok returns true if all options are consistent.
 // Ok returns false and a message if the options are bad.
-func Ok() (bool, string) {
+func Ok(c *cli.Context) (bool, string) {
+	if c.NArg() == 0 {
+		return false, "no input files"
+	}
+	if c.IsSet("output") && c.NArg() > 1 {
+		return false, "flag --output is used with more then one input file"
+	}
 	lang := 0
 	if BuildTengo {
 		lang++

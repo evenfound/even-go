@@ -1,8 +1,9 @@
 package tool
 
 import (
-	"github.com/evenfound/even-go/node/cmd/evec/config"
 	"testing"
+
+	"github.com/evenfound/even-go/node/cmd/evec/config"
 
 	"github.com/ztrue/tracerr"
 

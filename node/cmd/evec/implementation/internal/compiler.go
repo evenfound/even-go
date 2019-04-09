@@ -4,12 +4,13 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	tengo "github.com/d5/tengo/compiler"
-	tengoParser "github.com/d5/tengo/compiler/parser"
-	tengoSource "github.com/d5/tengo/compiler/source"
 	"github.com/evenfound/even-go/node/cmd/evec/compiler"
 	"github.com/evenfound/even-go/node/cmd/evec/mock/interop"
 	"github.com/evenfound/even-go/node/cmd/evec/tool"
+
+	tengo "github.com/d5/tengo/compiler"
+	tengoParser "github.com/d5/tengo/compiler/parser"
+	tengoSource "github.com/d5/tengo/compiler/source"
 )
 
 type tengoCompiler struct {
