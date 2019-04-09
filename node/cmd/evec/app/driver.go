@@ -3,6 +3,7 @@ package app
 import (
 	"bytes"
 	"compress/gzip"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -11,49 +12,76 @@ import (
 	"github.com/evenfound/even-go/node/cmd/evec/config"
 	"github.com/evenfound/even-go/node/cmd/evec/implementation"
 	"github.com/evenfound/even-go/node/cmd/evec/tool"
+
+	shell "github.com/ipfs/go-ipfs-api"
 	"github.com/urfave/cli"
 )
 
 const (
 	header = "EVEN"
+	ipfs   = "ipfs"
 )
 
 func clean() error {
 	return cleanDir(config.WorkDir, config.CompiledExt)
 }
 
-func buildWorkDir() error {
-	return filepath.Walk(config.WorkDir, func(path string, f os.FileInfo, _ error) error {
-		if f != nil && !f.IsDir() {
-			fn := f.Name()
-			if config.LooksLikeSourceFile(fn) {
-				if err := build(fn); err != nil {
-					return tool.Wrap(err, "build")
-				}
-			}
+func buildFiles(c *cli.Context) error {
+	var err error
+	for _, f := range c.Args() {
+		of := c.String(output)
+		isIPFS := of == ipfs
+		if isIPFS {
+			of = generateOutputFilename(ipfs)
 		}
-		return nil
-	})
-}
-
-func buildFiles(filenames cli.Args) error {
-	for _, f := range filenames {
-		if err := build(f); err != nil {
+		if of == "" {
+			of = generateOutputFilename(f)
+		}
+		if err = compile(f, of); err != nil {
 			return tool.Wrap(err, "build")
+		}
+		log.Printf("Built %s\n", of)
+		if isIPFS {
+			if of, err = storeToIPFS(of); err != nil {
+				return tool.Wrap(err, "store to IPFS")
+			}
+			log.Printf("Stored %s\n", of)
 		}
 	}
 	return nil
 }
 
-func build(filename string) error {
+func generateOutputFilename(filename string) string {
+	if filename == ipfs {
+		return generateTempFilename(filename)
+	}
 	basename := filepath.Base(filename)
 	basename = strings.TrimSuffix(basename, filepath.Ext(basename))
-	outputFilename := basename + config.CompiledExt
-	err := compile(filename, outputFilename)
-	if err == nil {
-		log.Printf("Built %s\n", outputFilename)
+	return basename + config.CompiledExt
+}
+
+func generateTempFilename(prefix string) string {
+	tmpfile, err := ioutil.TempFile("", prefix+"*"+config.CompiledExt)
+	tool.Must(err)
+	tool.Must(tmpfile.Close())
+	return tmpfile.Name()
+}
+
+func storeToIPFS(filename string) (string, error) {
+	sh := shell.NewLocalShell()
+	if sh == nil {
+		return filename, tool.NewError("IPFS daemon is not running")
 	}
-	return err
+	file, err := os.Open(filepath.Clean(filename))
+	if err != nil {
+		return filename, err
+	}
+	cid, err := sh.Add(file)
+	if err != nil {
+		return filename, err
+	}
+	tool.Must(os.Remove(filename))
+	return "/" + ipfs + "/" + cid, nil
 }
 
 func cleanDir(dir, suffix string) error {

@@ -5,7 +5,12 @@ import (
 
 	"github.com/evenfound/even-go/node/cmd/evec/config"
 	"github.com/evenfound/even-go/node/cmd/evec/tool"
+
 	"github.com/urfave/cli"
+)
+
+const (
+	output = "output"
 )
 
 // Init initializes the application.
@@ -36,7 +41,7 @@ func Run() error {
 			Usage: "remove object files and cached files",
 			Action: func(c *cli.Context) error {
 				config.Debug = c.GlobalBool("debug")
-				if ok, msg := config.Ok(); !ok {
+				if ok, msg := config.Ok(c); !ok {
 					return tool.NewError(msg)
 				}
 				return clean()
@@ -51,13 +56,10 @@ func Run() error {
 				config.BuildEvelyn = c.Bool("evelyn")
 				config.BuildVyper = c.Bool("vyper")
 				config.BuildSolidity = c.Bool("solidity")
-				if ok, msg := config.Ok(); !ok {
+				if ok, msg := config.Ok(c); !ok {
 					return tool.NewError(msg)
 				}
-				if c.NArg() == 0 {
-					return buildWorkDir()
-				}
-				return buildFiles(c.Args())
+				return buildFiles(c)
 			},
 			Flags: []cli.Flag{
 				cli.BoolFlag{
@@ -78,7 +80,7 @@ func Run() error {
 				},
 				cli.StringFlag{
 					Name:  "output,o",
-					Usage: "name of output binary file",
+					Usage: "name of the output binary file; or 'ipfs' to store in the IPFS",
 				},
 			},
 		},
