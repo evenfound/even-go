@@ -6,12 +6,12 @@ import (
 	"time"
 
 	"github.com/evenfound/even-go/node/cmd/evenctl/config"
-	pb "github.com/evenfound/even-go/node/cmd/evenctl/rpc/api"
 	"github.com/evenfound/even-go/node/cmd/evenctl/tool"
+	pb "github.com/evenfound/even-go/node/server/api"
 	"google.golang.org/grpc"
 )
 
-// Call performs a gRPC call.
+// Call performs a gRPC call implementing a smart contract call.
 func Call(filename, entryFunc string) error {
 	if !isCorrectFilename(filename) {
 		return tool.NewError("filename '" + filename +

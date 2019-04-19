@@ -1,5 +1,6 @@
 package server
 
+//go:generate protoc --proto_path=proto --go_out=plugins=grpc:api wallet.proto
 //go:generate protoc --proto_path=proto --go_out=plugins=grpc:api transaction.proto
 //go:generate protoc --proto_path=proto --go_out=plugins=grpc:api smartcontract.proto
 
@@ -22,11 +23,13 @@ func Run(port int) {
 	}
 
 	var (
+		walletHandler      = handlers.Wallet{}
 		transactionHandler = handlers.Transaction{}
 		smartHandler       = handlers.SmartContract{}
 		grpcServer         = grpc.NewServer()
 	)
 
+	api.RegisterWalletServer(grpcServer, &walletHandler)
 	api.RegisterTransactionServer(grpcServer, &transactionHandler)
 	api.RegisterSmartContractServer(grpcServer, &smartHandler)
 

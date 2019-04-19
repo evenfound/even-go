@@ -1,6 +1,9 @@
 package interop
 
-import "fmt"
+import (
+	"crypto/sha256"
+	"fmt"
+)
 
 // This file contains implementation of the Smart Contract API: namespace even.
 // See the Even Network Smart Contract Specification.
@@ -17,7 +20,8 @@ func (e *Environment) addString(str string) int {
 
 // evenHashMessage hashes the given message.
 func (e *Environment) evenHashMessage(msg string) string {
-	return msg + "XXX"
+	hash := sha256.Sum256([]byte(msg))
+	return string(hash[:])
 }
 
 // evenCreateWallet creates a wallet object.

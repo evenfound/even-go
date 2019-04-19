@@ -26,19 +26,19 @@ func (sc *SmartContract) Call(ctx context.Context, in *api.SmartContractInput) (
 
 	bytecode, err := ioutil.ReadFile(filepath.Clean(filename))
 	if err != nil {
-		return result(false, err.Error()), nil
+		return newSmartContractResult(false, err.Error()), nil
 	}
 
 	vm := evm.New()
 	res, err := vm.Run(bytecode, in.EntryFunc)
 	if err != nil {
-		return result(false, err.Error()), nil
+		return newSmartContractResult(false, err.Error()), nil
 	}
 
-	return result(true, res), nil
+	return newSmartContractResult(true, res), nil
 }
 
-func result(ok bool, msg string) *api.SmartContractResult {
+func newSmartContractResult(ok bool, msg string) *api.SmartContractResult {
 	return &api.SmartContractResult{
 		Ok:     ok,
 		Result: msg,

@@ -1,0 +1,52 @@
+// wallet.proto
+syntax = "proto3";
+
+package api;
+
+service Wallet {
+    // GenerateWallet returns result=seed on success.
+    rpc GenerateWallet(WalletInput) returns (WalletResult) {}
+
+    // CreateWallet returns result=seed on success.
+    rpc CreateWallet(CreateWalletInput) returns (WalletResult) {}
+
+    // UnlockWallet returns result=duration on success.
+    rpc UnlockWallet(WalletInput) returns (WalletResult) {}
+
+    // WalletNextAccount returns result=address on success.
+    rpc WalletNextAccount(WalletInput) returns (WalletResult) {}
+
+    // WalletAccountDumpPrivateKey returns result=privkey on success.
+    rpc WalletAccountDumpPrivateKey(WalletAccountInput) returns (WalletResult) {}
+
+    // WalletAccountDumpPublicKey returns result=pubkey on success.
+    rpc WalletAccountDumpPublicKey(WalletAccountInput) returns (WalletResult) {}
+
+    // WalletAccountShowBalance returns result=balance on success.
+    rpc WalletAccountShowBalance(WalletAccountInput) returns (WalletResult) {}
+
+    // GetWalletInfo returns result=info on success.
+    rpc GetWalletInfo(WalletInput) returns (WalletResult) {}
+}
+
+message WalletInput {
+    string name = 1;
+    string password = 2;
+}
+
+message CreateWalletInput {
+    string name = 1;
+    string password = 2;
+    string mnemonic = 3;
+}
+
+message WalletAccountInput {
+    string name = 1;
+    string password = 2;
+    string account = 3;
+}
+
+message WalletResult {
+    bool ok = 1;
+    string result = 2;
+}

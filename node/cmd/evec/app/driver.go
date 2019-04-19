@@ -14,7 +14,6 @@ import (
 	"github.com/evenfound/even-go/node/cmd/evec/tool"
 
 	shell "github.com/ipfs/go-ipfs-api"
-	"github.com/urfave/cli"
 )
 
 const (
@@ -26,10 +25,9 @@ func clean() error {
 	return cleanDir(config.WorkDir, config.CompiledExt)
 }
 
-func buildFiles(c *cli.Context) error {
+func buildFiles(files []string, of string) error {
 	var err error
-	for _, f := range c.Args() {
-		of := c.String(output)
+	for _, f := range files {
 		isIPFS := of == ipfs
 		if isIPFS {
 			of = generateOutputFilename(ipfs)
@@ -116,23 +114,67 @@ func compile(inName, outName string) error {
 
 	src, err := compiler.TryCompile(inName)
 	if err != nil {
-		return err // no need to wrap
+		return err
 	}
 
-	var binary bytes.Buffer
-	zipper := gzip.NewWriter(&binary)
+	binary, err := compress(src)
+	if err != nil {
+		return err
+	}
 
-	if _, err := zipper.Write(src); err != nil {
-		return tool.Wrap(err, "compress")
+	binary, err = encrypt(binary)
+	if err != nil {
+		return err
+	}
+
+	if err := saveToFile(outName, binary); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func compress(input []byte) ([]byte, error) {
+	var result bytes.Buffer
+
+	zipper := gzip.NewWriter(&result)
+	if _, err := zipper.Write(input); err != nil {
+		return nil, tool.Wrap(err, "compress")
 	}
 	if err := zipper.Flush(); err != nil {
-		return tool.Wrap(err, "flush")
+		return nil, tool.Wrap(err, "flush")
 	}
 	if err := zipper.Close(); err != nil {
-		return tool.Wrap(err, "close")
+		return nil, tool.Wrap(err, "close")
 	}
 
-	out, err := os.OpenFile(outName, os.O_CREATE|os.O_WRONLY, os.ModePerm)
+	return result.Bytes(), nil
+}
+
+func encrypt(stream []byte) ([]byte, error) {
+	return stream, nil
+}
+
+/*
+func encrypt(stream []byte) ([]byte, error) {
+	const keyLengthBytes = 10
+	//fmt.Println("input:", stream)
+	key := make([]byte, keyLengthBytes)
+	if _, err := rand.Read(key); err != nil {
+		return nil, err
+	}
+	//fmt.Println("key:", key)
+	c, err := rc4.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+	c.XORKeyStream(stream, stream)
+	//fmt.Println("output:", key, stream)
+	return append(key, stream...), nil
+}*/
+
+func saveToFile(filename string, data []byte) error {
+	out, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY, os.ModePerm)
 	if err != nil {
 		return tool.Wrap(err, "create file")
 	}
@@ -141,7 +183,7 @@ func compile(inName, outName string) error {
 	if _, err := out.Write([]byte(header)); err != nil {
 		return tool.Wrap(err, "write to file")
 	}
-	if _, err := out.Write(binary.Bytes()); err != nil {
+	if _, err := out.Write(data); err != nil {
 		return tool.Wrap(err, "write to file")
 	}
 
