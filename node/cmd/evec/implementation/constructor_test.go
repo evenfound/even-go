@@ -21,10 +21,6 @@ func TestConstructionByFilenameSuffix(t *testing.T) {
 		c := New(".vy")
 		So(c, ShouldBeNil)
 	})
-	Convey("Solidity compiler is not yet implemented", t, func() {
-		c := New(".sol")
-		So(c, ShouldBeNil)
-	})
 	Convey("Unused suffix", t, func() {
 		c := New("XXX")
 		So(c, ShouldBeNil)
@@ -35,7 +31,6 @@ func TestConstructionByGlobalFlag(t *testing.T) {
 	config.BuildTengo = false
 	config.BuildEvelyn = false
 	config.BuildVyper = false
-	config.BuildSolidity = false
 	Convey("Tengo compiler", t, func() {
 		config.BuildTengo = true
 		c := New("XXX")
@@ -53,11 +48,5 @@ func TestConstructionByGlobalFlag(t *testing.T) {
 		c := New("XXX")
 		So(c, ShouldBeNil)
 		config.BuildVyper = false
-	})
-	Convey("Solidity compiler is not yet implemented", t, func() {
-		config.BuildSolidity = true
-		c := New("XXX")
-		So(c, ShouldBeNil)
-		config.BuildSolidity = false
 	})
 }

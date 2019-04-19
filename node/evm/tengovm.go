@@ -12,8 +12,6 @@ import (
 	"github.com/evenfound/even-go/node/evm/interop"
 )
 
-const ()
-
 var _ Interface = tengoVM{}
 
 // newTengoVM creates new instance of the tengoVM.

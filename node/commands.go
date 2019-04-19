@@ -48,30 +48,6 @@ var commandList = map[string]commandItem{
 		&cmd.Start{},
 	},
 
-	"newwallet": {
-		"Creating a new wallet",
-		"This command creates a new wallet",
-		&cmd.CreateWallet{},
-	},
-
-	"listaccounts": {
-		"Creating a account",
-		"This command creates a new account in the wallet",
-		&cmd.ListAccounts{},
-	},
-
-	"newaccount": {
-		"Creating a account",
-		"This command creates a new account in the wallet",
-		&cmd.CreateAccount{},
-	},
-
-	"newaddress": {
-		"Generating addresses",
-		"This command generates addresses based on level and index",
-		&cmd.NewAddress{},
-	},
-
 	"stop": {
 		"shutdown the server and disconnect",
 		"The stop command disconnects from peers and shuts down EvenNetwork-Server",
@@ -107,5 +83,4 @@ var commandList = map[string]commandItem{
 		"This command will convert the node to use a different crypto-currency",
 		&cmd.Convert{},
 	},
-
 }

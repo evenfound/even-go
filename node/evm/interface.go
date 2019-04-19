@@ -6,3 +6,8 @@ type Interface interface {
 	// Returns resulting string.
 	Run(bc Bytecode, entryFunc string) (string, error)
 }
+
+// New creates another instance of the EVM.
+func New() Interface {
+	return newTengoVM()
+}

@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 
 	"github.com/evenfound/even-go/node/cmd/evec/compiler"
-	"github.com/evenfound/even-go/node/cmd/evec/mock/interop"
 	"github.com/evenfound/even-go/node/cmd/evec/tool"
+	"github.com/evenfound/even-go/node/evm/interop"
 
 	tengo "github.com/d5/tengo/compiler"
 	tengoParser "github.com/d5/tengo/compiler/parser"

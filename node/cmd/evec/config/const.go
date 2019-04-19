@@ -17,9 +17,6 @@ const (
 	// VyperExt is a Vyper source code file name extension.
 	VyperExt = ".vy"
 
-	// SolidityExt is a Solidity source code file name extension.
-	SolidityExt = ".sol"
-
 	// CompiledExt is a compiled program file name extension.
 	CompiledExt = ".out"
 )
@@ -28,6 +25,5 @@ const (
 func LooksLikeSourceFile(filename string) bool {
 	return strings.HasSuffix(filename, TengoExt) ||
 		strings.HasSuffix(filename, EvelynExt) ||
-		strings.HasSuffix(filename, VyperExt) ||
-		strings.HasSuffix(filename, SolidityExt)
+		strings.HasSuffix(filename, VyperExt)
 }
