@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package api;
+
+service Crypto {
+    rpc Sign(SignInput) returns (SignResult) {}
+    rpc Verify(VerifyInput) returns (SignResult) {}
+}
+
+message SignInput {
+    string message = 1;
+    string privkey = 2;
+}
+
+message VerifyInput {
+    string message = 1;
+    string signature = 2;
+    string pubkey = 3;
+}
+
+message SignResult {
+    bool ok = 1;
+    string result = 2;
+}

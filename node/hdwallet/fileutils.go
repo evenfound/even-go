@@ -87,7 +87,7 @@ func absoluteFilename(name string) (string, error) {
 	}
 	absoluteWalletDir := filepath.Join(confDir, walletDir)
 	if _, err := os.Stat(absoluteWalletDir); err != nil {
-		err = os.Mkdir(absoluteWalletDir, 0755)
+		err = os.Mkdir(absoluteWalletDir, 0750)
 		if err != nil {
 			return "", err
 		}

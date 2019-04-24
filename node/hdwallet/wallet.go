@@ -25,7 +25,10 @@ func newWallet(name, pass string) *wallet {
 
 // Generate implements Interface.Generate.
 func (w *wallet) Generate() (string, error) {
-	mnemonic := generateMnemonic()
+	mnemonic, err := generateMnemonic()
+	if err != nil {
+		return "", err
+	}
 	if err := w.Create(mnemonic); err != nil {
 		return "", err
 	}
