@@ -35,13 +35,20 @@ func Run() (err error) {
 	config.Debug = *a.BoolOpt("d debug", false, "show additional information")
 
 	a.Command("test", "test", func(config *cli.Cmd) {
-		config.Command("call", "call a smart contract", cmdTestCall)
+		config.Command("call", "call smart contract", cmdTestCall)
+		config.Command("sign", "sign message", cmdTestSign)
+		config.Command("verify", "verify signed message", cmdTestVerify)
+		config.Command("tx", "transactions", func(config *cli.Cmd) {
+			config.Command("create", "create new transaction", cmdTestCreateTx)
+			config.Command("read", "read and show transaction", cmdTestReadTx)
+			config.Command("verify", "verify transaction", cmdTestVerifyTx)
+		})
 	})
 
 	a.Command("wallet", "manage wallets", func(config *cli.Cmd) {
 		config.Command("generate", "create new unique wallet", cmdWalletGenerate)
 		config.Command("create", "(re)create a wallet with known seed", cmdWalletCreate)
-		config.Command("unlock", "unlock password temporarily", cmdWalletUnlock)
+		config.Command("unlock", "unlock wallet temporarily", cmdWalletUnlock)
 		config.Command("nextaccount", "generate next account", cmdWalletNextAccount)
 		config.Command("privkey", "show private key of account", cmdAccountPrivateKey)
 		config.Command("pubkey", "show public key of account", cmdAccountPublicKey)
@@ -60,6 +67,50 @@ func cmdTestCall(c *cli.Cmd) {
 	c.Spec = "--file ... [--entry ...]"
 	c.Action = func() {
 		tool.Must(rpc.Call(*file, *entry))
+	}
+}
+
+func cmdTestSign(c *cli.Cmd) {
+	var (
+		message = c.StringArg("MESSAGE", "", "arbitrary message")
+		privkey = c.StringOpt("k privkey", "", "private key")
+	)
+	c.Spec = "MESSAGE --privkey ..."
+	c.Action = func() {
+		tool.Must(rpc.Sign(*message, *privkey))
+	}
+}
+
+func cmdTestVerify(c *cli.Cmd) {
+	var (
+		message   = c.StringArg("MESSAGE", "", "message")
+		signature = c.StringOpt("s signature", "", "signature")
+		pubkey = c.StringOpt("k pubkey", "", "public key")
+	)
+	c.Spec = "MESSAGE --signature ... --pubkey ..."
+	c.Action = func() {
+		tool.Must(rpc.Verify(*message, *signature, *pubkey))
+	}
+}
+
+func cmdTestCreateTx(c *cli.Cmd) {
+	var ()
+	c.Spec = ""
+	c.Action = func() {
+	}
+}
+
+func cmdTestReadTx(c *cli.Cmd) {
+	var ()
+	c.Spec = ""
+	c.Action = func() {
+	}
+}
+
+func cmdTestVerifyTx(c *cli.Cmd) {
+	var ()
+	c.Spec = ""
+	c.Action = func() {
 	}
 }
 

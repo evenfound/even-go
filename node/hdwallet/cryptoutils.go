@@ -1,7 +1,7 @@
 package hdwallet
 
 import (
-	"crypto/ecdsa"
+	"encoding/hex"
 	"errors"
 
 	"github.com/btcsuite/btcd/btcec"
@@ -10,19 +10,23 @@ import (
 	"github.com/edunuzzi/go-bip44"
 )
 
+// Network represents type of the Even Network.
 type Network int16
 
 const (
 	bitSize                 = 128 // 12 words in mnemonic seed
-	BitcoinTestnet3 Network = iota + 1
-	BitcoinMainnet
-	EvenTestnet = BitcoinTestnet3
-	EvenMainnet = BitcoinMainnet
+	bitcoinTestnet3 Network = iota + 1
+	bitcoinMainnet
+	evenTestnet = bitcoinTestnet3
+	evenMainnet = bitcoinMainnet
 )
 
-func generateMnemonic() string {
-	m, _ := bip44.NewMnemonic(bitSize)
-	return m.Value
+func generateMnemonic() (string, error) {
+	m, err := bip44.NewMnemonic(bitSize)
+	if err != nil {
+		return "", err
+	}
+	return m.Value, nil
 }
 
 func generateAddress(mnemonic, password string, index uint32) (string, error) {
@@ -31,7 +35,7 @@ func generateAddress(mnemonic, password string, index uint32) (string, error) {
 		return "", err
 	}
 
-	chainCfg, err := networkToChainConfig(EvenTestnet)
+	chainCfg, err := networkToChainConfig(evenTestnet)
 	if err != nil {
 		return "", err
 	}
@@ -68,15 +72,10 @@ func generatePublicKey(mnemonic, password string, index uint32) (string, error) 
 	if err != nil {
 		return "", err
 	}
-	privKeyECDSA := privKey.ToECDSA()
 
-	pubKey := privKeyECDSA.Public()
-	puk, ok := pubKey.(*ecdsa.PublicKey)
-	if !ok {
-		return "", errors.New("failed to get public key")
-	}
+	pubKey := privKey.PubKey()
 
-	return publicKeyToString(puk), nil
+	return publicKeyToString(pubKey), nil
 }
 
 func generateExtendedKey(mnemonic, password string, index uint32) (*hdkeychain.ExtendedKey, error) {
@@ -86,7 +85,7 @@ func generateExtendedKey(mnemonic, password string, index uint32) (*hdkeychain.E
 		return nil, err
 	}
 
-	chainCfg, err := networkToChainConfig(EvenTestnet)
+	chainCfg, err := networkToChainConfig(evenTestnet)
 	if err != nil {
 		return nil, err
 	}
@@ -105,19 +104,19 @@ func generateExtendedKey(mnemonic, password string, index uint32) (*hdkeychain.E
 }
 
 func privateKeyToString(pk *btcec.PrivateKey) string {
-	return pk.D.Text(16)
+	return hex.EncodeToString(pk.Serialize())
 }
 
-func publicKeyToString(pk *ecdsa.PublicKey) string {
-	return pk.X.Text(16) + pk.Y.Text(16)
+func publicKeyToString(puk *btcec.PublicKey) string {
+	return hex.EncodeToString(puk.SerializeCompressed())
 }
 
 func networkToChainConfig(net Network) (*chaincfg.Params, error) {
 	switch net {
-	case BitcoinTestnet3:
+	case bitcoinTestnet3:
 		return &chaincfg.TestNet3Params, nil
 
-	case BitcoinMainnet:
+	case bitcoinMainnet:
 		return &chaincfg.MainNetParams, nil
 	}
 

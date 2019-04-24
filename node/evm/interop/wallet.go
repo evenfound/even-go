@@ -11,9 +11,7 @@ const (
 	invalidPhraseError = "The provided seed phrase is not valid"
 )
 
-type wallet struct {
-	//
-}
+type wallet struct{}
 
 // walletSave stores encrypted wallet locally.
 func (e *Environment) walletSave(h handle, password string) error {

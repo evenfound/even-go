@@ -16,7 +16,7 @@ func (e *Environment) Run() error {
 	return e.runner.Run()
 }
 
-// Get returns a variable identified by the name.
+// Get returns a variable identified by name.
 func (e *Environment) Get(name string) *script.Variable {
 	return e.runner.Get(name)
 }

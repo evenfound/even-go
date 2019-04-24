@@ -1,9 +1,11 @@
 syntax = "proto3";
+
 package api;
 
 message GetTransactionRequestMessage {
     string address = 1;
 }
+
 message GetTransactionResponseMessage {
     string transaction = 1;
 }

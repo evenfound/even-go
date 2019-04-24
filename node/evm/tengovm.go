@@ -12,16 +12,16 @@ import (
 	"github.com/evenfound/even-go/node/evm/interop"
 )
 
+// Ensure tengoVM satisfies evm.Interface.
 var _ Interface = tengoVM{}
-
-// newTengoVM creates new instance of the tengoVM.
-func newTengoVM() Interface {
-	vm := tengoVM{}
-	return vm
-}
 
 // tengoVM represents the Tengo VM.
 type tengoVM struct {
+}
+
+// newTengoVM creates new instance of the tengoVM.
+func newTengoVM() Interface {
+	return tengoVM{}
 }
 
 // Run implements corresponding method of the EVM interface.

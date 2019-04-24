@@ -49,7 +49,7 @@ func cmdBuild(c *cli.Cmd) {
 	config.BuildEvelyn = *c.BoolOpt("e evelyn", false, "force compile Evelyn sources")
 	output := c.StringOpt("o output", "", "name of the output binary file; or 'ipfs' to store in the IPFS")
 	c.Spec = "FILE... [--tengo] [--vyper] [--evelyn] [--output ...]"
-	files := c.StringsArg("FILE", nil, "File names to build")
+	files := c.StringsArg("FILE", nil, "file names to build")
 	c.Action = func() {
 		if ok, msg := config.Ok(); !ok {
 			panic(tool.NewError(msg))
