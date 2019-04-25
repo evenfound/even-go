@@ -6,84 +6,17 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"syscall"
-
+	"path/filepath"
 	"runtime"
 	"runtime/debug"
+	"syscall"
 )
 
 // winServiceMain is only invoked on Windows.
 // It detects when mbnd is running as a service and reacts accordingly.
 var winServiceMain func() (bool, error)
 
-// Multi-Blockchain Network Demon is the entry point for start external micro-services.
-// Required by defers created in the top-level scope of a main method aren't executed if os.Exit() is called.
-func mbnd() error {
-
-	// Load configuration and parse command line.
-	// This function also initializes logging and configures it accordingly.
-	_, _, err := loadConfig()
-	if err != nil {
-		return err
-	}
-
-	// Get a channel that will be closed when a shutdown signal has been
-	// triggered either from an OS signal such as SIGINT (Ctrl+C) or from
-	// another subsystem such as the RPC server.
-	interrupt := interruptListener()
-
-	// Return now if an interrupt signal was triggered.
-	if interruptRequested(interrupt) {
-		return nil
-	}
-
-	procAttr := &os.ProcAttr{
-		Dir:   os.TempDir(),
-		Env:   os.Environ(),
-		Files: []*os.File{os.Stdin, os.Stdout, os.Stderr},
-		Sys:   &syscall.SysProcAttr{},
-	}
-
-	//@todo in future will move this options to configuration file
-	procArgv := []string{
-		"--testnet",
-	}
-
-	//@todo in future will move this list to configuration file
-	bcNets := []string{
-		"btcd",
-		"ltcd",
-	}
-
-	for _, bcNet := range bcNets {
-
-		binFilePath, lookErr := exec.LookPath(bcNet)
-		if lookErr != nil {
-			panic(lookErr)
-		}
-
-		fmt.Printf("Start %s form %v ...\n", bcNet, binFilePath)
-
-		process, err := os.StartProcess(binFilePath, procArgv, procAttr)
-		if err != nil {
-			panic(err)
-		}
-
-		err = process.Release()
-		if err != nil {
-			panic(err)
-		}
-
-		defer process.Kill()
-
-	}
-
-	// Wait until the interrupt signal is received from an OS signal or shutdown
-	// is requested through one of the subsystems such as the RPC server.
-	<-interrupt
-	return nil
-}
-
+// External start the Multi-Blockchain Network Demon.
 func Start() {
 
 	// Use all processor cores.
@@ -113,4 +46,90 @@ func Start() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+// Wrapper run the Multi-Blockchain Network Demon.
+func run(name string, argv []string, attr *os.ProcAttr) {
+
+	process, err := os.StartProcess(name, argv, attr)
+	if err != nil {
+		panic(err)
+	}
+
+	err = process.Release()
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		_ = process.Kill()
+	}()
+}
+
+// Multi-Blockchain Network Demon is the entry point for start external micro-services.
+// Required by defers created in the top-level scope of a main method aren't executed if os.Exit() is called.
+func mbnd() error {
+
+	// Load configuration and parse command line.
+	// This function also initializes logging and configures it accordingly.
+	err := loadConfig()
+	if err != nil {
+		return err
+	}
+
+	// Get a channel that will be closed when a shutdown signal has been
+	// triggered either from an OS signal such as SIGINT (Ctrl+C) or from
+	// another subsystem such as the RPC server.
+	interrupt := interruptListener()
+
+	// Return now if an interrupt signal was triggered.
+	if interruptRequested(interrupt) {
+		return nil
+	}
+
+	//@todo in future will move this options to configuration file
+	argv := []string{
+		"--testnet",
+		"--txindex",
+		"--addrindex",
+	}
+
+	//@todo in future will move this list to configuration file
+	networks := []string{
+		"btcd",
+		"ltcd",
+	}
+
+	procAttr := &os.ProcAttr{
+		Dir:   os.TempDir(),
+		Env:   os.Environ(),
+		Files: []*os.File{os.Stdin, os.Stdout, os.Stderr},
+		Sys:   &syscall.SysProcAttr{},
+	}
+
+	for _, net := range networks {
+
+		binFilePath, lookErr := exec.LookPath(net)
+		if lookErr != nil {
+			panic(lookErr)
+		}
+
+		logger.Infof("Start %s form %v ...", net, binFilePath)
+
+		procArgv := append(argv,
+			"--logdir="+filepath.Join(cfg.ExternalDir, net, defaultLogDirname),
+			"--datadir="+filepath.Join(cfg.ExternalDir, net, defaultDataDirname))
+
+		go run(binFilePath, procArgv, procAttr)
+	}
+
+	defer func() {
+		_ = os.Stdout.Sync()
+	}()
+
+	// Wait until the interrupt signal is received from an OS signal or shutdown
+	// is requested through one of the subsystems such as the RPC server.
+	<-interrupt
+
+	return nil
 }

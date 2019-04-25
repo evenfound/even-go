@@ -2,7 +2,9 @@
 
 package main
 
-import "github.com/evenfound/even-go/node/cmd"
+import (
+	"github.com/evenfound/even-go/node/cmd"
+)
 
 type commandItem struct {
 	shortDescription string

@@ -10,8 +10,9 @@ import (
 )
 
 const (
-	walletSpec  = "--name ... --password ..."
-	accountSpec = "--name ... --password ... --account ..."
+	walletSpec        = "--name ... --password ..."
+	accountSpec       = "--name ... --password ... --account ..."
+	mchainBalanceSpec = "--list ..."
 )
 
 var fcmd, _ = rpc.NewFileCMD()
@@ -27,6 +28,7 @@ func Close() {
 
 // Run starts the application.
 func Run() (err error) {
+
 	defer func() {
 		if r := recover(); r != nil {
 			err = r.(error)
@@ -73,6 +75,10 @@ func Run() (err error) {
 	a.Command("peer", "manage peers", func(cmd *cli.Cmd) {
 		cmd.Command("list", "peer list", cmdPeerList)
 		cmd.Command("send", "send store to peers", cmdPeerSend)
+	})
+
+	a.Command("multichain", "fetch blockchain data", func(config *cli.Cmd) {
+		config.Command("balance", "show current balance for specified address", cmdMchainAddrBalance)
 	})
 
 	//TODO create cmd command for files and peers
@@ -332,5 +338,15 @@ func cmdPeerSend(c *cli.Cmd) {
 	c.Action = func() {
 
 		tool.Must(pcmd.SendStore(*hash))
+	}
+}
+
+func cmdMchainAddrBalance(c *cli.Cmd) {
+	var (
+		list = c.StringsOpt("l list", []string{""}, "address list csv")
+	)
+	c.Spec = mchainBalanceSpec
+	c.Action = func() {
+		tool.Must(rpc.AddrBalance(*list))
 	}
 }

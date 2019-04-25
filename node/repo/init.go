@@ -36,10 +36,6 @@ func DoInit(repoRoot string, nBitsForKeypair int, testnet bool, password string,
 	}
 
 	if fsrepo.IsInitialized(repoRoot) {
-		err := MigrateUp(repoRoot, password, testnet)
-		if err != nil {
-			return err
-		}
 		return ErrRepoExists
 	}
 

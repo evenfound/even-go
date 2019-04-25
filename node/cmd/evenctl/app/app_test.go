@@ -1,3 +1,5 @@
+// Copyright (C) 2017-2019 The Even Network Developers
+
 package app
 
 import (

@@ -15,12 +15,12 @@ import (
 	"time"
 
 	"github.com/OpenBazaar/jsonpb"
+	"github.com/OpenBazaar/wallet-interface"
 	"github.com/evenfound/even-go/node/core"
 	"github.com/evenfound/even-go/node/ipfs"
 	"github.com/evenfound/even-go/node/pb"
 	"github.com/evenfound/even-go/node/repo"
 	"github.com/evenfound/even-go/node/repo/db"
-	"github.com/OpenBazaar/wallet-interface"
 	"github.com/golang/protobuf/proto"
 	ipfscore "github.com/ipfs/go-ipfs/core"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
@@ -34,16 +34,8 @@ type Convert struct {
 }
 
 func (x *Convert) Execute(args []string) error {
-	if len(args) == 0 {
-		fmt.Fprintf(os.Stderr, "Please specify the cryptocurrency you wish to convert to. Examples:\nopenbazaar-go convert bitcoin\nopenbazaar-go convert bitcoincash\nopenbazaar-go convert zcash /path/to/zcashd\n")
-		return nil
-	}
-	if strings.ToLower(args[0]) == "zcash" && len(args) == 1 {
-		fmt.Fprintf(os.Stderr, "When converting to zcash please specify the path to the zcash binary. Example:\nopenbazaar-go convert zcash /path/to/zcashd\n")
-		return nil
-	}
-	if !(strings.ToLower(args[0]) == "bitcoin" || strings.ToLower(args[0]) == "bitcoincash" || strings.ToLower(args[0]) == "zcash") {
-		fmt.Fprintf(os.Stderr, "Unknown currency type: please enter either bitcoin, bitcoincash, or zcash.\n")
+	if !(strings.ToLower(args[0]) == "bitcoin") {
+		fmt.Fprintf(os.Stderr, "Unknown currency type: please enter either bitcoin.\n")
 		return nil
 	}
 
@@ -56,16 +48,6 @@ func (x *Convert) Execute(args []string) error {
 		str = "Bitcoin"
 		cfgtype = "spvwallet"
 		currencyCode = "BTC"
-	case "bitcoincash":
-		str = "Bitcoin Cash"
-		cfgtype = "bitcoincash"
-		currencyCode = "BCH"
-		ct = wallet.BitcoinCash
-	case "zcash":
-		str = "ZCash"
-		cfgtype = "zcashd"
-		currencyCode = "ZEC"
-		ct = wallet.Zcash
 	}
 
 	if x.Testnet {

@@ -1,21 +1,23 @@
 // Copyright (c) 2013-2016 The btcsuite developers
+// Copyright (C) 2017-2019 The Even Network Developers
 // Use of this source code is governed by an ISC license that can be found in the LICENSE file.
 
 package mbnd
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
 )
 
-// shutdownRequestChannel is used to initiate shutdown from one of the subsystems using the same code paths
-// as when an interrupt signal is received.
-var shutdownRequestChannel = make(chan struct{})
+var (
+	// shutdownRequestChannel is used to initiate shutdown from one of the subsystems using the same code paths
+	// as when an interrupt signal is received.
+	shutdownRequestChannel = make(chan struct{})
 
-// interruptSignals defines the default signals to catch in order to do a proper shutdown.
-// This may be modified during init depending on the platform.
-var interruptSignals = []os.Signal{os.Interrupt}
+	// interruptSignals defines the default signals to catch in order to do a proper shutdown.
+	// This may be modified during init depending on the platform.
+	interruptSignals = []os.Signal{os.Interrupt}
+)
 
 // interruptListener listens for OS Signals such as SIGINT (Ctrl+C) and shutdown requests from shutdownRequestChannel.
 // It returns a channel that is closed when either signal is received.
@@ -31,10 +33,10 @@ func interruptListener() <-chan struct{} {
 		// Listen for initial shutdown signal and close the returned channel to notify the caller.
 		select {
 		case sig := <-interruptChannel:
-			fmt.Printf("\n[INF] SGNL: Received signal (%s).\nShutting down...\n", sig)
+			logger.Infof("Received signal (%s).", sig)
 
 		case <-shutdownRequestChannel:
-			fmt.Println("\n[INF] SGNL: Shutdown requested.\nShutting down...")
+			logger.Infof("Shutdown requested. Shutting down...")
 		}
 
 		close(c)
@@ -43,10 +45,10 @@ func interruptListener() <-chan struct{} {
 		for {
 			select {
 			case sig := <-interruptChannel:
-				fmt.Printf("[INF] SGNL: Received signal (%s). Already shutting down.\n", sig)
+				logger.Infof("Received signal (%s). Already shutting down.", sig)
 
 			case <-shutdownRequestChannel:
-				fmt.Println("[INF] SGNL: Shutdown requested. Already shutting down.")
+				logger.Infof("Shutdown requested. Already shutting down.")
 			}
 		}
 	}()

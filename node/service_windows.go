@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	// svcName is the name of evennet service.
-	svcName = "evennetsvc"
+	// svcName is the name of evenet service.
+	svcName = "evenetsvc"
 
 	// svcDisplayName is the service name that will be shown in the windows services list.
 	// Not the svcName is the "real" name which is used to control the service.  This is only for display purposes.
@@ -30,7 +30,7 @@ const (
 type service struct{}
 
 // Execute is the main entry point the winsvc package calls when receiving information from the Windows service control manager.
-// It launches the long-running btcdMain (which is the real meat of evennet), handles service change requests, and notifies the service control manager of changes.
+// It launches the long-running btcdMain (which is the real meat of evenet), handles service change requests, and notifies the service control manager of changes.
 func (s *service) Execute(args []string, r <-chan svc.ChangeRequest, changes chan<- svc.Status) (bool, uint32) {
 	// Service start is pending.
 	const cmdsAccepted = svc.AcceptStop | svc.AcceptShutdown
@@ -83,7 +83,7 @@ loop:
 	return false, 0
 }
 
-// installService attempts to install the evennet service.
+// installService attempts to install the evenet service.
 // Typically this should be done by the msi installer, but it is provided here since it can be useful for development.
 func installService() error {
 	// Get the path of the current executable.
@@ -131,7 +131,7 @@ func installService() error {
 	return nil
 }
 
-// removeService attempts to uninstall the evennet service.
+// removeService attempts to uninstall the evenet service.
 // Typically this should be done by the msi uninstaller, but it is provided here since it can be useful for development.
 // Not the eventlog entry is intentionally not removed since it would invalidate any existing event log messages.
 func removeService() error {
@@ -157,7 +157,7 @@ func removeService() error {
 	return service.Delete()
 }
 
-// startService attempts to start the evennet service.
+// startService attempts to start the evenet service.
 func startService() error {
 	// Connect to the windows service manager.
 	serviceManager, err := mgr.Connect()

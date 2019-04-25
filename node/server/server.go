@@ -1,11 +1,13 @@
 package server
 
-//go:generate protoc --proto_path=proto --go_out=plugins=grpc:api transaction.proto
-//go:generate protoc --proto_path=proto --go_out=plugins=grpc:api files.proto
-//go:generate protoc --proto_path=proto --go_out=plugins=grpc:api peers.proto
+// please add in alphabetical order
 //go:generate protoc --proto_path=proto --go_out=plugins=grpc:api crypto.proto
 //go:generate protoc --proto_path=proto --go_out=plugins=grpc:api eventransaction.proto
+//go:generate protoc --proto_path=proto --go_out=plugins=grpc:api files.proto
+//go:generate protoc --proto_path=proto --go_out=plugins=grpc:api multichain.proto
+//go:generate protoc --proto_path=proto --go_out=plugins=grpc:api peers.proto
 //go:generate protoc --proto_path=proto --go_out=plugins=grpc:api smartcontract.proto
+//go:generate protoc --proto_path=proto --go_out=plugins=grpc:api transaction.proto
 //go:generate protoc --proto_path=proto --go_out=plugins=grpc:api wallet.proto
 
 import (
@@ -27,17 +29,21 @@ func Run(port int) {
 	}
 
 	var (
+		grpcServer = grpc.NewServer()
+
+		// please add in alphabetical order
 		cryptoHandler      = handlers.Crypto{}
 		eventrHandler      = handlers.EvenTransaction{}
 		filesHandler       = handlers.FilesHandler{}
+		multichainHandler  = handlers.Multichain{}
 		peerHandler        = handlers.PeersHandler{}
 		smartHandler       = handlers.SmartContract{}
 		transactionHandler = handlers.Transaction{}
 		walletHandler      = handlers.Wallet{}
-
-		grpcServer = grpc.NewServer()
 	)
 
+	// please add in alphabetical order
+	api.RegisterBalanceServer(grpcServer, &multichainHandler)
 	api.RegisterCryptoServer(grpcServer, &cryptoHandler)
 	api.RegisterEvenTransactionServer(grpcServer, &eventrHandler)
 	api.RegisterSmartContractServer(grpcServer, &smartHandler)

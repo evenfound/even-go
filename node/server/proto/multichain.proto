@@ -1,0 +1,19 @@
+syntax = "proto3";
+package api;
+
+message AddressMessage {
+    string address = 1;
+}
+
+message AddressesRequest {
+    repeated AddressMessage addresses = 1;
+}
+
+message BalancesResponse {
+    map<string, double> balances = 1;
+}
+
+service Balance {
+    rpc FetchBalance (AddressesRequest) returns (BalancesResponse) {
+    }
+}

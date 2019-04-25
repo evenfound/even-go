@@ -1,19 +1,25 @@
+// Copyright (c) 2018-2019 The Even Foundation developers
+// Use of this source code is governed by an ISC license that can be found in the LICENSE file.
+
 package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/evenfound/even-go/node/core"
 )
 
 type CoreVersion struct {
-	version string
+	s string
 }
 
-func (x *CoreVersion) Execute(args []string) error {
+func (ver *CoreVersion) Execute(args []string) error {
 
-	x.version = core.VERSION
+	ver.s = core.SprintVersion()
 
-	fmt.Printf("Even Nenwork core version %s", x.version)
+	fmt.Println(ver.s)
+	os.Exit(0)
 
 	return nil
 }

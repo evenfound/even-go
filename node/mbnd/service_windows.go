@@ -17,21 +17,21 @@ import (
 
 const (
 	// svcName is the name of mbnd service.
-	svcName = "mbndsvc"
+	svcName = "mbnsvc"
 
 	// svcDisplayName is the service name that will be shown in the windows services list.
 	// Not the svcName is the "real" name which is used to control the service.  This is only for display purposes.
-	svcDisplayName = "mbnd-Service"
+	svcDisplayName = "Multi Blockchain Network Service"
 
 	// svcDesc is the description of the service.
-	svcDesc = "Downloads and stays synchronized with the bitcoin block chain and provides chain services to applications."
+	svcDesc = "Downloads and stays synchronized with the multi-blockchain and provides their services to applications."
 )
-
-// elog is used to send messages to the Windows event log.
-var elog *eventlog.Log
 
 // mbndService houses the main service handler which handles all service updates and launching btcdMain.
 type mbndService struct{}
+
+// elog is used to send messages to the Windows event logger.
+var elog *eventlog.Log
 
 // Execute is the main entry point the winsvc package calls when receiving information from the Windows service control manager.
 // It launches the long-running btcdMain (which is the real meat of mbnd), handles service change requests, and notifies the service control manager of changes.
@@ -70,7 +70,7 @@ loop:
 				shutdownRequestChannel <- struct{}{}
 
 			default:
-				elog.Error(1, fmt.Sprintf("Unexpected control request #%d.", c))
+				elog.Error(1, fmt.Sprintf("Unexpected control Request #%d.", c))
 			}
 
 		//case srvr := <-serverChan:
@@ -136,7 +136,7 @@ func installService() error {
 
 	defer service.Close()
 
-	// Support events to the event log using the standard "standard" Windows EventCreate.exe message file.
+	// Support events to the event logger using the standard "standard" Windows EventCreate.exe message file.
 	// This allows easy logging of custom messages instead of needing to create our own message catalog.
 	eventlog.Remove(svcName)
 	eventsSupported := uint32(eventlog.Error | eventlog.Warning | eventlog.Info)
@@ -146,7 +146,7 @@ func installService() error {
 
 // removeService attempts to uninstall the mbnd service.
 // Typically this should be done by the msi uninstaller, but it is provided here since it can be useful for development.
-// Not the eventlog entry is intentionally not removed since it would invalidate any existing event log messages.
+// Not the eventlog entry is intentionally not removed since it would invalidate any existing event logger messages.
 func removeService() error {
 	// Connect to the windows service manager.
 	serviceManager, err := mgr.Connect()

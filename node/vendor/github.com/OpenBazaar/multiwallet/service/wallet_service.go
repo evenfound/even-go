@@ -12,17 +12,13 @@ import (
 
 	"github.com/OpenBazaar/multiwallet/cache"
 	"github.com/OpenBazaar/multiwallet/keys"
-	laddr "github.com/OpenBazaar/multiwallet/litecoin/address"
 	"github.com/OpenBazaar/multiwallet/model"
 	"github.com/OpenBazaar/multiwallet/util"
-	zaddr "github.com/OpenBazaar/multiwallet/zcash/address"
 	"github.com/OpenBazaar/wallet-interface"
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
-	"github.com/btcsuite/btcd/txscript"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
-	"github.com/cpacia/bchutil"
 	"github.com/op/go-logging"
 )
 
@@ -534,48 +530,6 @@ func (ws *WalletService) getStoredAddresses() map[string]storedAddress {
 			continue
 		}
 		addrs[addr.String()] = storedAddress{addr, false}
-	}
-	watchScripts, err := ws.db.WatchedScripts().GetAll()
-	if err != nil {
-		Log.Errorf("Error loading %s watch scripts: %s", ws.coinType.String(), err.Error())
-	} else {
-		for _, script := range watchScripts {
-			switch ws.coinType {
-			case wallet.Bitcoin:
-				_, addrSlice, _, err := txscript.ExtractPkScriptAddrs(script, ws.params)
-				if err != nil {
-					Log.Errorf("Error serializing %s script: %s", ws.coinType.String(), err.Error())
-					continue
-				}
-				if len(addrs) == 0 {
-					Log.Errorf("Error serializing %s script: %s", ws.coinType.String(), "Unknown script")
-					continue
-				}
-				addr := addrSlice[0]
-				addrs[addr.String()] = storedAddress{addr, true}
-			case wallet.BitcoinCash:
-				addr, err := bchutil.ExtractPkScriptAddrs(script, ws.params)
-				if err != nil {
-					Log.Errorf("Error serializing %s script: %s", ws.coinType.String(), err.Error())
-					continue
-				}
-				addrs[addr.String()] = storedAddress{addr, true}
-			case wallet.Zcash:
-				addr, err := zaddr.ExtractPkScriptAddrs(script, ws.params)
-				if err != nil {
-					Log.Errorf("Error serializing %s script: %s", ws.coinType.String(), err.Error())
-					continue
-				}
-				addrs[addr.String()] = storedAddress{addr, true}
-			case wallet.Litecoin:
-				addr, err := laddr.ExtractPkScriptAddrs(script, ws.params)
-				if err != nil {
-					Log.Errorf("Error serializing %s script: %s", ws.coinType.String(), err.Error())
-					continue
-				}
-				addrs[addr.String()] = storedAddress{addr, true}
-			}
-		}
 	}
 	return addrs
 }

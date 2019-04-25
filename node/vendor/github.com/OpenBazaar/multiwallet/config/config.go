@@ -115,62 +115,6 @@ func NewDefaultConfig(coinTypes map[wallet.CoinType]bool, params *chaincfg.Param
 		}
 		cfg.Coins = append(cfg.Coins, btcCfg)
 	}
-	if coinTypes[wallet.BitcoinCash] {
-		var apiEndpoints []string
-		if !testnet {
-			apiEndpoints = []string{
-				"https://bch.blockbook.api.openbazaar.org/api",
-				// temporarily deprecated Insight endpoints
-				//"https://bitcoincash.blockexplorer.com/api",
-			}
-		} else {
-			apiEndpoints = []string{
-				"https://tbch.blockbook.api.openbazaar.org/api",
-				// temporarily deprecated Insight endpoints
-				//"https://test-bch-insight.bitpay.com/api",
-			}
-		}
-		db, _ := mockDB.GetDatastoreForWallet(wallet.BitcoinCash)
-		bchCfg := CoinConfig{
-			CoinType:   wallet.BitcoinCash,
-			FeeAPI:     "",
-			LowFee:     140,
-			MediumFee:  160,
-			HighFee:    180,
-			MaxFee:     2000,
-			ClientAPIs: apiEndpoints,
-			DB:         db,
-		}
-		cfg.Coins = append(cfg.Coins, bchCfg)
-	}
-	if coinTypes[wallet.Zcash] {
-		var apiEndpoints []string
-		if !testnet {
-			apiEndpoints = []string{
-				"https://zec.blockbook.api.openbazaar.org/api",
-				// temporarily deprecated Insight endpoints
-				//"https://zcashnetwork.info/api",
-			}
-		} else {
-			apiEndpoints = []string{
-				"https://tzec.blockbook.api.openbazaar.org/api",
-				// temporarily deprecated Insight endpoints
-				//"https://explorer.testnet.z.cash/api",
-			}
-		}
-		db, _ := mockDB.GetDatastoreForWallet(wallet.Zcash)
-		zecCfg := CoinConfig{
-			CoinType:   wallet.Zcash,
-			FeeAPI:     "",
-			LowFee:     140,
-			MediumFee:  160,
-			HighFee:    180,
-			MaxFee:     2000,
-			ClientAPIs: apiEndpoints,
-			DB:         db,
-		}
-		cfg.Coins = append(cfg.Coins, zecCfg)
-	}
 	if coinTypes[wallet.Litecoin] {
 		var apiEndpoints []string
 		if !testnet {

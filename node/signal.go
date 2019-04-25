@@ -1,10 +1,10 @@
 // Copyright (c) 2013-2016 The btcsuite developers
+// Copyright (C) 2017-2019 The Even Network Developers
 // Use of this source code is governed by an ISC license that can be found in the LICENSE file.
 
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
 )
@@ -31,10 +31,10 @@ func interruptListener() <-chan struct{} {
 		// Listen for initial shutdown signal and close the returned channel to notify the caller.
 		select {
 		case sig := <-interruptChannel:
-			fmt.Printf("\n[INF] SGNL: Received signal (%s).\n", sig)
+			logger.Infof("Received signal (%s).", sig)
 
 		case <-shutdownRequestChannel:
-			fmt.Println("\n[INF] SGNL: Shutdown requested. Shutting down...")
+			logger.Info("Shutdown requested. Shutting down...")
 		}
 
 		close(c)
@@ -43,10 +43,10 @@ func interruptListener() <-chan struct{} {
 		for {
 			select {
 			case sig := <-interruptChannel:
-				fmt.Printf("[INF] SGNL: Received signal (%s). Already shutting down.\n", sig)
+				logger.Infof("Received signal (%s). Already shutting down.", sig)
 
 			case <-shutdownRequestChannel:
-				fmt.Println("[INF] SGNL: Shutdown requested. Already shutting down.")
+				logger.Info("Shutdown requested. Already shutting down.")
 			}
 		}
 	}()

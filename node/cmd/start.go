@@ -5,6 +5,21 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"net"
+	"net/http"
+	"os"
+	"path"
+	"path/filepath"
+	"sort"
+	"strconv"
+	"strings"
+	"syscall"
+	"time"
+
+	"github.com/evenfound/even-go/node/mbnd"
+	"github.com/evenfound/even-go/node/server"
 	"gx/ipfs/QmNSWW3Sb4eju4o2djPQ1L1c2Zj9XN9sMYJL8r1cbxdc6b/go-addr-util"
 	p2pbhost "gx/ipfs/QmNh1kGFFdsPu79KNSaL4NUKUPb4Eiz4KHdMtFY6664RDp/go-libp2p/p2p/host/basic"
 	p2phost "gx/ipfs/QmNmJZL7FQySMtE2BQuLMuZg2EB2CLEunJJUSVSc9YnnbV/go-libp2p-host"
@@ -25,21 +40,6 @@ import (
 	"gx/ipfs/QmZoWKhxUmZ2seW4BzX6fJkNR8hh9PsGModr7q171yq2SS/go-libp2p-peer"
 	"gx/ipfs/QmdeBtQGXjSt7cb97nx9JyLHHv5va2LyEAue7Q5tDFzpLy/go-libp2p-metrics"
 	oniontp "gx/ipfs/Qmdh86HZtNap3ktHvjyiVhBnp4uRpQWMCRAASieh8fDH8J/go-onion-transport"
-	"io"
-	"io/ioutil"
-	"net"
-	"net/http"
-	"os"
-	"path"
-	"path/filepath"
-	"sort"
-	"strconv"
-	"strings"
-	"syscall"
-	"time"
-
-	"github.com/evenfound/even-go/node/mbnd"
-	"github.com/evenfound/even-go/node/server"
 
 	bstk "github.com/OpenBazaar/go-blockstackclient"
 	wi "github.com/OpenBazaar/wallet-interface"
@@ -54,14 +54,11 @@ import (
 	"github.com/evenfound/even-go/node/net/service"
 	"github.com/evenfound/even-go/node/repo"
 	"github.com/evenfound/even-go/node/repo/db"
-	"github.com/evenfound/even-go/node/repo/migrations"
 	"github.com/evenfound/even-go/node/schema"
 	sto "github.com/evenfound/even-go/node/storage"
 	"github.com/evenfound/even-go/node/storage/dropbox"
 	"github.com/evenfound/even-go/node/storage/selfhosted"
 	"github.com/evenfound/even-go/node/wallet"
-	lis "github.com/evenfound/even-go/node/wallet/listeners"
-	"github.com/evenfound/even-go/node/wallet/resync"
 	"github.com/fatih/color"
 	"github.com/ipfs/go-ipfs/commands"
 	ipfscore "github.com/ipfs/go-ipfs/core"
@@ -79,15 +76,13 @@ import (
 	"golang.org/x/net/proxy"
 )
 
-var stdoutLogFormat = logging.MustStringFormatter(
-	`%{color:reset}%{color}%{time:15:04:05.000} [%{level}] [%{module}/%{shortfunc}] %{message}`,
-)
-
-var fileLogFormat = logging.MustStringFormatter(
-	`%{time:15:04:05.000} [%{level}] [%{module}/%{shortfunc}] %{message}`,
-)
-
 var (
+	stdoutLogFormat = logging.MustStringFormatter(
+		`%{color:reset}%{color}%{time:15:04:05.000} [%{level}] [%{module}/%{shortfunc}] %{message}`,
+	)
+	fileLogFormat = logging.MustStringFormatter(
+		`%{time:15:04:05.000} [%{level}] [%{module}/%{shortfunc}] %{message}`,
+	)
 	ErrNoGateways = errors.New("No gateway addresses configured ")
 )
 
@@ -106,13 +101,10 @@ type Start struct {
 	TorPassword          string   `long:"torpassword" description:"Set the tor control password. This will override the tor password in the config."`
 	Tor                  bool     `long:"tor" description:"Automatically configure the daemon to run as a Tor hidden service and use Tor exclusively. Requires Tor to be running."`
 	DualStack            bool     `long:"dualstack" description:"Automatically configure the daemon to run as a Tor hidden service IN ADDITION to using the clear internet. Requires Tor to be running. WARNING: this mode is not private"`
-	DisableWallet        bool     `long:"disablewallet" description:"disable the wallet functionality of the node"`
 	DisableExchangeRates bool     `long:"disableexchangerates" description:"disable the exchange rate service to prevent api queries"`
 	Storage              string   `long:"storage" description:"set the outgoing message storage option [self-hosted, dropbox] default=self-hosted"`
-	BitcoinCash          bool     `long:"bitcoincash" description:"use a Bitcoin Cash wallet in a dedicated data directory"`
-	ZCash                string   `long:"zcash" description:"use a ZCash wallet in a dedicated data directory. To use this you must pass in the location of the zcashd binary."`
 	RpcPort              int      `long:"rpcport" description:"Listening for  RPC <port> "`
-	Mbndstart            bool     `long:"mbnd" description:"Will start a multi blockchain demon with a multi-wallet functionality for supported tokens of blockchain-networks."`
+	MbndStart            bool     `long:"mbnd" description:"Will start a multi blockchain demon with a multi-wallet functionality for supported tokens of blockchain-networks."`
 }
 
 func (x *Start) Execute(args []string) error {
@@ -131,19 +123,15 @@ func (x *Start) Execute(args []string) error {
 	if x.Testnet || x.Regtest {
 		isTestnet = true
 	}
-	if x.BitcoinCash && x.ZCash != "" {
-		return errors.New("Bitcoin Cash and ZCash cannot be used at the same time")
-	}
 
 	var rpcPort = 8090
-
 	if x.RpcPort != 0 {
 		rpcPort = x.RpcPort
 	}
 
 	go server.Run(rpcPort)
 
-	if x.Mbndstart {
+	if x.MbndStart {
 		go mbnd.Start()
 	}
 
@@ -151,11 +139,6 @@ func (x *Start) Execute(args []string) error {
 	repoPath, err := repo.GetRepoPath(isTestnet)
 	if err != nil {
 		return err
-	}
-	if x.BitcoinCash {
-		repoPath += "-bitcoincash"
-	} else if x.ZCash != "" {
-		repoPath += "-zcash"
 	}
 	if x.DataDir != "" {
 		repoPath = x.DataDir
@@ -223,15 +206,8 @@ func (x *Start) Execute(args []string) error {
 		return err
 	}
 
-	ct := wi.Bitcoin
-	if x.BitcoinCash || strings.Contains(repoPath, "-bitcoincash") {
-		ct = wi.BitcoinCash
-	} else if x.ZCash != "" || strings.Contains(repoPath, "-zcash") {
-		ct = wi.Zcash
-	}
-
-	migrations.WalletCoinType = ct
-	sqliteDB, err := InitializeRepo(repoPath, x.Password, "", isTestnet, time.Now(), ct)
+	// Init repo with sqlite db
+	sqliteDB, err := InitializeRepo(repoPath, x.Password, "", isTestnet, time.Now(), wi.Bitcoin)
 	if err != nil && err != repo.ErrRepoExists {
 		return err
 	}
@@ -252,7 +228,7 @@ func (x *Start) Execute(args []string) error {
 		bytePassword, _ := terminal.ReadPassword(int(syscall.Stdin))
 		fmt.Println("")
 		pw := string(bytePassword)
-		sqliteDB, err = InitializeRepo(repoPath, pw, "", isTestnet, time.Now(), ct)
+		sqliteDB, err = InitializeRepo(repoPath, pw, "", isTestnet, time.Now(), wi.Bitcoin)
 		if err != nil && err != repo.ErrRepoExists {
 			return err
 		}
@@ -260,12 +236,6 @@ func (x *Start) Execute(args []string) error {
 			log.Error("Invalid password")
 			os.Exit(3)
 		}
-	}
-
-	// Get creation date. Ignore the error and use a default timestamp.
-	creationDate, err := sqliteDB.Config().GetCreationDate()
-	if err != nil {
-		log.Error("error loading wallet creation date from database - using unix epoch.")
 	}
 
 	// Load config
@@ -303,11 +273,6 @@ func (x *Start) Execute(args []string) error {
 	republishInterval, err := schema.GetRepublishInterval(configFile)
 	if err != nil {
 		log.Error("scan republish interval config:", err)
-		return err
-	}
-	walletsConfig, err := schema.GetWalletsConfig(configFile)
-	if err != nil {
-		log.Error("scan wallets config:", err)
 		return err
 	}
 
@@ -549,36 +514,10 @@ func (x *Start) Execute(args []string) error {
 	}
 
 	// Multiwallet setup
-	var walletLogWriter io.Writer
-	if x.NoLogFiles {
-		walletLogWriter = &DummyWriter{}
-	} else {
-		walletLogWriter = &lumberjack.Logger{
-			Filename:   path.Join(repoPath, "logs", "wallet.log"),
-			MaxSize:    10, // Megabytes
-			MaxBackups: 3,
-			MaxAge:     30, // Days
-		}
-	}
-	walletLogFile := logging.NewLogBackend(walletLogWriter, "", 0)
-	walletFileFormatter := logging.NewBackendFormatter(walletLogFile, fileLogFormat)
-	walletLogger := logging.MultiLogger(walletFileFormatter)
-	multiwalletConfig := &wallet.WalletConfig{
-		ConfigFile:           walletsConfig,
-		DB:                   sqliteDB.DB(),
-		Params:               &params,
-		RepoPath:             repoPath,
-		Logger:               walletLogger,
-		Proxy:                torDialer,
-		WalletCreationDate:   creationDate,
-		Mnemonic:             mn,
-		DisableExchangeRates: x.DisableExchangeRates,
-	}
-	mw, err := wallet.NewMultiWallet(multiwalletConfig)
+	mw, err := wallet.NewMultiWallet()
 	if err != nil {
 		return err
 	}
-	resyncManager := resync.NewResyncManager(sqliteDB.Sales(), mw)
 
 	// Master key setup
 	seed := bip39.NewSeed(mn, "")
@@ -766,32 +705,8 @@ func (x *Start) Execute(args []string) error {
 	}
 
 	go func() {
-		if !x.DisableWallet {
-			// If the wallet doesn't allow resyncing from a specific height to scan for unpaid orders, wait for all messages to process before continuing.
-			if resyncManager == nil {
-				core.Node.WaitForMessageRetrieverCompletion()
-			}
-			TL := lis.NewTransactionListener(core.Node.Multiwallet, core.Node.Datastore, core.Node.Broadcast)
-			for ct, wal := range mw {
-				WL := lis.NewWalletListener(core.Node.Datastore, core.Node.Broadcast, ct)
-				wal.AddTransactionListener(WL.OnTransactionReceived)
-				wal.AddTransactionListener(TL.OnTransactionReceived)
-			}
-			log.Info("Starting multiwallet...")
-			su := wallet.NewStatusUpdater(mw, core.Node.Broadcast, nd.Context())
-			go su.Start()
-			go mw.Start()
-			if resyncManager != nil {
-				go resyncManager.Start()
-				go func() {
-					core.Node.WaitForMessageRetrieverCompletion()
-					resyncManager.CheckUnfunded()
-				}()
-			}
-		}
 		<-dht.DefaultBootstrapConfig.DoneChan
 		core.Node.Service = service.New(core.Node, sqliteDB)
-		fmt.Println("Node.Service is ready")
 
 		core.Node.StartMessageRetriever()
 		core.Node.StartPointerRepublisher()
@@ -1032,6 +947,7 @@ func InitializeRepo(dataDir, password, mnemonic string, testnet bool, creationDa
 	if err != nil {
 		return sqliteDB, err
 	}
+
 	return sqliteDB, nil
 }
 
@@ -1068,9 +984,8 @@ func printSplashScreen(verbose bool) {
 
 	blue.DisableColor()
 	white.DisableColor()
-	fmt.Println("")
-	fmt.Println("EvenNetwork Server v" + core.VERSION)
+	fmt.Println(core.SprintVersion())
 	if !verbose {
-		fmt.Println("[Press Ctrl+C to exit]")
+		fmt.Println("[ Press Ctrl+C to exit ]")
 	}
 }
