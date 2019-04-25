@@ -78,7 +78,11 @@ func newConfigParser(cfg *config, so *serviceOptions, options flags.Options) *fl
 	parser := flags.NewParser(cfg, options)
 
 	if runtime.GOOS == "windows" {
-		parser.AddGroup("Service Options", "Service Options", so)
+		var err error
+		_, err = parser.AddGroup("Service Options", "Service Options", so)
+		if err != nil {
+			return nil
+		}
 	}
 
 	return parser

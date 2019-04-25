@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -19,8 +20,11 @@ import (
 var winServiceMain func() (bool, error)
 
 type (
+	// Stop represents stop.
 	Stop struct{}
+	// Restart represents restart.
 	Restart struct{}
+	// Options contains global node options.
 	Options struct {
 		Version bool `short:"v" long:"version" description:"Print the version number and exit"`
 	}
@@ -114,9 +118,19 @@ func worker() error {
 
 			//core.Node.Multiwallet.Close()
 			//fmt.Println("[INF] EVNET: Multi-wallet closed...")
+			core.OfflineMessageWaitGroup.Wait()
+			core.PublishLock.Unlock()
+			core.Node.Datastore.Close()
+			fmt.Println("[INF] EVNET: Data-store unlocked and closed...")
+			err = os.Remove(filepath.Join(core.Node.RepoPath, fsrepo.LockFile))
+			if err != nil {
+				log.Println(err)
+			}
 
-			core.Node.IpfsNode.Close()
-
+			err = core.Node.IpfsNode.Close()
+			if err != nil {
+				log.Println(err)
+			}
 			fmt.Println("[INF] EVNET: IPFS-Node closed...")
 
 			fmt.Println("\n[EXIT] EVNET: Even Network shutdown completed.")

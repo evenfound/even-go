@@ -13,6 +13,7 @@ func addBuiltinModules(env *Environment, s *script.Script) {
 	// Script does not include any modules by default
 	mods.AddBuiltinModule("times", stdlib.BuiltinModules["times"])
 
+	// Custom module even
 	mods.AddBuiltinModule("even", map[string]objects.Object{
 		"println": &objects.UserFunction{Name: "println", Value: func(args ...objects.Object) (ret objects.Object, err error) {
 			msg, _ := objects.ToString(args[0])
@@ -22,9 +23,31 @@ func addBuiltinModules(env *Environment, s *script.Script) {
 			str, _ := objects.ToString(args[0])
 			return &objects.Int{Value: int64(env.addString(str))}, nil
 		}},
-		"hashMessage": &objects.UserFunction{Name: "hashMessage", Value: func(args ...objects.Object) (ret objects.Object, err error) {
+		"hash": &objects.UserFunction{Name: "hash", Value: func(args ...objects.Object) (ret objects.Object, err error) {
 			msg, _ := objects.ToString(args[0])
-			return &objects.String{Value: env.evenHashMessage(msg)}, nil
+			return &objects.String{Value: env.evenHash(msg)}, nil
+		}},
+		"sign": &objects.UserFunction{Name: "sign", Value: func(args ...objects.Object) (ret objects.Object, err error) {
+			msg, _ := objects.ToString(args[0])
+			privkey, _ := objects.ToString(args[1])
+			signature, err := env.evenSign(msg, privkey)
+			if err != nil {
+				return nil, err
+			}
+			return &objects.String{Value: signature}, nil
+		}},
+		"verify": &objects.UserFunction{Name: "verify", Value: func(args ...objects.Object) (ret objects.Object, err error) {
+			msg, _ := objects.ToString(args[0])
+			signature, _ := objects.ToString(args[1])
+			pubkey, _ := objects.ToString(args[2])
+			valid, err := env.evenVerify(msg, signature, pubkey)
+			if err != nil {
+				return nil, err
+			}
+			if valid {
+				return objects.TrueValue, nil
+			}
+			return objects.FalseValue, nil
 		}},
 		"createWallet": &objects.UserFunction{Name: "createWallet", Value: func(args ...objects.Object) (ret objects.Object, err error) {
 			name, _ := objects.ToString(args[0])
@@ -37,6 +60,7 @@ func addBuiltinModules(env *Environment, s *script.Script) {
 		}},
 	})
 
+	// Custom module wallet
 	mods.AddBuiltinModule("wallet", map[string]objects.Object{
 		"save": &objects.UserFunction{Name: "save", Value: func(args ...objects.Object) (ret objects.Object, err error) {
 			w, _ := objects.ToInt64(args[0])

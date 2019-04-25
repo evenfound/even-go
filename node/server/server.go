@@ -3,7 +3,9 @@ package server
 //go:generate protoc --proto_path=proto --go_out=plugins=grpc:api transaction.proto
 //go:generate protoc --proto_path=proto --go_out=plugins=grpc:api files.proto
 //go:generate protoc --proto_path=proto --go_out=plugins=grpc:api peers.proto
+//go:generate protoc --proto_path=proto --go_out=plugins=grpc:api crypto.proto
 //go:generate protoc --proto_path=proto --go_out=plugins=grpc:api smartcontract.proto
+//go:generate protoc --proto_path=proto --go_out=plugins=grpc:api wallet.proto
 
 import (
 	"fmt"
@@ -24,17 +26,22 @@ func Run(port int) {
 	}
 
 	var (
+		cryptoHandler = handlers.Crypto{}
+		smartHandler  = handlers.SmartContract{}
+		filesHandler = handlers.FilesHandler{}
+		peerHandler  = handlers.PeersHandler{}
 		transactionHandler = handlers.Transaction{}
-		smartHandler       = handlers.SmartContract{}
-		filesHandler       = handlers.FilesHandler{}
-		peerHandler        = handlers.PeersHandler{}
-		grpcServer         = grpc.NewServer()
+		walletHandler      = handlers.Wallet{}
+
+		grpcServer = grpc.NewServer()
 	)
 
-	api.RegisterTransactionServer(grpcServer, &transactionHandler)
+	api.RegisterCryptoServer(grpcServer, &cryptoHandler)
 	api.RegisterSmartContractServer(grpcServer, &smartHandler)
 	api.RegisterFileServiceServer(grpcServer, &filesHandler)
 	api.RegisterPeersServer(grpcServer, &peerHandler)
+	api.RegisterTransactionServer(grpcServer, &transactionHandler)
+	api.RegisterWalletServer(grpcServer, &walletHandler)
 
 	// start the server
 	if err := grpcServer.Serve(lis); err != nil {
