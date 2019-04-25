@@ -101,33 +101,40 @@ func worker() error {
 
 		fmt.Println("[INF] EVNET: Gracefully shutting down the Even Network...")
 
-		if core.Node.MessageRetriever != nil {
-			core.Node.RecordAgingNotifier.Stop()
-			fmt.Println("[INF] EVNET: RecordAgingNotifier stopped...")
-			close(core.Node.MessageRetriever.DoneChan)
-			core.Node.MessageRetriever.Wait()
-			fmt.Println("[INF] EVNET: MessageRetriever closed...")
+		if core.Node != nil {
+			if core.Node.MessageRetriever != nil {
+				core.Node.RecordAgingNotifier.Stop()
+				fmt.Println("[INF] EVNET: RecordAgingNotifier stopped...")
+				close(core.Node.MessageRetriever.DoneChan)
+				core.Node.MessageRetriever.Wait()
+				fmt.Println("[INF] EVNET: MessageRetriever closed...")
+			}
+
+			core.OfflineMessageWaitGroup.Wait()
+			core.PublishLock.Unlock()
+			core.Node.Datastore.Close()
+			fmt.Println("[INF] EVNET: Data-store unlocked and closed...")
+			os.Remove(filepath.Join(core.Node.RepoPath, fsrepo.LockFile))
+
+			//core.Node.Multiwallet.Close()
+			//fmt.Println("[INF] EVNET: Multi-wallet closed...")
+			core.OfflineMessageWaitGroup.Wait()
+			core.PublishLock.Unlock()
+			core.Node.Datastore.Close()
+			fmt.Println("[INF] EVNET: Data-store unlocked and closed...")
+			err = os.Remove(filepath.Join(core.Node.RepoPath, fsrepo.LockFile))
+			if err != nil {
+				log.Println(err)
+			}
+
+			err = core.Node.IpfsNode.Close()
+			if err != nil {
+				log.Println(err)
+			}
+			fmt.Println("[INF] EVNET: IPFS-Node closed...")
+
+			fmt.Println("\n[EXIT] EVNET: Even Network shutdown completed.")
 		}
-
-		core.OfflineMessageWaitGroup.Wait()
-		core.PublishLock.Unlock()
-		core.Node.Datastore.Close()
-		fmt.Println("[INF] EVNET: Data-store unlocked and closed...")
-		err = os.Remove(filepath.Join(core.Node.RepoPath, fsrepo.LockFile))
-		if err != nil {
-			log.Println(err)
-		}
-
-		//core.Node.Multiwallet.Close()
-		//fmt.Println("[INF] EVNET: Multi-wallet closed...")
-
-		err = core.Node.IpfsNode.Close()
-		if err != nil {
-			log.Println(err)
-		}
-		fmt.Println("[INF] EVNET: IPFS-Node closed...")
-
-		fmt.Println("\n[EXIT] EVNET: Even Network shutdown completed.")
 
 	}()
 

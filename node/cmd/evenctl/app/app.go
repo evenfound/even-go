@@ -23,6 +23,7 @@ func Close() {
 }
 
 // Run starts the application.
+
 func Run() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -56,6 +57,8 @@ func Run() (err error) {
 		config.Command("info", "show some information about wallet", cmdWalletInfo)
 	})
 
+	//TODO create cmd command for files and peers
+
 	return a.Run(os.Args)
 }
 
@@ -85,7 +88,7 @@ func cmdTestVerify(c *cli.Cmd) {
 	var (
 		message   = c.StringArg("MESSAGE", "", "message")
 		signature = c.StringOpt("s signature", "", "signature")
-		pubkey = c.StringOpt("k pubkey", "", "public key")
+		pubkey    = c.StringOpt("k pubkey", "", "public key")
 	)
 	c.Spec = "MESSAGE --signature ... --pubkey ..."
 	c.Action = func() {

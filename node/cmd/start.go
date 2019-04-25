@@ -717,8 +717,6 @@ func (x *Start) Execute(args []string) error {
 	}
 	core.PublishLock.Lock()
 
-	return nil
-
 	// Offline messaging storage
 	var storage sto.OfflineMessagingStorage
 	if x.Storage == "self-hosted" || x.Storage == "" {

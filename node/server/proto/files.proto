@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package api;
+
+message FileRequest {
+    string cid = 1;
+    string output = 2;
+}
+
+message FileResponse {
+    bool status = 1;
+}
+
+message FileCreateRequest {
+    string fname = 2;
+    string source = 3;
+}
+
+message FileMkdirRequest {
+    string dirName = 1;
+}
+
+
+message FileDataResponse {
+    string cid = 1;
+}
+
+
+message FileStateRequest {
+    string path = 1;
+}
+
+message FileStatResponse {
+    string cid = 1;
+    int64 blockSize = 2;
+    int64 cumulativeSize = 3;
+    int64 dataSize = 4;
+    int64 numLinks = 5;
+    int64 linksSize = 6;
+
+    enum Type {
+        Directory = 0;
+        File = 1;
+    }
+
+    Type type = 7;
+}
+
+service FileService {
+    rpc GetFileByHash (FileRequest) returns (FileResponse) {
+    };
+
+    rpc Create (FileCreateRequest) returns (FileResponse) {
+    };
+
+
+    rpc Mkdir (FileMkdirRequest) returns (FileDataResponse) {
+    };
+
+    rpc Stat (FileStateRequest) returns (FileStatResponse) {
+    };
+}

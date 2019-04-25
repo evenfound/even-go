@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package api;
+
+message PeerEmptyRequest {
+
+}
+
+message PeerListResponse {
+    repeated string peers = 1;
+}
+
+message PeerSendStoreRequest {
+    string cid = 1;
+}
+
+
+service Peers {
+
+    rpc List (PeerEmptyRequest) returns (PeerListResponse) {
+    };
+
+    rpc SendStore (PeerSendStoreRequest) returns (PeerListResponse) {
+    };
+}
