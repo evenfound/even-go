@@ -1,0 +1,32 @@
+syntax = "proto3";
+package api;
+
+message Addrlist {
+
+    message Address {
+        string address = 1;
+    }
+
+    repeated Address addresses = 1;
+}
+
+message BalancesRequest {
+
+    enum Network {
+        testnet = 0;
+        mainnet = 1;
+    }
+
+    string token = 1;
+    Network network = 2;
+    Addrlist addrlist = 3;
+}
+
+message BalancesResponse {
+    map<string, double> balances = 1;
+}
+
+service Balance {
+    rpc FetchBalance (BalancesRequest) returns (BalancesResponse) {
+    }
+}
