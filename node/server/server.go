@@ -1,6 +1,8 @@
 package server
 
 //go:generate protoc --proto_path=proto --go_out=plugins=grpc:api transaction.proto
+//go:generate protoc --proto_path=proto --go_out=plugins=grpc:api files.proto
+//go:generate protoc --proto_path=proto --go_out=plugins=grpc:api peers.proto
 //go:generate protoc --proto_path=proto --go_out=plugins=grpc:api smartcontract.proto
 
 import (
@@ -24,11 +26,15 @@ func Run(port int) {
 	var (
 		transactionHandler = handlers.Transaction{}
 		smartHandler       = handlers.SmartContract{}
+		filesHandler       = handlers.FilesHandler{}
+		peerHandler        = handlers.PeersHandler{}
 		grpcServer         = grpc.NewServer()
 	)
 
 	api.RegisterTransactionServer(grpcServer, &transactionHandler)
 	api.RegisterSmartContractServer(grpcServer, &smartHandler)
+	api.RegisterFileServiceServer(grpcServer, &filesHandler)
+	api.RegisterPeersServer(grpcServer, &peerHandler)
 
 	// start the server
 	if err := grpcServer.Serve(lis); err != nil {

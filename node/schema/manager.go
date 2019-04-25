@@ -533,6 +533,12 @@ func MustDefaultConfig() *config.Config {
 			IPNS: "/ipns",
 		},
 
+		Experimental: config.Experiments{
+			FilestoreEnabled:     true,
+			Libp2pStreamMounting: true,
+			ShardingEnabled:      true,
+		},
+
 		Ipns: config.Ipns{
 			ResolveCacheSize:   128,
 			RecordLifetime:     "7d",

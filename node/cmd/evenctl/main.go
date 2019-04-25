@@ -1,7 +1,5 @@
 package main
 
-//go:generate protoc --proto_path=../../server/proto --go_out=plugins=grpc:rpc/api smartcontract.proto
-
 import (
 	"log"
 

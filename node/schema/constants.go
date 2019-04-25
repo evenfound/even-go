@@ -65,13 +65,15 @@ var (
 	DataPushNodes = []string{DataPushNodeOne, DataPushNodeTwo, DataPushNodeThree}
 
 	BootstrapAddressesDefault = []string{
-		BootstrapNodeDefault_LeMarcheSerpette,
-		BootstrapNodeDefault_BrixtonVillage,
-		BootstrapNodeDefault_Johari,
+		//"/ip4/192.168.192.2/tcp/4001/ipfs/QmT6YhQ1t6MSkMCMm7Wf1EkhcSctHTLXYjn82eZAnRmYUR",
+		//BootstrapNodeDefault_LeMarcheSerpette,
+		//BootstrapNodeDefault_BrixtonVillage,
+		//BootstrapNodeDefault_Johari,
 	}
 	BootstrapAddressesTestnet = []string{
-		BootstrapNodeTestnet_BrooklynFlea,
-		BootstrapNodeTestnet_Shipshewana,
+		//"/ip4/192.168.192.2/tcp/4001/ipfs/QmT6YhQ1t6MSkMCMm7Wf1EkhcSctHTLXYjn82eZAnRmYUR",
+		//BootstrapNodeTestnet_BrooklynFlea,
+		//BootstrapNodeTestnet_Shipshewana,
 	}
 )
 
