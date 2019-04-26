@@ -13,7 +13,9 @@ type PeerCMD struct {
 	stub api.PeersClient
 }
 
-func NewPeerCMD(ctx context.Context) (*PeerCMD, error) {
+func NewPeerCMD() (*PeerCMD, error) {
+
+	ctx := context.Background()
 
 	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
 

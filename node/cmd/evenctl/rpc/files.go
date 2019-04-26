@@ -68,17 +68,18 @@ func (cmd *FileCMD) Mkdir(dirName string) error {
 
 }
 
-
-func (cmd *FileCMD) Create(source, destination string) error {
+func (cmd *FileCMD) Create(fname, source string) error {
 
 	req := &api.FileCreateRequest{
-		Fname:  destination,
+		Fname:  fname,
 		Source: source,
 	}
 
 	_, err := cmd.stub.Create(cmd.ctx, req)
 
-	fmt.Println(err)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
