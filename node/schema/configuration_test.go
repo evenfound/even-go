@@ -220,7 +220,7 @@ func configFixture() []byte {
     "/ip4/139.59.6.222/tcp/4001/ipfs/QmPZkv392E7VxumGSugQDEpfk6bHxfv271HTdVvdUu5Sod"
   ],
   "DataSharing": {
-    "AcceptStoreRequests": false,
+    "AcceptStoreRequests": true,
     "PushTo": [
       "QmZbLxbrPfGKjhFPwv9g7PkT5jL5DzQ8mF3iioByWMAprj",
       "QmPZkv392E7VxumGSugQDEpfk6bHxfv271HTdVvdUu5Sod"
@@ -267,9 +267,9 @@ func configFixture() []byte {
   },
   "Dropbox-api-token": "dropbox123",
   "Experimental": {
-    "FilestoreEnabled": false,
-    "Libp2pStreamMounting": false,
-    "ShardingEnabled": false
+    "FilestoreEnabled": true,
+    "Libp2pStreamMounting": true,
+    "ShardingEnabled": true
   },
   "Gateway": {
     "HTTPHeaders": null,

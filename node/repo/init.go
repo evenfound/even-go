@@ -13,8 +13,8 @@ import (
 	"github.com/ipfs/go-ipfs/core"
 	"github.com/ipfs/go-ipfs/namesys"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
-	logging "github.com/op/go-logging"
-	bip39 "github.com/tyler-smith/go-bip39"
+	"github.com/op/go-logging"
+	"github.com/tyler-smith/go-bip39"
 )
 
 const RepoVersion = "17"
@@ -68,11 +68,12 @@ func DoInit(repoRoot string, nBitsForKeypair int, testnet bool, password string,
 		return err
 	}
 
+	conf.Identity = identity
+
 	log.Infof("Initializing EvenNetwork node at %s\n", repoRoot)
 	if err := fsrepo.Init(repoRoot, conf); err != nil {
 		return err
 	}
-	conf.Identity = identity
 
 	if err := addConfigExtensions(repoRoot); err != nil {
 		return err
@@ -166,7 +167,7 @@ func addConfigExtensions(repoRoot string) error {
 		}
 
 		ds = schema.DataSharing{
-			AcceptStoreRequests: false,
+			AcceptStoreRequests: true,
 			PushTo:              schema.DataPushNodes,
 		}
 

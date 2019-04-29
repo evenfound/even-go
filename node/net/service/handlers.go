@@ -1482,6 +1482,13 @@ func (service *OpenBazaarService) handleStore(pid peer.ID, pmes *pb.Message, opt
 		MessageType: pb.Message_STORE,
 		Payload:     a,
 	}
+
+	err = core.ProcessMessage(m)
+
+	if err != nil {
+		log.Errorf("Error when trying to process message: %v", err)
+	}
+
 	return m, nil
 }
 

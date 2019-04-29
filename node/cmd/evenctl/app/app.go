@@ -14,6 +14,9 @@ const (
 	accountSpec = "--name ... --password ... --account ..."
 )
 
+var fcmd, _ = rpc.NewFileCMD()
+var pcmd, _ = rpc.NewPeerCMD()
+
 // Init initializes the application.
 func Init() {
 }
@@ -59,6 +62,20 @@ func Run() (err error) {
 			config.Command("newreg", "create initial transaction", cmdWalletTxNewReg)
 		})
 	})
+
+	a.Command("file", "manage files", func(cmd *cli.Cmd) {
+		cmd.Command("create", "create new file", cmdCreateFile)
+		cmd.Command("mkdir", "create new directory", cmdFilesMkdir)
+		cmd.Command("find", "find file by hash", cmdFileFind)
+		cmd.Command("stat", "file stat information", cmdFileStat)
+	})
+
+	a.Command("peer", "manage peers", func(cmd *cli.Cmd) {
+		cmd.Command("list", "peer list", cmdPeerList)
+		cmd.Command("send", "send store to peers", cmdPeerSend)
+	})
+
+	//TODO create cmd command for files and peers
 
 	return a.Run(os.Args)
 }
@@ -238,5 +255,82 @@ func cmdWalletTxNewReg(c *cli.Cmd) {
 	c.Spec = accountSpec
 	c.Action = func() {
 		tool.Must(rpc.WalletAccountTxNewReg(*name, *password, *account))
+	}
+}
+
+func cmdCreateFile(c *cli.Cmd) {
+	var (
+		name     = c.StringOpt("n name", "", "name of file")
+		password = c.StringOpt("s source", "", "source file")
+	)
+
+	c.Spec = "--name ... --source ..."
+
+	c.Action = func() {
+
+		tool.Must(fcmd.Create(*name, *password))
+	}
+}
+
+func cmdFileStat(c *cli.Cmd) {
+	var (
+		name = c.StringOpt("n name", "", "name of file")
+	)
+
+	c.Spec = "--name"
+
+	c.Action = func() {
+
+		tool.Must(fcmd.Stat(*name))
+	}
+}
+
+func cmdFilesMkdir(c *cli.Cmd) {
+	var (
+		name = c.StringOpt("n name", "", "name of file")
+	)
+
+	c.Spec = "--name"
+
+	c.Action = func() {
+
+		tool.Must(fcmd.Mkdir(*name))
+	}
+}
+
+func cmdFileFind(c *cli.Cmd) {
+	var (
+		hash   = c.StringOpt("h hash", "", "hash of the file")
+		output = c.StringOpt("o output", "", "full name of the output file")
+	)
+
+	c.Spec = "--hash ... -output ..."
+
+	c.Action = func() {
+
+		tool.Must(fcmd.GetFileByHash(*hash, *output))
+	}
+}
+
+func cmdPeerList(c *cli.Cmd) {
+	c.Spec = ""
+
+	c.Action = func() {
+
+		tool.Must(pcmd.List())
+	}
+}
+
+func cmdPeerSend(c *cli.Cmd) {
+
+	var (
+		hash = c.StringOpt("h hash", "", "hash of the file")
+	)
+
+	c.Spec = "--hash ..."
+
+	c.Action = func() {
+
+		tool.Must(pcmd.SendStore(*hash))
 	}
 }
