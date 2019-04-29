@@ -1,6 +1,7 @@
 package server
 
 //go:generate protoc --proto_path=proto --go_out=plugins=grpc:api crypto.proto
+//go:generate protoc --proto_path=proto --go_out=plugins=grpc:api eventransaction.proto
 //go:generate protoc --proto_path=proto --go_out=plugins=grpc:api smartcontract.proto
 //go:generate protoc --proto_path=proto --go_out=plugins=grpc:api transaction.proto
 //go:generate protoc --proto_path=proto --go_out=plugins=grpc:api wallet.proto
@@ -25,6 +26,7 @@ func Run(port int) {
 
 	var (
 		cryptoHandler      = handlers.Crypto{}
+		eventrHandler      = handlers.EvenTransaction{}
 		smartHandler       = handlers.SmartContract{}
 		transactionHandler = handlers.Transaction{}
 		walletHandler      = handlers.Wallet{}
@@ -32,6 +34,7 @@ func Run(port int) {
 	)
 
 	api.RegisterCryptoServer(grpcServer, &cryptoHandler)
+	api.RegisterEvenTransactionServer(grpcServer, &eventrHandler)
 	api.RegisterSmartContractServer(grpcServer, &smartHandler)
 	api.RegisterTransactionServer(grpcServer, &transactionHandler)
 	api.RegisterWalletServer(grpcServer, &walletHandler)
