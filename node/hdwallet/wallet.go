@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"time"
+
+	"github.com/evenfound/even-go/node/transaction"
 )
 
 // wallet implements Interface.
@@ -116,6 +118,13 @@ func (w *wallet) GetInfo() (string, error) {
 	}
 
 	return string(js), nil
+}
+
+// TxNewReg creates initial transaction.
+func (w *wallet) TxNewReg(address string) (string, error) {
+	builder := transaction.NewBuilderMeta(transaction.TagNewReg)
+	builder.SetAddress(address)
+	return builder.Save(0)
 }
 
 // save saves wallet as single binary encrypted file.

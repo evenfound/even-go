@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package api;
+
+service EvenTransaction {
+    rpc Create(EvenTransactionCreateInput) returns (EvenTransactionResult) {}
+    rpc Show(EvenTransactionInput) returns (EvenTransactionResult) {}
+    rpc Analyze(EvenTransactionInput) returns (EvenTransactionResult) {}
+    rpc Verify(EvenTransactionInput) returns (EvenTransactionResult) {}
+}
+
+message EvenTransactionCreateInput {
+    int32 format = 1;
+    string tag = 2;
+}
+
+message EvenTransactionInput {
+    string filename = 1;
+}
+
+message EvenTransactionResult {
+    bool ok = 1;
+    string result = 2;
+}

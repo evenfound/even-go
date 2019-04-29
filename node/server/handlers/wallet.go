@@ -91,6 +91,16 @@ func (sc *Wallet) GetWalletInfo(ctx context.Context, in *api.WalletInput) (*api.
 	return newWalletResult(true, info), nil
 }
 
+// WalletAccountTxNewReg creates initial transaction.
+func (sc *Wallet) WalletAccountTxNewReg(ctx context.Context, in *api.WalletAccountInput) (*api.WalletResult, error) {
+	wallet := hdwallet.New(in.Name, in.Password)
+	hash, err := wallet.TxNewReg(in.Account)
+	if err != nil {
+		return newWalletResult(false, err.Error()), nil
+	}
+	return newWalletResult(true, hash), nil
+}
+
 func newWalletResult(ok bool, msg string) *api.WalletResult {
 	return &api.WalletResult{
 		Ok:     ok,

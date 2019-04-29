@@ -26,7 +26,6 @@ func Close() {
 }
 
 // Run starts the application.
-
 func Run() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -44,8 +43,9 @@ func Run() (err error) {
 		config.Command("verify", "verify signed message", cmdTestVerify)
 		config.Command("tx", "transactions", func(config *cli.Cmd) {
 			config.Command("create", "create new transaction", cmdTestCreateTx)
-			config.Command("read", "read and show transaction", cmdTestReadTx)
-			config.Command("verify", "verify transaction", cmdTestVerifyTx)
+			config.Command("show", "read and show transaction", cmdTestShowTx)
+			config.Command("analyze", "read and analyze transaction", cmdTestAnalyzeTx)
+			config.Command("verify", "read and verify transaction", cmdTestVerifyTx)
 		})
 	})
 
@@ -58,6 +58,9 @@ func Run() (err error) {
 		config.Command("pubkey", "show public key of account", cmdAccountPublicKey)
 		config.Command("balance", "show current balance of account", cmdAccountBalance)
 		config.Command("info", "show some information about wallet", cmdWalletInfo)
+		config.Command("tx", "transactions", func(config *cli.Cmd) {
+			config.Command("newreg", "create initial transaction", cmdWalletTxNewReg)
+		})
 	})
 
 	a.Command("file", "manage files", func(cmd *cli.Cmd) {
@@ -112,23 +115,42 @@ func cmdTestVerify(c *cli.Cmd) {
 }
 
 func cmdTestCreateTx(c *cli.Cmd) {
-	var ()
-	c.Spec = ""
+	var (
+		format = c.StringOpt("f format", "", "file format")
+	)
+	c.Spec = "--format ..."
 	c.Action = func() {
+		tool.Must(rpc.CreateTransaction(*format))
 	}
 }
 
-func cmdTestReadTx(c *cli.Cmd) {
-	var ()
+func cmdTestShowTx(c *cli.Cmd) {
+	var (
+		file = c.StringArg("FILE", "", "filename")
+	)
+	c.Spec = "FILE"
+	c.Action = func() {
+		tool.Must(rpc.ShowTransaction(*file))
+	}
+}
+
+func cmdTestAnalyzeTx(c *cli.Cmd) {
+	var (
+		file = c.StringArg("FILE", "", "filename")
+	)
 	c.Spec = ""
 	c.Action = func() {
+		tool.Must(rpc.AnalyzeTransaction(*file))
 	}
 }
 
 func cmdTestVerifyTx(c *cli.Cmd) {
-	var ()
+	var (
+		file = c.StringArg("FILE", "", "filename")
+	)
 	c.Spec = ""
 	c.Action = func() {
+		tool.Must(rpc.VerifyTransaction(*file))
 	}
 }
 
@@ -224,6 +246,18 @@ func cmdWalletInfo(c *cli.Cmd) {
 	}
 }
 
+func cmdWalletTxNewReg(c *cli.Cmd) {
+	var (
+		name     = c.StringOpt("n name", "", "name of wallet")
+		password = c.StringOpt("p password", "", "password")
+		account  = c.StringOpt("a account", "", "address of account")
+	)
+	c.Spec = accountSpec
+	c.Action = func() {
+		tool.Must(rpc.WalletAccountTxNewReg(*name, *password, *account))
+	}
+}
+
 func cmdCreateFile(c *cli.Cmd) {
 	var (
 		name     = c.StringOpt("n name", "", "name of file")
@@ -250,6 +284,7 @@ func cmdFileStat(c *cli.Cmd) {
 		tool.Must(fcmd.Stat(*name))
 	}
 }
+
 func cmdFilesMkdir(c *cli.Cmd) {
 	var (
 		name = c.StringOpt("n name", "", "name of file")

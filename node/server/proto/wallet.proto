@@ -27,6 +27,9 @@ service Wallet {
 
     // GetWalletInfo returns result=info on success.
     rpc GetWalletInfo(WalletInput) returns (WalletResult) {}
+
+    // WalletAccountTxNewReg creates initial transaction.
+    rpc WalletAccountTxNewReg(WalletAccountInput) returns (WalletResult) {}
 }
 
 message WalletInput {

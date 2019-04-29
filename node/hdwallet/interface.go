@@ -27,6 +27,9 @@ type Interface interface {
 
 	// GetInfo retrieves some information about wallet.
 	GetInfo() (string, error)
+
+	// TxNewReg creates initial transaction.
+	TxNewReg(address string) (string, error)
 }
 
 // New creates another instance of wallet interface.

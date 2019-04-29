@@ -15,28 +15,28 @@ type Crypto struct{}
 func (c *Crypto) Sign(ctx context.Context, in *api.SignInput) (*api.SignResult, error) {
 	signature, err := crypto.Sign(in.Message, in.Privkey)
 	if err != nil {
-		return fail(err)
+		return failSign(err)
 	}
-	return success(signature)
+	return successSign(signature)
 }
 
 // Verify recovers the account which was used to sign a message.
 func (c *Crypto) Verify(ctx context.Context, in *api.VerifyInput) (*api.SignResult, error) {
 	valid, err := crypto.Verify(in.Message, in.Signature, in.Pubkey)
 	if err != nil {
-		return fail(err)
+		return failSign(err)
 	}
-	return success(fmt.Sprint(valid))
+	return successSign(fmt.Sprint(valid))
 }
 
-func fail(err error) (*api.SignResult, error) {
+func failSign(err error) (*api.SignResult, error) {
 	return &api.SignResult{
 		Ok:     false,
 		Result: err.Error(),
 	}, nil
 }
 
-func success(result string) (*api.SignResult, error) {
+func successSign(result string) (*api.SignResult, error) {
 	return &api.SignResult{
 		Ok:     true,
 		Result: result,
