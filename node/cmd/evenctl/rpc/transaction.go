@@ -16,14 +16,14 @@ func formatCode(format string) (int32, error) {
 	switch format {
 	case "json":
 		return 1, nil
-	case "zlib":
+	case "zjson":
 		return 2, nil
 	case "ubjson":
 		return 3, nil
 	case "gob":
 		return 4, nil
 	}
-	msg := fmt.Sprintf("'%s' unknown file format (expected json | zlib | ubjson | gob)", format)
+	msg := fmt.Sprintf("'%s' unknown file format (expected json | zjson | ubjson | gob)", format)
 	return 0, tool.NewError(msg)
 }
 

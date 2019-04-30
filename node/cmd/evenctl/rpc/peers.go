@@ -3,16 +3,19 @@ package rpc
 import (
 	"context"
 	"fmt"
+
 	"github.com/evenfound/even-go/node/cmd/evenctl/config"
 	"github.com/evenfound/even-go/node/server/api"
 	"google.golang.org/grpc"
 )
 
+// PeerCMD ...
 type PeerCMD struct {
 	ctx  context.Context
 	stub api.PeersClient
 }
 
+// NewPeerCMD ...
 func NewPeerCMD() (*PeerCMD, error) {
 
 	ctx := context.Background()
@@ -32,6 +35,7 @@ func NewPeerCMD() (*PeerCMD, error) {
 
 }
 
+// List ...
 func (cmd *PeerCMD) List() error {
 
 	resp, err := cmd.stub.List(cmd.ctx, &api.PeerEmptyRequest{})
@@ -47,6 +51,7 @@ func (cmd *PeerCMD) List() error {
 	return nil
 }
 
+// SendStore ...
 func (cmd *PeerCMD) SendStore(hash string) error {
 
 	fmt.Printf("Sending hash %v to peers \n", hash)

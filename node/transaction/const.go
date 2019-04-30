@@ -21,7 +21,7 @@ const (
 const (
 	unspecifiedFileFormat FileFormat = iota
 	jsonFile
-	zlibFile
+	zjsonFile
 	ubjsonFile
 	gobFile
 )

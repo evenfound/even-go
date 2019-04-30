@@ -3,17 +3,20 @@ package rpc
 import (
 	"context"
 	"fmt"
+
 	"github.com/evenfound/even-go/node/cmd/evenctl/config"
 	"github.com/evenfound/even-go/node/server/api"
 
 	"google.golang.org/grpc"
 )
 
+// FileCMD ...
 type FileCMD struct {
 	ctx  context.Context
 	stub api.FileServiceClient
 }
 
+// NewFileCMD ...
 func NewFileCMD() (*FileCMD, error) {
 
 	ctx := context.Background()
@@ -33,6 +36,7 @@ func NewFileCMD() (*FileCMD, error) {
 
 }
 
+// GetFileByHash ...
 func (cmd *FileCMD) GetFileByHash(filename, output string) error {
 
 	_, err := cmd.stub.GetFileByHash(cmd.ctx, &api.FileRequest{
@@ -50,6 +54,7 @@ func (cmd *FileCMD) GetFileByHash(filename, output string) error {
 
 }
 
+// Mkdir ...
 func (cmd *FileCMD) Mkdir(dirName string) error {
 
 	req := &api.FileMkdirRequest{
@@ -68,6 +73,7 @@ func (cmd *FileCMD) Mkdir(dirName string) error {
 
 }
 
+// Create ...
 func (cmd *FileCMD) Create(fname, source string) error {
 
 	req := &api.FileCreateRequest{
@@ -84,6 +90,7 @@ func (cmd *FileCMD) Create(fname, source string) error {
 	return nil
 }
 
+// Stat ...
 func (cmd *FileCMD) Stat(path string) error {
 
 	fmt.Println(path)

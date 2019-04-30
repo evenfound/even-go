@@ -9,6 +9,6 @@ import (
 type Transaction struct{}
 
 // GetTransactions calls a handler.
-func (transaction *Transaction) GetTransactions(ctx context.Context, in *protoApi.GetTransactionRequestMessage) (*protoApi.GetTransactionResponseMessage, error) {
+func (transaction *Transaction) GetTransactions(_ context.Context, in *protoApi.GetTransactionRequestMessage) (*protoApi.GetTransactionResponseMessage, error) {
 	return nil, nil
 }
