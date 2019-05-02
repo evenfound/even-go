@@ -5,8 +5,6 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
-	"github.com/evenfound/even-go/node/mbnd"
-	"github.com/evenfound/even-go/node/server"
 	"gx/ipfs/QmNSWW3Sb4eju4o2djPQ1L1c2Zj9XN9sMYJL8r1cbxdc6b/go-addr-util"
 	p2pbhost "gx/ipfs/QmNh1kGFFdsPu79KNSaL4NUKUPb4Eiz4KHdMtFY6664RDp/go-libp2p/p2p/host/basic"
 	p2phost "gx/ipfs/QmNmJZL7FQySMtE2BQuLMuZg2EB2CLEunJJUSVSc9YnnbV/go-libp2p-host"
@@ -39,6 +37,9 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/evenfound/even-go/node/mbnd"
+	"github.com/evenfound/even-go/node/server"
 
 	bstk "github.com/OpenBazaar/go-blockstackclient"
 	wi "github.com/OpenBazaar/wallet-interface"
@@ -790,6 +791,7 @@ func (x *Start) Execute(args []string) error {
 		}
 		<-dht.DefaultBootstrapConfig.DoneChan
 		core.Node.Service = service.New(core.Node, sqliteDB)
+		fmt.Println("Node.Service is ready")
 
 		core.Node.StartMessageRetriever()
 		core.Node.StartPointerRepublisher()

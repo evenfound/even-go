@@ -14,7 +14,7 @@ func load(filename string) ([]byte, error) {
 		return nil, err
 	}
 
-	header := []byte(zlibFile.String())
+	header := []byte(zjsonFile.String())
 	if bytes.HasPrefix(stream, header) {
 		stream = stream[len(header):]
 		stream, err = unpack(stream)

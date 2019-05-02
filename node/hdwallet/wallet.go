@@ -124,7 +124,15 @@ func (w *wallet) GetInfo() (string, error) {
 func (w *wallet) TxNewReg(address string) (string, error) {
 	builder := transaction.NewBuilderMeta(transaction.TagNewReg)
 	builder.SetAddress(address)
-	return builder.Save(0)
+	hash, err := builder.Save()
+	if err != nil {
+		return "", err
+	}
+	err = notifyAllPeers(hash)
+	if err != nil {
+		return "", err
+	}
+	return hash, nil
 }
 
 // save saves wallet as single binary encrypted file.

@@ -10,6 +10,16 @@ const timeLayout = time.RubyDate
 
 type timestamp time.Time
 
+// String satisfies interface Stringer.
+func (t *timestamp) String() string {
+	return time.Time(*t).String()
+}
+
+// UnixNanoStr returns string representation of UnixNano.
+func (t *timestamp) UnixNanoStr() string {
+	return fmt.Sprintf("%d", uint64(time.Time(*t).UnixNano()))
+}
+
 // MarshalJSON satisfies interface Marshaler.
 func (t *timestamp) MarshalJSON() ([]byte, error) {
 	s := fmt.Sprintf(`"%s"`, time.Time(*t).Format(timeLayout))

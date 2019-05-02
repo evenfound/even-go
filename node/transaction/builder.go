@@ -3,6 +3,8 @@ package transaction
 import (
 	"bytes"
 	"errors"
+
+	"github.com/evenfound/even-go/node/core"
 )
 
 // Builder builds new transaction.
@@ -68,8 +70,8 @@ func (b *Builder) AddTwig(h Hash) *Builder {
 	return b
 }
 
-// Save writes completed transaction into a file and returns it's hash.
-func (b Builder) Save(format FileFormat) (string, error) {
+// SaveLocal writes completed transaction into a file and returns it's filename.
+func (b Builder) SaveLocal(format FileFormat) (string, error) {
 	if format == unspecifiedFileFormat {
 		format = jsonFile
 	}
@@ -84,6 +86,30 @@ func (b Builder) Save(format FileFormat) (string, error) {
 
 	filename := format.String() + ".tr"
 	return saveLocal(filename, ser)
+}
+
+// Save writes completed transaction into IPFS and returns it's hash.
+func (b Builder) Save() (string, error) {
+	format := zjsonFile
+	stream, err := b.t.serialize(format)
+	if err != nil {
+		return "", err
+	}
+
+	// Prepend format header
+	stream = append([]byte(format.String()), stream...)
+
+	path := b.t.generateFileName()
+	if err := core.CreateNewFile(path, stream); err != nil {
+		return "", err
+	}
+
+	stat, err := core.FileStat(path)
+	if err != nil {
+		return "", err
+	}
+
+	return stat.Cid, nil
 }
 
 // Load reads transaction from a local file.

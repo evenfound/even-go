@@ -10,7 +10,7 @@ import (
 type EvenTransaction struct{}
 
 // Create creates new transaction.
-func (t *EvenTransaction) Create(ctx context.Context, in *api.EvenTransactionCreateInput) (*api.EvenTransactionResult, error) {
+func (t *EvenTransaction) Create(_ context.Context, in *api.EvenTransactionCreateInput) (*api.EvenTransactionResult, error) {
 	builder := transaction.NewBuilderOutput(in.Tag, 100)
 	builder.
 		SetAddress("msnxVmXXoTxVP5DNerVbiJ31AP6snsAmiv").
@@ -21,7 +21,7 @@ func (t *EvenTransaction) Create(ctx context.Context, in *api.EvenTransactionCre
 		AddTwig("m222222222222222222222222222222222").
 		AddTwig("m333333333333333333333333333333333").
 		AddTwig("m444444444444444444444444444444444")
-	hash, err := builder.Save(transaction.FileFormat(in.Format))
+	hash, err := builder.SaveLocal(transaction.FileFormat(in.Format))
 	if err != nil {
 		return failEvenTransaction(err)
 	}
@@ -29,7 +29,7 @@ func (t *EvenTransaction) Create(ctx context.Context, in *api.EvenTransactionCre
 }
 
 // Show reads and shows transaction.
-func (t *EvenTransaction) Show(ctx context.Context, in *api.EvenTransactionInput) (*api.EvenTransactionResult, error) {
+func (t *EvenTransaction) Show(_ context.Context, in *api.EvenTransactionInput) (*api.EvenTransactionResult, error) {
 	tran, err := transaction.Load(in.Filename)
 	if err != nil {
 		return failEvenTransaction(err)
@@ -38,12 +38,12 @@ func (t *EvenTransaction) Show(ctx context.Context, in *api.EvenTransactionInput
 }
 
 // Analyze analyzes transaction.
-func (t *EvenTransaction) Analyze(ctx context.Context, in *api.EvenTransactionInput) (*api.EvenTransactionResult, error) {
+func (t *EvenTransaction) Analyze(_ context.Context, in *api.EvenTransactionInput) (*api.EvenTransactionResult, error) {
 	return successEvenTransaction("Analyze")
 }
 
 // Verify validates transaction.
-func (t *EvenTransaction) Verify(ctx context.Context, in *api.EvenTransactionInput) (*api.EvenTransactionResult, error) {
+func (t *EvenTransaction) Verify(_ context.Context, in *api.EvenTransactionInput) (*api.EvenTransactionResult, error) {
 	return successEvenTransaction("Verify")
 }
 

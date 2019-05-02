@@ -12,7 +12,7 @@ import (
 type Crypto struct{}
 
 // Sign signs a message and returns the signature.
-func (c *Crypto) Sign(ctx context.Context, in *api.SignInput) (*api.SignResult, error) {
+func (c *Crypto) Sign(_ context.Context, in *api.SignInput) (*api.SignResult, error) {
 	signature, err := crypto.Sign(in.Message, in.Privkey)
 	if err != nil {
 		return failSign(err)
@@ -21,7 +21,7 @@ func (c *Crypto) Sign(ctx context.Context, in *api.SignInput) (*api.SignResult, 
 }
 
 // Verify recovers the account which was used to sign a message.
-func (c *Crypto) Verify(ctx context.Context, in *api.VerifyInput) (*api.SignResult, error) {
+func (c *Crypto) Verify(_ context.Context, in *api.VerifyInput) (*api.SignResult, error) {
 	valid, err := crypto.Verify(in.Message, in.Signature, in.Pubkey)
 	if err != nil {
 		return failSign(err)

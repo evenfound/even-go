@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/cesanta/ubjson"
@@ -38,11 +39,21 @@ func (t *transaction) String() string {
 	return t.Tag
 }
 
+// generateFileName generates unique file name for writing to IPFS/MFS.
+func (t *transaction) generateFileName() string {
+	const filler = "_"
+	result := t.Tag +
+		filler + string(t.Address) +
+		filler + t.Timestamp.UnixNanoStr()
+	return strings.Replace(result, " ", filler, -1)
+}
+
+// serialize converts transaction struct into stream of bytes.
 func (t *transaction) serialize(format FileFormat) ([]byte, error) {
 	switch format {
 	case jsonFile:
 		return toJSON(t)
-	case zlibFile:
+	case zjsonFile:
 		return toZlibJSON(t)
 	case ubjsonFile:
 		return toUBJSON(t)
@@ -50,7 +61,7 @@ func (t *transaction) serialize(format FileFormat) ([]byte, error) {
 		return toGOB(t)
 	}
 	msg := fmt.Sprintf("'%d' unknown file format (expected %d | %d | %d | %d)",
-		format, jsonFile, zlibFile, ubjsonFile, gobFile)
+		format, jsonFile, zjsonFile, ubjsonFile, gobFile)
 	return nil, errors.New(msg)
 }
 

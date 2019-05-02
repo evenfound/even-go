@@ -18,7 +18,7 @@ const (
 type SmartContract struct{}
 
 // Call creates a VM instance and makes a call of a smart contract.
-func (sc *SmartContract) Call(ctx context.Context, in *api.SmartContractInput) (*api.SmartContractResult, error) {
+func (sc *SmartContract) Call(_ context.Context, in *api.SmartContractInput) (*api.SmartContractResult, error) {
 	filename := in.Uri
 	if strings.HasPrefix(filename, filePrefix) {
 		filename = filename[len(filePrefix):]

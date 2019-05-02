@@ -4,18 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
+	"os"
+	"strings"
+
 	"github.com/evenfound/even-go/node/pb"
 	"github.com/evenfound/even-go/node/server/api"
 	"github.com/ipfs/go-ipfs/core/coreapi"
 	"github.com/ipfs/go-ipfs/core/coreapi/interface"
-	"io"
-	"os"
-
-	"strings"
-
-	"github.com/ipfs/go-ipfs/mfs"
-
 	dag "github.com/ipfs/go-ipfs/merkledag"
+	"github.com/ipfs/go-ipfs/mfs"
 	ft "github.com/ipfs/go-ipfs/unixfs"
 )
 
@@ -137,8 +135,6 @@ func FileStat(path string) (*api.FileStatResponse, error) {
 	}
 
 	dirName := cnts[0]
-
-	fmt.Println(dirName)
 
 	dirLookup, err := mfs.Lookup(Node.IpfsNode.FilesRoot, dirName)
 
