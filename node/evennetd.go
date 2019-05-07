@@ -4,14 +4,10 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
-	"path/filepath"
 	"runtime"
 	"runtime/debug"
 
-	"github.com/evenfound/even-go/node/core"
-	"github.com/ipfs/go-ipfs/repo/fsrepo"
 	"github.com/jessevdk/go-flags"
 )
 
@@ -77,16 +73,6 @@ func worker() error {
 		return err
 	}
 
-	// Get a channel that will be closed when a shutdown signal has been
-	// triggered either from an OS signal such as SIGINT (Ctrl+C) or from
-	// another subsystem such as the RPC server.
-	interrupt := interruptListener()
-
-	// Return now if an interrupt signal was triggered.
-	if interruptRequested(interrupt) {
-		return nil
-	}
-
 	for name, spec := range commandList {
 		if _, err := parser.AddCommand(name, spec.shortDescription, spec.longDescription, spec.command); err != nil {
 			return err
@@ -97,49 +83,5 @@ func worker() error {
 		return err
 	}
 
-	defer func() {
-
-		fmt.Println("[INF] EVNET: Gracefully shutting down the Even Network...")
-
-		if core.Node != nil {
-			if core.Node.MessageRetriever != nil {
-				core.Node.RecordAgingNotifier.Stop()
-				fmt.Println("[INF] EVNET: RecordAgingNotifier stopped...")
-				close(core.Node.MessageRetriever.DoneChan)
-				core.Node.MessageRetriever.Wait()
-				fmt.Println("[INF] EVNET: MessageRetriever closed...")
-			}
-
-			core.OfflineMessageWaitGroup.Wait()
-			core.PublishLock.Unlock()
-			core.Node.Datastore.Close()
-			fmt.Println("[INF] EVNET: Data-store unlocked and closed...")
-			os.Remove(filepath.Join(core.Node.RepoPath, fsrepo.LockFile))
-
-			//core.Node.Multiwallet.Close()
-			//fmt.Println("[INF] EVNET: Multi-wallet closed...")
-			core.OfflineMessageWaitGroup.Wait()
-			core.PublishLock.Unlock()
-			core.Node.Datastore.Close()
-			fmt.Println("[INF] EVNET: Data-store unlocked and closed...")
-			err = os.Remove(filepath.Join(core.Node.RepoPath, fsrepo.LockFile))
-			if err != nil {
-				log.Println(err)
-			}
-
-			err = core.Node.IpfsNode.Close()
-			if err != nil {
-				log.Println(err)
-			}
-			fmt.Println("[INF] EVNET: IPFS-Node closed...")
-
-			fmt.Println("\n[EXIT] EVNET: Even Network shutdown completed.")
-		}
-
-	}()
-
-	// Wait until the interrupt signal is received from an OS signal or shutdown
-	// is requested through one of the subsystems such as the RPC server.
-	<-interrupt
 	return nil
 }
