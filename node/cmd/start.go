@@ -812,11 +812,23 @@ func (x *Start) Execute(args []string) error {
 	}()
 
 	// Start gateway
-	err = gateway.Serve()
+
+	go func() {
+		err = gateway.Serve()
+		if err != nil {
+			log.Error(err)
+		}
+
+		defer gateway.Close()
+
+		return
+	}()
+
+	err = core.Worker()
+
 	if err != nil {
-		log.Error(err)
+		log.Errorf("Error Caused : %v \n", err)
 	}
-	defer gateway.Close()
 
 	return nil
 }
