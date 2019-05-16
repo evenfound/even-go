@@ -4,8 +4,8 @@ import (
 	"os"
 
 	"github.com/evenfound/even-go/node/cmd/evec/config"
-	"github.com/evenfound/even-go/node/cmd/evec/tool"
 	"github.com/jawher/mow.cli"
+	"github.com/pkg/errors"
 )
 
 // Init initializes the application.
@@ -26,7 +26,7 @@ func Run() (err error) {
 
 	a := cli.App("evec", "Even Smart Contract compiler.")
 
-	config.Debug = *a.BoolOpt("d debug", false, "show additional information")
+	a.BoolOptPtr(&config.Debug, "d debug", false, "show additional information")
 
 	a.Command("clean", "remove intermediate files", cmdClean)
 	a.Command("build", "compile program(s)", cmdBuild)
@@ -37,23 +37,27 @@ func Run() (err error) {
 func cmdClean(c *cli.Cmd) {
 	c.Action = func() {
 		if ok, msg := config.Ok(); !ok {
-			panic(tool.NewError(msg))
+			panic(errors.New(msg))
 		}
-		tool.Must(clean())
+		if err := clean(); err != nil {
+			panic(err)
+		}
 	}
 }
 
 func cmdBuild(c *cli.Cmd) {
-	config.BuildTengo = *c.BoolOpt("t tengo", false, "force compile Tengo sources")
-	config.BuildVyper = *c.BoolOpt("v vyper", false, "force compile Vyper sources")
-	config.BuildEvelyn = *c.BoolOpt("e evelyn", false, "force compile Evelyn sources")
+	c.BoolOptPtr(&config.BuildTengo, "t tengo", false, "force compile Tengo sources")
+	c.BoolOptPtr(&config.BuildVyper, "v vyper", false, "force compile Vyper sources")
+	c.BoolOptPtr(&config.BuildEvelyn, "e evelyn", false, "force compile Evelyn sources")
 	output := c.StringOpt("o output", "", "name of the output binary file; or 'ipfs' to store in the IPFS")
 	c.Spec = "FILE... [--tengo] [--vyper] [--evelyn] [--output ...]"
 	files := c.StringsArg("FILE", nil, "file names to build")
 	c.Action = func() {
 		if ok, msg := config.Ok(); !ok {
-			panic(tool.NewError(msg))
+			panic(errors.New(msg))
 		}
-		tool.Must(buildFiles(*files, *output))
+		if err := buildFiles(*files, *output); err != nil {
+			panic(err)
+		}
 	}
 }

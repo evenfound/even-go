@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/evenfound/even-go/node/cmd/evenctl/config"
-	"github.com/evenfound/even-go/node/cmd/evenctl/tool"
 	pb "github.com/evenfound/even-go/node/server/api"
+	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 )
 
@@ -24,7 +24,7 @@ func formatCode(format string) (int32, error) {
 		return 4, nil
 	}
 	msg := fmt.Sprintf("'%s' unknown file format (expected json | zjson | ubjson | gob)", format)
-	return 0, tool.NewError(msg)
+	return 0, errors.New(msg)
 }
 
 // CreateTransaction creates new transaction.
@@ -37,9 +37,9 @@ func CreateTransaction(format string) error {
 	// Set up a connection to the server
 	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
 	if err != nil {
-		return tool.Wrap(err, "RPC connect")
+		return errors.Wrap(err, "RPC connect")
 	}
-	defer func() { tool.Must(conn.Close()) }()
+	defer func() { must(conn.Close()) }()
 
 	// Create a client
 	scc := pb.NewEvenTransactionClient(conn)
@@ -53,11 +53,11 @@ func CreateTransaction(format string) error {
 	}
 	r, err := scc.Create(ctx, &input)
 	if err != nil {
-		return tool.Wrap(err, "EvenTransaction.Create")
+		return errors.Wrap(err, "EvenTransaction.Create")
 	}
 
 	if !r.Ok {
-		return tool.NewError(r.Result)
+		return errors.New(r.Result)
 	}
 	log.Println(r.Result)
 
@@ -69,9 +69,9 @@ func ShowTransaction(filename string) error {
 	// Set up a connection to the server
 	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
 	if err != nil {
-		return tool.Wrap(err, "RPC connect")
+		return errors.Wrap(err, "RPC connect")
 	}
-	defer func() { tool.Must(conn.Close()) }()
+	defer func() { must(conn.Close()) }()
 
 	// Create a client
 	scc := pb.NewEvenTransactionClient(conn)
@@ -84,11 +84,11 @@ func ShowTransaction(filename string) error {
 	}
 	r, err := scc.Show(ctx, &input)
 	if err != nil {
-		return tool.Wrap(err, "EvenTransaction.Show")
+		return errors.Wrap(err, "EvenTransaction.Show")
 	}
 
 	if !r.Ok {
-		return tool.NewError(r.Result)
+		return errors.New(r.Result)
 	}
 	log.Println(r.Result)
 
@@ -100,9 +100,9 @@ func AnalyzeTransaction(filename string) error {
 	// Set up a connection to the server
 	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
 	if err != nil {
-		return tool.Wrap(err, "RPC connect")
+		return errors.Wrap(err, "RPC connect")
 	}
-	defer func() { tool.Must(conn.Close()) }()
+	defer func() { must(conn.Close()) }()
 
 	// Create a client
 	scc := pb.NewEvenTransactionClient(conn)
@@ -115,11 +115,11 @@ func AnalyzeTransaction(filename string) error {
 	}
 	r, err := scc.Analyze(ctx, &input)
 	if err != nil {
-		return tool.Wrap(err, "EvenTransaction.Analyze")
+		return errors.Wrap(err, "EvenTransaction.Analyze")
 	}
 
 	if !r.Ok {
-		return tool.NewError(r.Result)
+		return errors.New(r.Result)
 	}
 	log.Println(r.Result)
 
@@ -131,9 +131,9 @@ func VerifyTransaction(filename string) error {
 	// Set up a connection to the server
 	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
 	if err != nil {
-		return tool.Wrap(err, "RPC connect")
+		return errors.Wrap(err, "RPC connect")
 	}
-	defer func() { tool.Must(conn.Close()) }()
+	defer func() { must(conn.Close()) }()
 
 	// Create a client
 	scc := pb.NewEvenTransactionClient(conn)
@@ -146,11 +146,11 @@ func VerifyTransaction(filename string) error {
 	}
 	r, err := scc.Verify(ctx, &input)
 	if err != nil {
-		return tool.Wrap(err, "EvenTransaction.Verify")
+		return errors.Wrap(err, "EvenTransaction.Verify")
 	}
 
 	if !r.Ok {
-		return tool.NewError(r.Result)
+		return errors.New(r.Result)
 	}
 	log.Println(r.Result)
 
@@ -162,9 +162,9 @@ func WalletAccountTxNewReg(name, password, account string) error {
 	// Set up a connection to the server
 	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
 	if err != nil {
-		return tool.Wrap(err, "RPC connect")
+		return errors.Wrap(err, "RPC connect")
 	}
-	defer func() { tool.Must(conn.Close()) }()
+	defer func() { must(conn.Close()) }()
 
 	// Create a client
 	scc := pb.NewWalletClient(conn)
@@ -179,11 +179,80 @@ func WalletAccountTxNewReg(name, password, account string) error {
 	}
 	r, err := scc.WalletAccountTxNewReg(ctx, &input)
 	if err != nil {
-		return tool.Wrap(err, "Wallet.WalletAccountTxNewReg")
+		return errors.Wrap(err, "Wallet.WalletAccountTxNewReg")
 	}
 
 	if !r.Ok {
-		return tool.NewError(r.Result)
+		return errors.New(r.Result)
+	}
+	log.Println(r.Result)
+
+	return nil
+}
+
+// WalletAccountTxContract creates contract-deploy transaction.
+func WalletAccountTxContract(name, password, account, contract string) error {
+	// Set up a connection to the server
+	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
+	if err != nil {
+		return errors.Wrap(err, "RPC connect")
+	}
+	defer func() { must(conn.Close()) }()
+
+	// Create a client
+	scc := pb.NewWalletClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	// Make the call
+	input := pb.WalletContractInput{
+		Name:     name,
+		Password: password,
+		Account:  account,
+		Contract: contract,
+	}
+	r, err := scc.WalletAccountTxContract(ctx, &input)
+	if err != nil {
+		return errors.Wrap(err, "Wallet.WalletAccountTxContract")
+	}
+
+	if !r.Ok {
+		return errors.New(r.Result)
+	}
+	log.Println(r.Result)
+
+	return nil
+}
+
+// WalletAccountTxContractInvoke creates contract-invoking transaction.
+func WalletAccountTxContractInvoke(name, password, account, contract, function string) error {
+	// Set up a connection to the server
+	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
+	if err != nil {
+		return errors.Wrap(err, "RPC connect")
+	}
+	defer func() { must(conn.Close()) }()
+
+	// Create a client
+	scc := pb.NewWalletClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	// Make the call
+	input := pb.WalletContractInput{
+		Name:     name,
+		Password: password,
+		Account:  account,
+		Contract: contract,
+		Function: function,
+	}
+	r, err := scc.WalletAccountTxInvoke(ctx, &input)
+	if err != nil {
+		return errors.Wrap(err, "Wallet.WalletAccountTxInvoke")
+	}
+
+	if !r.Ok {
+		return errors.New(r.Result)
 	}
 	log.Println(r.Result)
 

@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"reflect"
 	"strings"
 
 	"github.com/evenfound/even-go/node/evm/interop"
@@ -54,7 +53,7 @@ func (tengoVM) Run(bc Bytecode, entryFunc string) (string, error) {
 }
 
 func decypher(data []byte) []byte {
-	header := "EVEN"
+	const header = "EVENtimestampinnanosecs"
 	if len(data) > len(header) {
 		return data[len(header):]
 	}
@@ -99,14 +98,6 @@ func simplifyError(err error) error {
 	s := strings.ReplaceAll(err.Error(), "Compile Error:", "")
 	s = strings.Trim(s, " ")
 	return errors.New(s)
-}
-
-func tr(prefix string, aa ...interface{}) {
-	fmt.Print(prefix)
-	for _, a := range aa {
-		fmt.Print(a, " (", reflect.TypeOf(a), ") ")
-	}
-	fmt.Println()
 }
 
 func must(err error) {

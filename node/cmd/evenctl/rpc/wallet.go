@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/evenfound/even-go/node/cmd/evenctl/config"
-	"github.com/evenfound/even-go/node/cmd/evenctl/tool"
 	pb "github.com/evenfound/even-go/node/server/api"
+	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 )
 
@@ -16,9 +16,9 @@ func GenerateWallet(name, password string) error {
 	// Set up a connection to the server
 	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
 	if err != nil {
-		return tool.Wrap(err, "RPC connect")
+		return errors.Wrap(err, "RPC connect")
 	}
-	defer func() { tool.Must(conn.Close()) }()
+	defer func() { must(conn.Close()) }()
 
 	// Create a client
 	scc := pb.NewWalletClient(conn)
@@ -32,11 +32,11 @@ func GenerateWallet(name, password string) error {
 	}
 	r, err := scc.GenerateWallet(ctx, &input)
 	if err != nil {
-		return tool.Wrap(err, "Wallet.GenerateWallet")
+		return errors.Wrap(err, "Wallet.GenerateWallet")
 	}
 
 	if !r.Ok {
-		return tool.NewError(r.Result)
+		return errors.New(r.Result)
 	}
 	log.Println(r.Result)
 
@@ -48,9 +48,9 @@ func CreateWallet(name, mnemonic, password string) error {
 	// Set up a connection to the server
 	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
 	if err != nil {
-		return tool.Wrap(err, "RPC connect")
+		return errors.Wrap(err, "RPC connect")
 	}
-	defer func() { tool.Must(conn.Close()) }()
+	defer func() { must(conn.Close()) }()
 
 	// Create a client
 	scc := pb.NewWalletClient(conn)
@@ -65,11 +65,11 @@ func CreateWallet(name, mnemonic, password string) error {
 	}
 	r, err := scc.CreateWallet(ctx, &input)
 	if err != nil {
-		return tool.Wrap(err, "Wallet.CreateWallet")
+		return errors.Wrap(err, "Wallet.CreateWallet")
 	}
 
 	if !r.Ok {
-		return tool.NewError(r.Result)
+		return errors.New(r.Result)
 	}
 	log.Println(r.Result)
 
@@ -81,9 +81,9 @@ func UnlockWallet(name, password string) error {
 	// Set up a connection to the server
 	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
 	if err != nil {
-		return tool.Wrap(err, "RPC connect")
+		return errors.Wrap(err, "RPC connect")
 	}
-	defer func() { tool.Must(conn.Close()) }()
+	defer func() { must(conn.Close()) }()
 
 	// Create a client
 	scc := pb.NewWalletClient(conn)
@@ -97,11 +97,11 @@ func UnlockWallet(name, password string) error {
 	}
 	r, err := scc.UnlockWallet(ctx, &input)
 	if err != nil {
-		return tool.Wrap(err, "Wallet.UnlockWallet")
+		return errors.Wrap(err, "Wallet.UnlockWallet")
 	}
 
 	if !r.Ok {
-		return tool.NewError(r.Result)
+		return errors.New(r.Result)
 	}
 	log.Println(r.Result)
 
@@ -113,9 +113,9 @@ func WalletNextAccount(name, password string) error {
 	// Set up a connection to the server
 	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
 	if err != nil {
-		return tool.Wrap(err, "RPC connect")
+		return errors.Wrap(err, "RPC connect")
 	}
-	defer func() { tool.Must(conn.Close()) }()
+	defer func() { must(conn.Close()) }()
 
 	// Create a client
 	scc := pb.NewWalletClient(conn)
@@ -129,11 +129,11 @@ func WalletNextAccount(name, password string) error {
 	}
 	r, err := scc.WalletNextAccount(ctx, &input)
 	if err != nil {
-		return tool.Wrap(err, "Wallet.WalletNextAccount")
+		return errors.Wrap(err, "Wallet.WalletNextAccount")
 	}
 
 	if !r.Ok {
-		return tool.NewError(r.Result)
+		return errors.New(r.Result)
 	}
 	log.Println(r.Result)
 
@@ -145,9 +145,9 @@ func GetWalletInfo(name, password string) error {
 	// Set up a connection to the server
 	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
 	if err != nil {
-		return tool.Wrap(err, "RPC connect")
+		return errors.Wrap(err, "RPC connect")
 	}
-	defer func() { tool.Must(conn.Close()) }()
+	defer func() { must(conn.Close()) }()
 
 	// Create a client
 	scc := pb.NewWalletClient(conn)
@@ -161,11 +161,11 @@ func GetWalletInfo(name, password string) error {
 	}
 	r, err := scc.GetWalletInfo(ctx, &input)
 	if err != nil {
-		return tool.Wrap(err, "Wallet.GetWalletInfo")
+		return errors.Wrap(err, "Wallet.GetWalletInfo")
 	}
 
 	if !r.Ok {
-		return tool.NewError(r.Result)
+		return errors.New(r.Result)
 	}
 	log.Println(r.Result)
 

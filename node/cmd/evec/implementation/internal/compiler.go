@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 
 	"github.com/evenfound/even-go/node/cmd/evec/compiler"
-	"github.com/evenfound/even-go/node/cmd/evec/tool"
 	"github.com/evenfound/even-go/node/evm/interop"
+	"github.com/pkg/errors"
 
 	tengo "github.com/d5/tengo/compiler"
 	tengoParser "github.com/d5/tengo/compiler/parser"
@@ -20,7 +20,7 @@ type tengoCompiler struct {
 func (t tengoCompiler) Compile(filename string) (compiler.Bytecode, error) {
 	src, err := ioutil.ReadFile(filepath.Clean(filename))
 	if err != nil {
-		return nil, tool.Wrap(err, "read file")
+		return nil, errors.Wrap(err, "read file")
 	}
 
 	fileSet := tengoSource.NewFileSet()
@@ -29,12 +29,12 @@ func (t tengoCompiler) Compile(filename string) (compiler.Bytecode, error) {
 	p := tengoParser.NewParser(srcFile, src, nil)
 	file, err := p.ParseFile()
 	if err != nil {
-		return nil, tool.Wrap(err, "parsing")
+		return nil, errors.Wrap(err, "parsing")
 	}
 
 	c := tengo.NewCompiler(srcFile, nil, nil, nil, nil)
 	if err := c.Compile(file); err != nil {
-		return nil, tool.Wrap(err, "Tengo compiler")
+		return nil, errors.Wrap(err, "Tengo compiler")
 	}
 
 	return c.Bytecode(), nil
@@ -44,7 +44,7 @@ func (t tengoCompiler) Compile(filename string) (compiler.Bytecode, error) {
 func (t tengoCompiler) TryCompile(filename string) ([]byte, error) {
 	src, err := ioutil.ReadFile(filepath.Clean(filename))
 	if err != nil {
-		return nil, tool.Wrap(err, "read file")
+		return nil, errors.Wrap(err, "read file")
 	}
 
 	_, err = interop.NewEnvironment(src)

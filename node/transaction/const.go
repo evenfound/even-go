@@ -16,6 +16,8 @@ const (
 	outputTx
 	inputSpendTx
 	inputChangeTx
+	deployContractTx
+	invokeContractTx
 )
 
 const (
@@ -34,14 +36,18 @@ const (
 
 const (
 	// TagNewReg is tag for initial transaction.
-	TagNewReg = "NEW_REG"
+	TagNewReg         = "NEW_REG"
+	TagContractDeploy = "CONTRACT_DEPLOY"
+	TagContractInvoke = "CONTRACT_INVOKE"
 )
 
 var (
-	metaID        = id{metaTx, version}
-	outputID      = id{outputTx, version}
-	inputSpendID  = id{inputSpendTx, version}
-	inputChangeID = id{inputChangeTx, version}
+	metaID           = id{metaTx, version}
+	outputID         = id{outputTx, version}
+	inputSpendID     = id{inputSpendTx, version}
+	inputChangeID    = id{inputChangeTx, version}
+	contractDeployID = id{deployContractTx, version}
+	contractInvokeID = id{invokeContractTx, version}
 
 	fileFormatStrings = [...]string{
 		"UNKNOWN",

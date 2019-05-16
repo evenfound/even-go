@@ -101,6 +101,26 @@ func (sc *Wallet) WalletAccountTxNewReg(_ context.Context, in *api.WalletAccount
 	return newWalletResult(true, hash), nil
 }
 
+// WalletAccountTxContract creates contract-deploy transaction.
+func (sc *Wallet) WalletAccountTxContract(_ context.Context, in *api.WalletContractInput) (*api.WalletResult, error) {
+	wallet := hdwallet.New(in.Name, in.Password)
+	hash, err := wallet.TxContract(in.Account, in.Contract)
+	if err != nil {
+		return newWalletResult(false, err.Error()), nil
+	}
+	return newWalletResult(true, hash), nil
+}
+
+// WalletAccountTxInvoke creates contract-invoking transaction.
+func (sc *Wallet) WalletAccountTxInvoke(_ context.Context, in *api.WalletContractInput) (*api.WalletResult, error) {
+	wallet := hdwallet.New(in.Name, in.Password)
+	hash, err := wallet.TxContractInvoke(in.Account, in.Contract, in.Function)
+	if err != nil {
+		return newWalletResult(false, err.Error()), nil
+	}
+	return newWalletResult(true, hash), nil
+}
+
 func newWalletResult(ok bool, msg string) *api.WalletResult {
 	return &api.WalletResult{
 		Ok:     ok,

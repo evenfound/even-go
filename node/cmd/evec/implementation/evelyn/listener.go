@@ -4,7 +4,6 @@ import (
 	"io"
 
 	"github.com/evenfound/even-go/node/cmd/evec/implementation/evelyn/parser"
-	"github.com/evenfound/even-go/node/cmd/evec/tool"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
@@ -22,6 +21,7 @@ type tengoEmitterListener struct {
 }
 
 func (t *tengoEmitterListener) ExitContractClause(ctx *parser.ContractClauseContext) {
-	_, err := t.out.WriteString("XXX\n")
-	tool.Must(err)
+	if _, err := t.out.WriteString("XXX\n"); err != nil {
+		panic(err)
+	}
 }

@@ -3,6 +3,7 @@ package app
 import (
 	"bytes"
 	"compress/gzip"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -11,7 +12,9 @@ import (
 
 	"github.com/evenfound/even-go/node/cmd/evec/config"
 	"github.com/evenfound/even-go/node/cmd/evec/implementation"
-	"github.com/evenfound/even-go/node/cmd/evec/tool"
+	"github.com/pkg/errors"
+
+	"time"
 
 	shell "github.com/ipfs/go-ipfs-api"
 )
@@ -36,12 +39,12 @@ func buildFiles(files []string, of string) error {
 			of = generateOutputFilename(f)
 		}
 		if err = compile(f, of); err != nil {
-			return tool.Wrap(err, "build")
+			return errors.Wrap(err, "build")
 		}
 		log.Printf("Built %s\n", of)
 		if isIPFS {
 			if of, err = storeToIPFS(of); err != nil {
-				return tool.Wrap(err, "store to IPFS")
+				return errors.Wrap(err, "store to IPFS")
 			}
 			log.Printf("Stored %s\n", of)
 		}
@@ -60,15 +63,19 @@ func generateOutputFilename(filename string) string {
 
 func generateTempFilename(prefix string) string {
 	tmpfile, err := ioutil.TempFile("", prefix+"*"+config.CompiledExt)
-	tool.Must(err)
-	tool.Must(tmpfile.Close())
+	if err != nil {
+		panic(err)
+	}
+	if err := tmpfile.Close(); err != nil {
+		panic(err)
+	}
 	return tmpfile.Name()
 }
 
 func storeToIPFS(filename string) (string, error) {
 	sh := shell.NewLocalShell()
 	if sh == nil {
-		return filename, tool.NewError("IPFS daemon is not running")
+		return filename, errors.New("IPFS daemon is not running")
 	}
 	file, err := os.Open(filepath.Clean(filename))
 	if err != nil {
@@ -78,26 +85,32 @@ func storeToIPFS(filename string) (string, error) {
 	if err != nil {
 		return filename, err
 	}
-	tool.Must(os.Remove(filename))
+	if err := os.Remove(filename); err != nil {
+		panic(err)
+	}
 	return "/" + ipfs + "/" + cid, nil
 }
 
 func cleanDir(dir, suffix string) error {
 	d, err := os.Open(filepath.Clean(dir))
 	if err != nil {
-		return tool.Wrap(err, "directory open")
+		return errors.Wrap(err, "directory open")
 	}
-	defer func() { tool.Must(d.Close()) }()
+	defer func() {
+		if err := d.Close(); err != nil {
+			panic(err)
+		}
+	}()
 
 	names, err := d.Readdirnames(0)
 	if err != nil {
-		return tool.Wrap(err, "Readdirnames")
+		return errors.Wrap(err, "Readdirnames")
 	}
 
 	for _, name := range names {
 		if strings.HasSuffix(name, suffix) {
 			if err := os.Remove(filepath.Join(dir, name)); err != nil {
-				return tool.Wrap(err, "file removal")
+				return errors.Wrap(err, "file removal")
 			}
 		}
 	}
@@ -109,7 +122,7 @@ func cleanDir(dir, suffix string) error {
 func compile(inName, outName string) error {
 	compiler := implementation.New(filepath.Ext(inName))
 	if compiler == nil {
-		return tool.NewError("unknown format of file " + inName)
+		return errors.New("unknown format of file " + inName)
 	}
 
 	src, err := compiler.TryCompile(inName)
@@ -139,13 +152,13 @@ func compress(input []byte) ([]byte, error) {
 
 	zipper := gzip.NewWriter(&result)
 	if _, err := zipper.Write(input); err != nil {
-		return nil, tool.Wrap(err, "compress")
+		return nil, errors.Wrap(err, "compress")
 	}
 	if err := zipper.Flush(); err != nil {
-		return nil, tool.Wrap(err, "flush")
+		return nil, errors.Wrap(err, "flush")
 	}
 	if err := zipper.Close(); err != nil {
-		return nil, tool.Wrap(err, "close")
+		return nil, errors.Wrap(err, "close")
 	}
 
 	return result.Bytes(), nil
@@ -176,15 +189,20 @@ func encrypt(stream []byte) ([]byte, error) {
 func saveToFile(filename string, data []byte) error {
 	out, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY, os.ModePerm)
 	if err != nil {
-		return tool.Wrap(err, "create file")
+		return errors.Wrap(err, "create file")
 	}
-	defer func() { tool.Must(out.Close()) }()
+	defer func() {
+		if err := out.Close(); err != nil {
+			panic(err)
+		}
+	}()
 
-	if _, err := out.Write([]byte(header)); err != nil {
-		return tool.Wrap(err, "write to file")
+	head := header + fmt.Sprintf("%d", uint64(time.Now().UnixNano()))
+	if _, err := out.Write([]byte(head)); err != nil {
+		return errors.Wrap(err, "write to file")
 	}
 	if _, err := out.Write(data); err != nil {
-		return tool.Wrap(err, "write to file")
+		return errors.Wrap(err, "write to file")
 	}
 
 	return nil
