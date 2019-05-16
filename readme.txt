@@ -55,7 +55,7 @@ $ make install
 After first installation that update gx repo link make type 
 gx install --global
 
-11. Enter to even-go/node root and run command:
+11. Enter to even-go root and run command:
 godep get
 godep save 
  

@@ -4,8 +4,8 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/evenfound/even-go/node/cmd/evec/compiler"
-	"github.com/evenfound/even-go/node/evm/interop"
+	"github.com/evenfound/even-go/cmd/evec/compiler"
+	"github.com/evenfound/even-go/evm/interop"
 	"github.com/pkg/errors"
 
 	tengo "github.com/d5/tengo/compiler"

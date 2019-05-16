@@ -3,8 +3,8 @@ package app
 import (
 	"os"
 
-	"github.com/evenfound/even-go/node/cmd/evenctl/config"
-	"github.com/evenfound/even-go/node/cmd/evenctl/rpc"
+	"github.com/evenfound/even-go/cmd/evenctl/config"
+	"github.com/evenfound/even-go/cmd/evenctl/rpc"
 	"github.com/jawher/mow.cli"
 )
 

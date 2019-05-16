@@ -1,6 +1,6 @@
 package transaction
 
-import "github.com/evenfound/even-go/node/ipfs"
+import "github.com/evenfound/even-go/ipfs"
 
 // twig represents candidate transaction in a branch.
 type twig struct {

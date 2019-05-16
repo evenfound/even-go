@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/evenfound/even-go/node/cmd/evec/config"
-	"github.com/evenfound/even-go/node/cmd/evec/implementation"
+	"github.com/evenfound/even-go/cmd/evec/config"
+	"github.com/evenfound/even-go/cmd/evec/implementation"
 	"github.com/pkg/errors"
 
 	"time"

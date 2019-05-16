@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/evenfound/even-go/node/cmd/evenctl/app"
-	"github.com/evenfound/even-go/node/cmd/evenctl/config"
+	"github.com/evenfound/even-go/cmd/evenctl/app"
+	"github.com/evenfound/even-go/cmd/evenctl/config"
 	"github.com/pkg/errors"
 )
 

@@ -3,7 +3,7 @@ package app
 import (
 	"os"
 
-	"github.com/evenfound/even-go/node/cmd/evec/config"
+	"github.com/evenfound/even-go/cmd/evec/config"
 	"github.com/jawher/mow.cli"
 	"github.com/pkg/errors"
 )

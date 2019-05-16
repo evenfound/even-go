@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"errors"
 
-	"github.com/evenfound/even-go/node/core"
-	"github.com/evenfound/even-go/node/ipfs"
+	"github.com/evenfound/even-go/core"
+	"github.com/evenfound/even-go/ipfs"
 )
 
 // Builder builds new transaction.

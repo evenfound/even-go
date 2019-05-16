@@ -5,8 +5,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/evenfound/even-go/node/ipfs"
-	"github.com/evenfound/even-go/node/transaction"
+	"github.com/evenfound/even-go/ipfs"
+	"github.com/evenfound/even-go/transaction"
 )
 
 // wallet implements Interface.

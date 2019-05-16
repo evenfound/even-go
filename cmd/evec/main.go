@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/evenfound/even-go/node/cmd/evec/app"
-	"github.com/evenfound/even-go/node/cmd/evec/config"
+	"github.com/evenfound/even-go/cmd/evec/app"
+	"github.com/evenfound/even-go/cmd/evec/config"
 	"github.com/pkg/errors"
 )
 

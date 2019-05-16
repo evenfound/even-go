@@ -6,9 +6,9 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/evenfound/even-go/node/cmd/evec/compiler"
-	"github.com/evenfound/even-go/node/cmd/evec/config"
-	"github.com/evenfound/even-go/node/cmd/evec/implementation/evelyn/parser"
+	"github.com/evenfound/even-go/cmd/evec/compiler"
+	"github.com/evenfound/even-go/cmd/evec/config"
+	"github.com/evenfound/even-go/cmd/evec/implementation/evelyn/parser"
 	"github.com/pkg/errors"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"

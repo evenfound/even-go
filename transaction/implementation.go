@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/cesanta/ubjson"
-	"github.com/evenfound/even-go/node/ipfs"
+	"github.com/evenfound/even-go/ipfs"
 )
 
 type transaction struct {

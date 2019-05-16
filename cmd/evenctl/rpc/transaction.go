@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/evenfound/even-go/node/cmd/evenctl/config"
-	pb "github.com/evenfound/even-go/node/server/api"
+	"github.com/evenfound/even-go/cmd/evenctl/config"
+	pb "github.com/evenfound/even-go/server/api"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 )
