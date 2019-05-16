@@ -29,7 +29,13 @@ type Interface interface {
 	GetInfo() (string, error)
 
 	// TxNewReg creates initial transaction.
-	TxNewReg(address string) (string, error)
+	TxNewReg(account string) (string, error)
+
+	// TxContract creates contract-deploy transaction.
+	TxContract(account, contract string) (string, error)
+
+	// TxContractInvoke creates contract-invoking transaction.
+	TxContractInvoke(account, contract, function string) (string, error)
 }
 
 // New creates another instance of wallet interface.

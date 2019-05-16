@@ -3,9 +3,8 @@ package app
 import (
 	"os"
 
-	"github.com/evenfound/even-go/cmd/evec/tool"
-	"github.com/evenfound/even-go/cmd/evenctl/config"
-	"github.com/evenfound/even-go/cmd/evenctl/rpc"
+	"github.com/evenfound/even-go/node/cmd/evenctl/config"
+	"github.com/evenfound/even-go/node/cmd/evenctl/rpc"
 	"github.com/jawher/mow.cli"
 )
 
@@ -35,7 +34,7 @@ func Run() (err error) {
 
 	a := cli.App("evenctl", "Even Network control tool.")
 
-	config.Debug = *a.BoolOpt("d debug", false, "show additional information")
+	a.BoolOptPtr(&config.Debug, "d debug", false, "show additional information")
 
 	a.Command("test", "test", func(config *cli.Cmd) {
 		config.Command("call", "call smart contract", cmdTestCall)
@@ -60,6 +59,8 @@ func Run() (err error) {
 		config.Command("info", "show some information about wallet", cmdWalletInfo)
 		config.Command("tx", "transactions", func(config *cli.Cmd) {
 			config.Command("newreg", "create initial transaction", cmdWalletTxNewReg)
+			config.Command("contract", "create contract-deploy transaction", cmdWalletTxContract)
+			config.Command("invoke", "create contract-invoke transaction", cmdWalletTxContractInvoke)
 		})
 	})
 
@@ -87,7 +88,7 @@ func cmdTestCall(c *cli.Cmd) {
 	)
 	c.Spec = "--file ... [--entry ...]"
 	c.Action = func() {
-		tool.Must(rpc.Call(*file, *entry))
+		must(rpc.Call(*file, *entry))
 	}
 }
 
@@ -98,7 +99,7 @@ func cmdTestSign(c *cli.Cmd) {
 	)
 	c.Spec = "MESSAGE --privkey ..."
 	c.Action = func() {
-		tool.Must(rpc.Sign(*message, *privkey))
+		must(rpc.Sign(*message, *privkey))
 	}
 }
 
@@ -110,7 +111,7 @@ func cmdTestVerify(c *cli.Cmd) {
 	)
 	c.Spec = "MESSAGE --signature ... --pubkey ..."
 	c.Action = func() {
-		tool.Must(rpc.Verify(*message, *signature, *pubkey))
+		must(rpc.Verify(*message, *signature, *pubkey))
 	}
 }
 
@@ -120,7 +121,7 @@ func cmdTestCreateTx(c *cli.Cmd) {
 	)
 	c.Spec = "--format ..."
 	c.Action = func() {
-		tool.Must(rpc.CreateTransaction(*format))
+		must(rpc.CreateTransaction(*format))
 	}
 }
 
@@ -130,7 +131,7 @@ func cmdTestShowTx(c *cli.Cmd) {
 	)
 	c.Spec = "FILE"
 	c.Action = func() {
-		tool.Must(rpc.ShowTransaction(*file))
+		must(rpc.ShowTransaction(*file))
 	}
 }
 
@@ -140,7 +141,7 @@ func cmdTestAnalyzeTx(c *cli.Cmd) {
 	)
 	c.Spec = ""
 	c.Action = func() {
-		tool.Must(rpc.AnalyzeTransaction(*file))
+		must(rpc.AnalyzeTransaction(*file))
 	}
 }
 
@@ -150,7 +151,7 @@ func cmdTestVerifyTx(c *cli.Cmd) {
 	)
 	c.Spec = ""
 	c.Action = func() {
-		tool.Must(rpc.VerifyTransaction(*file))
+		must(rpc.VerifyTransaction(*file))
 	}
 }
 
@@ -161,7 +162,7 @@ func cmdWalletGenerate(c *cli.Cmd) {
 	)
 	c.Spec = walletSpec
 	c.Action = func() {
-		tool.Must(rpc.GenerateWallet(*name, *password))
+		must(rpc.GenerateWallet(*name, *password))
 	}
 }
 
@@ -173,7 +174,7 @@ func cmdWalletCreate(c *cli.Cmd) {
 	)
 	c.Spec = "--name ... --password ... --seed ..."
 	c.Action = func() {
-		tool.Must(rpc.CreateWallet(*name, *mnemonic, *password))
+		must(rpc.CreateWallet(*name, *mnemonic, *password))
 	}
 }
 
@@ -184,7 +185,7 @@ func cmdWalletUnlock(c *cli.Cmd) {
 	)
 	c.Spec = walletSpec
 	c.Action = func() {
-		tool.Must(rpc.UnlockWallet(*name, *password))
+		must(rpc.UnlockWallet(*name, *password))
 	}
 }
 
@@ -195,7 +196,7 @@ func cmdWalletNextAccount(c *cli.Cmd) {
 	)
 	c.Spec = walletSpec
 	c.Action = func() {
-		tool.Must(rpc.WalletNextAccount(*name, *password))
+		must(rpc.WalletNextAccount(*name, *password))
 	}
 }
 
@@ -207,7 +208,7 @@ func cmdAccountPrivateKey(c *cli.Cmd) {
 	)
 	c.Spec = accountSpec
 	c.Action = func() {
-		tool.Must(rpc.WalletAccountDumpPrivateKey(*name, *password, *account))
+		must(rpc.WalletAccountDumpPrivateKey(*name, *password, *account))
 	}
 }
 
@@ -219,7 +220,7 @@ func cmdAccountPublicKey(c *cli.Cmd) {
 	)
 	c.Spec = accountSpec
 	c.Action = func() {
-		tool.Must(rpc.WalletAccountDumpPublicKey(*name, *password, *account))
+		must(rpc.WalletAccountDumpPublicKey(*name, *password, *account))
 	}
 }
 
@@ -231,7 +232,7 @@ func cmdAccountBalance(c *cli.Cmd) {
 	)
 	c.Spec = accountSpec
 	c.Action = func() {
-		tool.Must(rpc.WalletAccountShowBalance(*name, *password, *account))
+		must(rpc.WalletAccountShowBalance(*name, *password, *account))
 	}
 }
 
@@ -242,7 +243,7 @@ func cmdWalletInfo(c *cli.Cmd) {
 	)
 	c.Spec = walletSpec
 	c.Action = func() {
-		tool.Must(rpc.GetWalletInfo(*name, *password))
+		must(rpc.GetWalletInfo(*name, *password))
 	}
 }
 
@@ -254,7 +255,35 @@ func cmdWalletTxNewReg(c *cli.Cmd) {
 	)
 	c.Spec = accountSpec
 	c.Action = func() {
-		tool.Must(rpc.WalletAccountTxNewReg(*name, *password, *account))
+		must(rpc.WalletAccountTxNewReg(*name, *password, *account))
+	}
+}
+
+func cmdWalletTxContract(c *cli.Cmd) {
+	var (
+		name     = c.StringOpt("n name", "", "name of wallet")
+		password = c.StringOpt("p password", "", "password")
+		account  = c.StringOpt("a account", "", "address of account")
+		contract = c.StringOpt("c contract", "", "IPFS-hash of contract")
+	)
+	c.Spec = "--name ... --password ... --account ... --contract ..."
+	c.Action = func() {
+		must(rpc.WalletAccountTxContract(*name, *password, *account, *contract))
+	}
+}
+
+func cmdWalletTxContractInvoke(c *cli.Cmd) {
+	var (
+		name     = c.StringOpt("n name", "", "name of wallet")
+		password = c.StringOpt("p password", "", "password")
+		account  = c.StringOpt("a account", "", "address of account")
+		contract = c.StringOpt("c contract", "", "IPFS-hash of contract")
+		function = c.StringOpt("f function", "", "name of function to invoke (default if omitted)")
+	)
+	c.Spec = "--name ... --password ... --account ... --contract ... [--function ...]"
+	c.Action = func() {
+		must(rpc.WalletAccountTxContractInvoke(*name, *password, *account,
+			*contract, *function))
 	}
 }
 
@@ -268,7 +297,7 @@ func cmdCreateFile(c *cli.Cmd) {
 
 	c.Action = func() {
 
-		tool.Must(fcmd.Create(*name, *password))
+		must(fcmd.Create(*name, *password))
 	}
 }
 
@@ -281,7 +310,7 @@ func cmdFileStat(c *cli.Cmd) {
 
 	c.Action = func() {
 
-		tool.Must(fcmd.Stat(*name))
+		must(fcmd.Stat(*name))
 	}
 }
 
@@ -294,7 +323,7 @@ func cmdFilesMkdir(c *cli.Cmd) {
 
 	c.Action = func() {
 
-		tool.Must(fcmd.Mkdir(*name))
+		must(fcmd.Mkdir(*name))
 	}
 }
 
@@ -308,7 +337,7 @@ func cmdFileFind(c *cli.Cmd) {
 
 	c.Action = func() {
 
-		tool.Must(fcmd.GetFileByHash(*hash, *output))
+		must(fcmd.GetFileByHash(*hash, *output))
 	}
 }
 
@@ -317,7 +346,7 @@ func cmdPeerList(c *cli.Cmd) {
 
 	c.Action = func() {
 
-		tool.Must(pcmd.List())
+		must(pcmd.List())
 	}
 }
 
@@ -331,6 +360,6 @@ func cmdPeerSend(c *cli.Cmd) {
 
 	c.Action = func() {
 
-		tool.Must(pcmd.SendStore(*hash))
+		must(pcmd.SendStore(*hash))
 	}
 }

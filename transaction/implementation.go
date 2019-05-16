@@ -10,16 +10,18 @@ import (
 	"time"
 
 	"github.com/cesanta/ubjson"
+	"github.com/evenfound/even-go/node/ipfs"
 )
 
 type transaction struct {
 	ID        id        `json:"id"`
 	Address   address   `json:"address"`
 	Message   message   `json:"message"`
-	Source    Hash      `json:"source"`
+	Source    ipfs.Hash `json:"source"`
 	Value     value     `json:"value"`
+	Data      data      `json:"data"`
 	Timestamp timestamp `json:"timestamp"`
-	Trunk     Hash      `json:"trunk"`
+	Trunk     ipfs.Hash `json:"trunk"`
 	Branch    twigs     `json:"branch"`
 	Tag       string    `json:"tag"`
 }

@@ -5,29 +5,29 @@ import (
 	"log"
 	"time"
 
-	"github.com/evenfound/even-go/cmd/evenctl/config"
-	"github.com/evenfound/even-go/cmd/evenctl/tool"
-	pb "github.com/evenfound/even-go/server/api"
+	"github.com/evenfound/even-go/node/cmd/evenctl/config"
+	pb "github.com/evenfound/even-go/node/server/api"
+	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 )
 
 // Call performs a gRPC call implementing a smart contract call.
 func Call(filename, entryFunc string) error {
 	if !isCorrectFilename(filename) {
-		return tool.NewError("filename '" + filename +
-			"' is incorrect. It should correspond to the file://<host>/<path> or /ipfs/<hash> scheme")
+		return errors.New("filename '" + filename +
+			"' is incorrect. It should correspond to file://<host>/<path> or /ipfs/<hash> scheme")
 	}
 	if !isCorrectFunction(entryFunc) {
-		return tool.NewError("name '" + entryFunc +
+		return errors.New("name '" + entryFunc +
 			"' is incorrect. It should start with a letter")
 	}
 
 	// Set up a connection to the server
 	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
 	if err != nil {
-		return tool.Wrap(err, "RPC connect")
+		return errors.Wrap(err, "RPC connect")
 	}
-	defer func() { tool.Must(conn.Close()) }()
+	defer func() { must(conn.Close()) }()
 
 	// Create a client
 	scc := pb.NewSmartContractClient(conn)
@@ -41,7 +41,7 @@ func Call(filename, entryFunc string) error {
 	}
 	r, err := scc.Call(ctx, &input)
 	if err != nil {
-		return tool.Wrap(err, "SmartContract.Call")
+		return errors.Wrap(err, "SmartContract.Call")
 	}
 
 	if r.Ok {

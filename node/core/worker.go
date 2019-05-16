@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
+	"log"
 	"os"
 	"os/signal"
 	"path/filepath"

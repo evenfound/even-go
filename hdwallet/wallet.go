@@ -5,7 +5,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/evenfound/even-go/transaction"
+	"github.com/evenfound/even-go/node/ipfs"
+	"github.com/evenfound/even-go/node/transaction"
 )
 
 // wallet implements Interface.
@@ -121,9 +122,41 @@ func (w *wallet) GetInfo() (string, error) {
 }
 
 // TxNewReg creates initial transaction.
-func (w *wallet) TxNewReg(address string) (string, error) {
+func (w *wallet) TxNewReg(account string) (string, error) {
 	builder := transaction.NewBuilderMeta(transaction.TagNewReg)
-	builder.SetAddress(address)
+	builder.SetAddress(account)
+	hash, err := builder.Save()
+	if err != nil {
+		return "", err
+	}
+	err = notifyAllPeers(hash)
+	if err != nil {
+		return "", err
+	}
+	return hash, nil
+}
+
+// TxContract creates contract-deploy transaction.
+func (w *wallet) TxContract(account, contract string) (string, error) {
+	builder := transaction.NewBuilderContractDeploy(transaction.TagContractDeploy)
+	builder.SetAddress(account)
+	builder.SetSource(ipfs.Hash(contract))
+	hash, err := builder.Save()
+	if err != nil {
+		return "", err
+	}
+	err = notifyAllPeers(hash)
+	if err != nil {
+		return "", err
+	}
+	return hash, nil
+}
+
+// TxContractInvoke creates contract-invoking transaction.
+func (w *wallet) TxContractInvoke(account, contract, function string) (string, error) {
+	builder := transaction.NewBuilderContractInvoke(transaction.TagContractInvoke)
+	builder.SetAddress(account)
+	builder.SetSource(ipfs.Hash(contract))
 	hash, err := builder.Save()
 	if err != nil {
 		return "", err

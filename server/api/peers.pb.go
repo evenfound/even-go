@@ -3,13 +3,14 @@
 
 package api
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-
 import (
-	context "golang.org/x/net/context"
+	context "context"
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	math "math"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -21,7 +22,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type PeerEmptyRequest struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -33,16 +34,17 @@ func (m *PeerEmptyRequest) Reset()         { *m = PeerEmptyRequest{} }
 func (m *PeerEmptyRequest) String() string { return proto.CompactTextString(m) }
 func (*PeerEmptyRequest) ProtoMessage()    {}
 func (*PeerEmptyRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_peers_0d22addcc5bdf99b, []int{0}
+	return fileDescriptor_9b029f9e0d26cab5, []int{0}
 }
+
 func (m *PeerEmptyRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PeerEmptyRequest.Unmarshal(m, b)
 }
 func (m *PeerEmptyRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PeerEmptyRequest.Marshal(b, m, deterministic)
 }
-func (dst *PeerEmptyRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PeerEmptyRequest.Merge(dst, src)
+func (m *PeerEmptyRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PeerEmptyRequest.Merge(m, src)
 }
 func (m *PeerEmptyRequest) XXX_Size() int {
 	return xxx_messageInfo_PeerEmptyRequest.Size(m)
@@ -64,16 +66,17 @@ func (m *PeerListResponse) Reset()         { *m = PeerListResponse{} }
 func (m *PeerListResponse) String() string { return proto.CompactTextString(m) }
 func (*PeerListResponse) ProtoMessage()    {}
 func (*PeerListResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_peers_0d22addcc5bdf99b, []int{1}
+	return fileDescriptor_9b029f9e0d26cab5, []int{1}
 }
+
 func (m *PeerListResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PeerListResponse.Unmarshal(m, b)
 }
 func (m *PeerListResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PeerListResponse.Marshal(b, m, deterministic)
 }
-func (dst *PeerListResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PeerListResponse.Merge(dst, src)
+func (m *PeerListResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PeerListResponse.Merge(m, src)
 }
 func (m *PeerListResponse) XXX_Size() int {
 	return xxx_messageInfo_PeerListResponse.Size(m)
@@ -102,16 +105,17 @@ func (m *PeerSendStoreRequest) Reset()         { *m = PeerSendStoreRequest{} }
 func (m *PeerSendStoreRequest) String() string { return proto.CompactTextString(m) }
 func (*PeerSendStoreRequest) ProtoMessage()    {}
 func (*PeerSendStoreRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_peers_0d22addcc5bdf99b, []int{2}
+	return fileDescriptor_9b029f9e0d26cab5, []int{2}
 }
+
 func (m *PeerSendStoreRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PeerSendStoreRequest.Unmarshal(m, b)
 }
 func (m *PeerSendStoreRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PeerSendStoreRequest.Marshal(b, m, deterministic)
 }
-func (dst *PeerSendStoreRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PeerSendStoreRequest.Merge(dst, src)
+func (m *PeerSendStoreRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PeerSendStoreRequest.Merge(m, src)
 }
 func (m *PeerSendStoreRequest) XXX_Size() int {
 	return xxx_messageInfo_PeerSendStoreRequest.Size(m)
@@ -133,6 +137,23 @@ func init() {
 	proto.RegisterType((*PeerEmptyRequest)(nil), "api.PeerEmptyRequest")
 	proto.RegisterType((*PeerListResponse)(nil), "api.PeerListResponse")
 	proto.RegisterType((*PeerSendStoreRequest)(nil), "api.PeerSendStoreRequest")
+}
+
+func init() { proto.RegisterFile("peers.proto", fileDescriptor_9b029f9e0d26cab5) }
+
+var fileDescriptor_9b029f9e0d26cab5 = []byte{
+	// 176 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2e, 0x48, 0x4d, 0x2d,
+	0x2a, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x4e, 0x2c, 0xc8, 0x54, 0x12, 0xe2, 0x12,
+	0x08, 0x48, 0x4d, 0x2d, 0x72, 0xcd, 0x2d, 0x28, 0xa9, 0x0c, 0x4a, 0x2d, 0x2c, 0x4d, 0x2d, 0x2e,
+	0x51, 0xd2, 0x80, 0x88, 0xf9, 0x64, 0x16, 0x97, 0x04, 0xa5, 0x16, 0x17, 0xe4, 0xe7, 0x15, 0xa7,
+	0x0a, 0x89, 0x70, 0xb1, 0x82, 0xf5, 0x4a, 0x30, 0x2a, 0x30, 0x6b, 0x70, 0x06, 0x41, 0x38, 0x4a,
+	0x1a, 0x5c, 0x22, 0x20, 0x95, 0xc1, 0xa9, 0x79, 0x29, 0xc1, 0x25, 0xf9, 0x45, 0xa9, 0x50, 0x13,
+	0x84, 0x04, 0xb8, 0x98, 0x93, 0x33, 0x53, 0x24, 0x18, 0x15, 0x18, 0x35, 0x38, 0x83, 0x40, 0x4c,
+	0xa3, 0x06, 0x46, 0x2e, 0x56, 0x90, 0xd2, 0x62, 0x21, 0x33, 0x2e, 0x16, 0x90, 0xc9, 0x42, 0xa2,
+	0x7a, 0x89, 0x05, 0x99, 0x7a, 0xe8, 0x96, 0x4b, 0x21, 0x84, 0x91, 0xed, 0x57, 0x62, 0x10, 0xb2,
+	0xe7, 0xe2, 0x84, 0xdb, 0x23, 0x24, 0x09, 0x57, 0x85, 0x6e, 0x37, 0x4e, 0x03, 0x92, 0xd8, 0xc0,
+	0xde, 0x36, 0x06, 0x04, 0x00, 0x00, 0xff, 0xff, 0x65, 0x24, 0xd8, 0x1e, 0x05, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -181,6 +202,17 @@ func (c *peersClient) SendStore(ctx context.Context, in *PeerSendStoreRequest, o
 type PeersServer interface {
 	List(context.Context, *PeerEmptyRequest) (*PeerListResponse, error)
 	SendStore(context.Context, *PeerSendStoreRequest) (*PeerListResponse, error)
+}
+
+// UnimplementedPeersServer can be embedded to have forward compatible implementations.
+type UnimplementedPeersServer struct {
+}
+
+func (*UnimplementedPeersServer) List(ctx context.Context, req *PeerEmptyRequest) (*PeerListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+}
+func (*UnimplementedPeersServer) SendStore(ctx context.Context, req *PeerSendStoreRequest) (*PeerListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendStore not implemented")
 }
 
 func RegisterPeersServer(s *grpc.Server, srv PeersServer) {
@@ -238,21 +270,4 @@ var _Peers_serviceDesc = grpc.ServiceDesc{
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "peers.proto",
-}
-
-func init() { proto.RegisterFile("peers.proto", fileDescriptor_peers_0d22addcc5bdf99b) }
-
-var fileDescriptor_peers_0d22addcc5bdf99b = []byte{
-	// 171 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe2, 0xe2, 0x2e, 0x48, 0x4d, 0x2d,
-	0x2a, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x4e, 0x2c, 0xc8, 0x54, 0x12, 0xe2, 0x12,
-	0x08, 0x00, 0x8a, 0xb9, 0xe6, 0x16, 0x94, 0x54, 0x06, 0xa5, 0x16, 0x96, 0xa6, 0x16, 0x97, 0x28,
-	0x69, 0x40, 0xc4, 0x7c, 0x32, 0x8b, 0x4b, 0x82, 0x52, 0x8b, 0x0b, 0xf2, 0xf3, 0x8a, 0x53, 0x85,
-	0x44, 0xb8, 0x58, 0xc1, 0x7a, 0x25, 0x18, 0x15, 0x98, 0x35, 0x38, 0x83, 0x20, 0x1c, 0xa0, 0x4a,
-	0x11, 0x90, 0xca, 0xe0, 0xd4, 0xbc, 0x94, 0xe0, 0x92, 0xfc, 0xa2, 0x54, 0xa8, 0x09, 0x42, 0x02,
-	0x5c, 0xcc, 0xc9, 0x99, 0x29, 0x40, 0xb5, 0x8c, 0x40, 0xb5, 0x20, 0xa6, 0x51, 0x03, 0x23, 0x17,
-	0x2b, 0x48, 0x69, 0xb1, 0x90, 0x19, 0x17, 0x0b, 0xc8, 0x64, 0x21, 0x51, 0x3d, 0xa0, 0xfd, 0x7a,
-	0xe8, 0x96, 0x4b, 0x21, 0x84, 0x91, 0xed, 0x57, 0x62, 0x10, 0xb2, 0xe7, 0xe2, 0x84, 0xdb, 0x23,
-	0x24, 0x09, 0x57, 0x85, 0x6e, 0x37, 0x4e, 0x03, 0x92, 0xd8, 0xc0, 0xde, 0x36, 0x06, 0x04, 0x00,
-	0x00, 0xff, 0xff, 0x65, 0x24, 0xd8, 0x1e, 0x05, 0x01, 0x00, 0x00,
 }

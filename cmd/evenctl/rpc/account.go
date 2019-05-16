@@ -5,9 +5,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/evenfound/even-go/cmd/evenctl/config"
-	"github.com/evenfound/even-go/cmd/evenctl/tool"
-	pb "github.com/evenfound/even-go/server/api"
+	"github.com/evenfound/even-go/node/cmd/evenctl/config"
+	pb "github.com/evenfound/even-go/node/server/api"
+	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 )
 
@@ -16,9 +16,9 @@ func WalletAccountDumpPrivateKey(name, password, account string) error {
 	// Set up a connection to the server
 	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
 	if err != nil {
-		return tool.Wrap(err, "RPC connect")
+		return errors.Wrap(err, "RPC connect")
 	}
-	defer func() { tool.Must(conn.Close()) }()
+	defer func() { must(conn.Close()) }()
 
 	// Create a client
 	scc := pb.NewWalletClient(conn)
@@ -33,11 +33,11 @@ func WalletAccountDumpPrivateKey(name, password, account string) error {
 	}
 	r, err := scc.WalletAccountDumpPrivateKey(ctx, &input)
 	if err != nil {
-		return tool.Wrap(err, "Wallet.WalletAccountDumpPrivateKey")
+		return errors.Wrap(err, "Wallet.WalletAccountDumpPrivateKey")
 	}
 
 	if !r.Ok {
-		return tool.NewError(r.Result)
+		return errors.New(r.Result)
 	}
 	log.Println(r.Result)
 
@@ -49,9 +49,9 @@ func WalletAccountDumpPublicKey(name, password, account string) error {
 	// Set up a connection to the server
 	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
 	if err != nil {
-		return tool.Wrap(err, "RPC connect")
+		return errors.Wrap(err, "RPC connect")
 	}
-	defer func() { tool.Must(conn.Close()) }()
+	defer func() { must(conn.Close()) }()
 
 	// Create a client
 	scc := pb.NewWalletClient(conn)
@@ -66,11 +66,11 @@ func WalletAccountDumpPublicKey(name, password, account string) error {
 	}
 	r, err := scc.WalletAccountDumpPublicKey(ctx, &input)
 	if err != nil {
-		return tool.Wrap(err, "Wallet.WalletAccountDumpPublicKey")
+		return errors.Wrap(err, "Wallet.WalletAccountDumpPublicKey")
 	}
 
 	if !r.Ok {
-		return tool.NewError(r.Result)
+		return errors.New(r.Result)
 	}
 	log.Println(r.Result)
 
@@ -82,9 +82,9 @@ func WalletAccountShowBalance(name, password, account string) error {
 	// Set up a connection to the server
 	conn, err := grpc.Dial(config.RPCAddress, grpc.WithInsecure())
 	if err != nil {
-		return tool.Wrap(err, "RPC connect")
+		return errors.Wrap(err, "RPC connect")
 	}
-	defer func() { tool.Must(conn.Close()) }()
+	defer func() { must(conn.Close()) }()
 
 	// Create a client
 	scc := pb.NewWalletClient(conn)
@@ -99,11 +99,11 @@ func WalletAccountShowBalance(name, password, account string) error {
 	}
 	r, err := scc.WalletAccountShowBalance(ctx, &input)
 	if err != nil {
-		return tool.Wrap(err, "Wallet.WalletAccountShowBalance")
+		return errors.Wrap(err, "Wallet.WalletAccountShowBalance")
 	}
 
 	if !r.Ok {
-		return tool.NewError(r.Result)
+		return errors.New(r.Result)
 	}
 	log.Println(r.Result)
 

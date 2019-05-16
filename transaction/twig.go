@@ -1,14 +1,16 @@
 package transaction
 
+import "github.com/evenfound/even-go/node/ipfs"
+
 // twig represents candidate transaction in a branch.
 type twig struct {
-	Hash  Hash `json:"hash"`
-	Proof Hash `json:"proof"`
+	Hash  ipfs.Hash `json:"hash"`
+	Proof ipfs.Hash `json:"proof"`
 }
 
 type twigs []twig
 
-func newTwig(h Hash) twig {
+func newTwig(h ipfs.Hash) twig {
 	return twig{
 		Hash:  h,
 		Proof: "Proof",

@@ -30,6 +30,12 @@ service Wallet {
 
     // WalletAccountTxNewReg creates initial transaction.
     rpc WalletAccountTxNewReg(WalletAccountInput) returns (WalletResult) {}
+
+    // WalletAccountTxContract creates contract-deploy transaction.
+    rpc WalletAccountTxContract(WalletContractInput) returns (WalletResult) {}
+
+    // WalletAccountTxInvoke creates contract-invoking transaction.
+    rpc WalletAccountTxInvoke(WalletContractInput) returns (WalletResult) {}
 }
 
 message WalletInput {
@@ -47,6 +53,14 @@ message WalletAccountInput {
     string name = 1;
     string password = 2;
     string account = 3;
+}
+
+message WalletContractInput {
+    string name = 1;
+    string password = 2;
+    string account = 3;
+    string contract = 4;
+    string function = 5;
 }
 
 message WalletResult {

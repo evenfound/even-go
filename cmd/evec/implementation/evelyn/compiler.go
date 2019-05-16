@@ -6,10 +6,10 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/evenfound/even-go/cmd/evec/compiler"
-	"github.com/evenfound/even-go/cmd/evec/config"
-	"github.com/evenfound/even-go/cmd/evec/implementation/evelyn/parser"
-	"github.com/evenfound/even-go/cmd/evec/tool"
+	"github.com/evenfound/even-go/node/cmd/evec/compiler"
+	"github.com/evenfound/even-go/node/cmd/evec/config"
+	"github.com/evenfound/even-go/node/cmd/evec/implementation/evelyn/parser"
+	"github.com/pkg/errors"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
@@ -22,7 +22,7 @@ type evelynCompiler struct {
 func (e evelynCompiler) Compile(filename string) (compiler.Bytecode, error) {
 	input, err := antlr.NewFileStream(filename)
 	if err != nil {
-		return nil, tool.Wrap(err, "open file")
+		return nil, errors.Wrap(err, "open file")
 	}
 
 	lexer := parser.NewEvelynLexer(input)
@@ -38,14 +38,14 @@ func (e evelynCompiler) Compile(filename string) (compiler.Bytecode, error) {
 
 	tree := p.SourceFile()
 	if !errList.Empty() {
-		return nil, tool.NewError(errList.FirstMessage())
+		return nil, errors.New(errList.FirstMessage())
 	}
 
 	tmpfile, err := ioutil.TempFile("", "evelyn.*"+config.TengoExt)
 	if err != nil {
-		return nil, tool.Wrap(err, "tempfile")
+		return nil, errors.Wrap(err, "tempfile")
 	}
-	//defer func() { tool.Ignore(os.Remove(tmpfile.Name())) }()
+	//defer func() { os.Remove(tmpfile.Name()) }()
 
 	antlr.ParseTreeWalkerDefault.Walk(newListener(tmpfile), tree)
 
@@ -56,7 +56,7 @@ func (e evelynCompiler) Compile(filename string) (compiler.Bytecode, error) {
 func (t evelynCompiler) TryCompile(filename string) ([]byte, error) {
 	src, err := ioutil.ReadFile(filepath.Clean(filename))
 	if err != nil {
-		return nil, tool.Wrap(err, "read file")
+		return nil, errors.Wrap(err, "read file")
 	}
 	return src, nil
 }
