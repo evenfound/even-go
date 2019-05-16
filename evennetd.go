@@ -8,8 +8,6 @@ import (
 	"runtime"
 	"runtime/debug"
 
-	"github.com/evenfound/even-go/core"
-	"github.com/ipfs/go-ipfs/repo/fsrepo"
 	"github.com/jessevdk/go-flags"
 )
 
