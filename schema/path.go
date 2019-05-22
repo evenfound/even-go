@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"time"
 
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/mitchellh/go-homedir"
 )
 
 func defaultDataPath() (path string) {

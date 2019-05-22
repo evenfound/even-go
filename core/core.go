@@ -2,31 +2,29 @@ package core
 
 import (
 	"errors"
-	routing "gx/ipfs/QmTiWLZ6Fo5j4KcTVutZJ5KWRRJrbxzmxA4td8NfEdrPh7/go-libp2p-routing"
-	dshelp "gx/ipfs/QmTmqJGRQfuH8eKWD1FjThwPRipt1QhqJQNZ8MpzmfAAxo/go-ipfs-ds-help"
-	ma "gx/ipfs/QmWWQ2Txc2c6tqjsBpzg5Ar652cHPGNsQQp2SejkNmkUMb/go-multiaddr"
-	peer "gx/ipfs/QmZoWKhxUmZ2seW4BzX6fJkNR8hh9PsGModr7q171yq2SS/go-libp2p-peer"
-	libp2p "gx/ipfs/QmaPbCnUMBohSGo3KnxEa2bHqyJVVeEEcwtqJAYxerieBo/go-libp2p-crypto"
-	cid "gx/ipfs/QmcZfnkapfECQGcLZaf9B79NRg7cRa9EnZh4LSbkCzwNvY/go-cid"
-	"net/url"
+	"github.com/btcsuite/btcutil/hdkeychain"
+	"github.com/evenfound/even-go/ipfs"
+	"github.com/evenfound/even-go/net"
+	rep "github.com/evenfound/even-go/net/repointer"
+	"github.com/ipfs/go-cid"
+	"github.com/ipfs/go-ipfs/namesys"
+	"github.com/ipfs/go-ipfs/repo"
+	libp2p "github.com/libp2p/go-libp2p-crypto"
+	"github.com/libp2p/go-libp2p-peer"
+
 	"path"
-	"strings"
 	"sync"
 	"time"
 
-	"github.com/OpenBazaar/multiwallet"
-	"github.com/btcsuite/btcutil/hdkeychain"
-	"github.com/evenfound/even-go/ipfs"
-	"github.com/evenfound/even-go/namesys"
-	"github.com/evenfound/even-go/net"
-	rep "github.com/evenfound/even-go/net/repointer"
-	ret "github.com/evenfound/even-go/net/retriever"
-	"github.com/evenfound/even-go/repo"
-	sto "github.com/evenfound/even-go/storage"
+	//"github.com/OpenBazaar/multiwallet"
+	//"github.com/btcsuite/btcutil/hdkeychain"
+	//"github.com/evenfound/even-go/ipfs"
+	//"github.com/evenfound/even-go/namesys"
+	//ret "github.com/evenfound/even-go/net/retriever"
+	//"github.com/evenfound/even-go/repo"
+	//sto "github.com/evenfound/even-go/storage"
 	"github.com/ipfs/go-ipfs/core"
-	"github.com/kennygrant/sanitize"
-	logging "github.com/op/go-logging"
-	"golang.org/x/net/context"
+	"github.com/op/go-logging"
 	"golang.org/x/net/proxy"
 )
 
@@ -64,16 +62,21 @@ type EvenNode struct {
 	Datastore repo.Datastore
 
 	// Websocket channel used for pushing data to the UI
-	Broadcast chan repo.Notifier
+
+	// TODO: commented mode refactoring
+	//Broadcast chan repo.Notifier
 
 	// A map of cryptocurrency wallets
-	Multiwallet multiwallet.MultiWallet
+	// TODO: commented mode refactoring
+	//Multiwallet multiwallet.MultiWallet
 
 	// Storage for our outgoing messages
-	MessageStorage sto.OfflineMessagingStorage
+	// TODO: commented mode refactoring
+	//MessageStorage sto.OfflineMessagingStorage
 
 	// A service that periodically checks the dht for outstanding messages
-	MessageRetriever *ret.MessageRetriever
+	// TODO: commented mode refactoring
+	//MessageRetriever *ret.MessageRetriever
 
 	// OfflineMessageFailoverTimeout is the duration until the protocol
 	// will stop looking for the peer to send a direct message and failover to
@@ -109,7 +112,8 @@ type EvenNode struct {
 
 	// RecordAgingNotifier is a worker that walks the cases datastore to
 	// notify the user as disputes age past certain thresholds
-	RecordAgingNotifier *recordAgingNotifier
+	// TODO: commented mode refactoring
+	//RecordAgingNotifier *recordAgingNotifier
 
 	// Generic pubsub interface
 	Pubsub ipfs.Pubsub
@@ -161,145 +165,155 @@ func (n *EvenNode) SeedNode() error {
 }
 
 func (n *EvenNode) publish(hash string) {
+	// TODO: commented mode refactoring
 	// Multiple publishes may have been queued
 	// We only need to publish the most recent
-	PublishLock.Lock()
-	defer PublishLock.Unlock()
-	if hash != n.RootHash {
-		return
-	}
-
-	if inflightPublishRequests == 0 {
-		n.Broadcast <- repo.StatusNotification{Status: "publishing"}
-	}
-
-	err := n.sendToPushNodes(hash)
-	if err != nil {
-		log.Error(err)
-		return
-	}
-
-	inflightPublishRequests++
-	err = ipfs.Publish(n.IpfsNode, hash)
-
-	inflightPublishRequests--
-	if inflightPublishRequests == 0 {
-		if err != nil {
-			log.Error(err)
-			n.Broadcast <- repo.StatusNotification{Status: "error publishing"}
-		} else {
-			n.Broadcast <- repo.StatusNotification{Status: "publish complete"}
-		}
-	}
+	//PublishLock.Lock()
+	//defer PublishLock.Unlock()
+	//if hash != n.RootHash {
+	//	return
+	//}
+	//
+	//if inflightPublishRequests == 0 {
+	//	n.Broadcast <- repo.StatusNotification{Status: "publishing"}
+	//}
+	//
+	//err := n.sendToPushNodes(hash)
+	//if err != nil {
+	//	log.Error(err)
+	//	return
+	//}
+	//
+	//inflightPublishRequests++
+	//err = ipfs.Publish(n.IpfsNode, hash)
+	//
+	//inflightPublishRequests--
+	//if inflightPublishRequests == 0 {
+	//	if err != nil {
+	//		log.Error(err)
+	//		n.Broadcast <- repo.StatusNotification{Status: "error publishing"}
+	//	} else {
+	//		n.Broadcast <- repo.StatusNotification{Status: "publish complete"}
+	//	}
+	//}
+	return
 }
 
 func (n *EvenNode) sendToPushNodes(hash string) error {
-	id, err := cid.Decode(hash)
-	if err != nil {
-		return err
-	}
-
-	var graph []cid.Cid
-	if len(n.PushNodes) > 0 {
-		graph, err = ipfs.FetchGraph(n.IpfsNode, id)
-		if err != nil {
-			return err
-		}
-		pointers, err := n.Datastore.Pointers().GetByPurpose(ipfs.MESSAGE)
-		if err != nil {
-			return err
-		}
-		// Check if we're seeding any outgoing messages and add their CIDs to the graph
-		for _, p := range pointers {
-			if len(p.Value.Addrs) > 0 {
-				s, err := p.Value.Addrs[0].ValueForProtocol(ma.P_IPFS)
-				if err != nil {
-					continue
-				}
-				c, err := cid.Decode(s)
-				if err != nil {
-					continue
-				}
-				graph = append(graph, *c)
-			}
-		}
-	}
-	for _, p := range n.PushNodes {
-		go n.retryableSeedStoreToPeer(p, hash, graph)
-	}
-
-	return nil
+	// TODO: commented mode refactoring
+	//id, err := cid.Decode(hash)
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//var graph []cid.Cid
+	//if len(n.PushNodes) > 0 {
+	//	graph, err = ipfs.FetchGraph(n.IpfsNode, id)
+	//	if err != nil {
+	//		return err
+	//	}
+	//	pointers, err := n.Datastore.Pointers().GetByPurpose(ipfs.MESSAGE)
+	//	if err != nil {
+	//		return err
+	//	}
+	//	// Check if we're seeding any outgoing messages and add their CIDs to the graph
+	//	for _, p := range pointers {
+	//		if len(p.Value.Addrs) > 0 {
+	//			s, err := p.Value.Addrs[0].ValueForProtocol(ma.P_IPFS)
+	//			if err != nil {
+	//				continue
+	//			}
+	//			c, err := cid.Decode(s)
+	//			if err != nil {
+	//				continue
+	//			}
+	//			graph = append(graph, *c)
+	//		}
+	//	}
+	//}
+	//for _, p := range n.PushNodes {
+	//	go n.retryableSeedStoreToPeer(p, hash, graph)
+	//}
+	//
+	//return nil
+	return errors.New("sendToPushNodes not implemented")
 }
 
 func (n *EvenNode) retryableSeedStoreToPeer(pid peer.ID, graphHash string, graph []cid.Cid) {
-	var retryTimeout = 2 * time.Second
-	for {
-		if graphHash != n.RootHash {
-			log.Errorf("root hash has changed, aborting push to %s", pid.Pretty())
-			return
-		}
-		err := n.SendStore(pid.Pretty(), graph)
-		if err != nil {
-			if retryTimeout > 60*time.Second {
-				log.Errorf("error pushing to peer %s: %s", pid.Pretty(), err.Error())
-				return
-			}
-			log.Errorf("error pushing to peer %s...backing off: %s", pid.Pretty(), err.Error())
-			time.Sleep(retryTimeout)
-			retryTimeout *= 2
-			continue
-		}
-		return
-	}
+	// TODO: commented mode refactoring
+	//var retryTimeout = 2 * time.Second
+	//for {
+	//	if graphHash != n.RootHash {
+	//		log.Errorf("root hash has changed, aborting push to %s", pid.Pretty())
+	//		return
+	//	}
+	//	err := n.SendStore(pid.Pretty(), graph)
+	//	if err != nil {
+	//		if retryTimeout > 60*time.Second {
+	//			log.Errorf("error pushing to peer %s: %s", pid.Pretty(), err.Error())
+	//			return
+	//		}
+	//		log.Errorf("error pushing to peer %s...backing off: %s", pid.Pretty(), err.Error())
+	//		time.Sleep(retryTimeout)
+	//		retryTimeout *= 2
+	//		continue
+	//	}
+	//	return
+	//}
+	return
 }
 
 // SetUpRepublisher - periodic publishing to IPNS
 func (n *EvenNode) SetUpRepublisher(interval time.Duration) {
-	if interval == 0 {
-		return
-	}
-	ticker := time.NewTicker(interval)
-	go func() {
-		for range ticker.C {
-			n.UpdateFollow()
-			n.SeedNode()
-		}
-	}()
+	// TODO: commented mode refactoring
+	//if interval == 0 {
+	//	return
+	//}
+	//ticker := time.NewTicker(interval)
+	//go func() {
+	//	for range ticker.C {
+	//		n.UpdateFollow()
+	//		n.SeedNode()
+	//	}
+	//}()
+	return
 }
 
 /*EncryptMessage This is a placeholder until the libsignal is operational.
   For now we will just encrypt outgoing offline messages with the long lived identity key.
   Optionally you may provide a public key, to avoid doing an IPFS lookup */
 func (n *EvenNode) EncryptMessage(peerID peer.ID, peerKey *libp2p.PubKey, message []byte) (ct []byte, rerr error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	if peerKey == nil {
-		var pubKey libp2p.PubKey
-		keyval, err := n.IpfsNode.Repo.Datastore().Get(dshelp.NewKeyFromBinary([]byte(KeyCachePrefix + peerID.Pretty())))
-		if err != nil {
-			pubKey, err = routing.GetPublicKey(n.IpfsNode.Routing, ctx, []byte(peerID))
-			if err != nil {
-				log.Errorf("Failed to find public key for %s", peerID.Pretty())
-				return nil, err
-			}
-		} else {
-			pubKey, err = libp2p.UnmarshalPublicKey(keyval.([]byte))
-			if err != nil {
-				log.Errorf("Failed to find public key for %s", peerID.Pretty())
-				return nil, err
-			}
-		}
-		peerKey = &pubKey
-	}
-	if peerID.MatchesPublicKey(*peerKey) {
-		ciphertext, err := net.Encrypt(*peerKey, message)
-		if err != nil {
-			return nil, err
-		}
-		return ciphertext, nil
-	}
-	log.Errorf("peer public key and id do not match for peer: %s", peerID.Pretty())
-	return nil, errors.New("peer public key and id do not match")
+	// TODO: commented mode refactoring
+	//ctx, cancel := context.WithCancel(context.Background())
+	//defer cancel()
+	//if peerKey == nil {
+	//	var pubKey libp2p.PubKey
+	//	keyval, err := n.IpfsNode.Repo.Datastore().Get(dshelp.NewKeyFromBinary([]byte(KeyCachePrefix + peerID.Pretty())))
+	//	if err != nil {
+	//		pubKey, err = routing.GetPublicKey(n.IpfsNode.Routing, ctx, []byte(peerID))
+	//		if err != nil {
+	//			log.Errorf("Failed to find public key for %s", peerID.Pretty())
+	//			return nil, err
+	//		}
+	//	} else {
+	//		pubKey, err = libp2p.UnmarshalPublicKey(keyval.([]byte))
+	//		if err != nil {
+	//			log.Errorf("Failed to find public key for %s", peerID.Pretty())
+	//			return nil, err
+	//		}
+	//	}
+	//	peerKey = &pubKey
+	//}
+	//if peerID.MatchesPublicKey(*peerKey) {
+	//	ciphertext, err := net.Encrypt(*peerKey, message)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	return ciphertext, nil
+	//}
+	//log.Errorf("peer public key and id do not match for peer: %s", peerID.Pretty())
+	//return nil, errors.New("peer public key and id do not match")
+	return nil, errors.New("EncryptMessage not implemented")
 }
 
 // IPFSIdentityString - IPFS identifier
@@ -309,9 +323,11 @@ func (n *EvenNode) IPFSIdentityString() string {
 
 // createSlugFor Create a slug from a string
 func createSlugFor(slugName string) string {
-	l := SentenceMaxCharacters - SlugBuffer
-	if len(slugName) < SentenceMaxCharacters-SlugBuffer {
-		l = len(slugName)
-	}
-	return url.QueryEscape(sanitize.Path(strings.ToLower(slugName[:l])))
+	// TODO: commented mode refactoring
+	//l := SentenceMaxCharacters - SlugBuffer
+	//if len(slugName) < SentenceMaxCharacters-SlugBuffer {
+	//	l = len(slugName)
+	//}
+	//return url.QueryEscape(sanitize.Path(strings.ToLower(slugName[:l])))
+	return ""
 }

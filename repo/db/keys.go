@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/evenfound/even-go/repo"
 	"github.com/OpenBazaar/wallet-interface"
 	"github.com/btcsuite/btcd/btcec"
+	"github.com/evenfound/even-go/repo"
 )
 
 type KeysDB struct {

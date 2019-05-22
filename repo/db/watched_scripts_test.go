@@ -7,8 +7,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/evenfound/even-go/repo"
 	"github.com/OpenBazaar/wallet-interface"
+	"github.com/evenfound/even-go/repo"
 )
 
 var wsdb repo.WatchedScriptStore

@@ -30,12 +30,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/OpenBazaar/wallet-interface"
 	"github.com/evenfound/even-go/ipfs"
 	obnet "github.com/evenfound/even-go/net"
 	"github.com/evenfound/even-go/repo"
 	"github.com/evenfound/even-go/repo/db"
 	"github.com/evenfound/even-go/schema"
-	"github.com/OpenBazaar/wallet-interface"
 	"github.com/ipfs/go-ipfs/core"
 	ipfscore "github.com/ipfs/go-ipfs/core"
 	"github.com/ipfs/go-ipfs/core/coreunix"
@@ -216,7 +216,7 @@ func (x *Restore) Execute(args []string) error {
 		if x.TorPassword != "" {
 			torPw = x.TorPassword
 		}
-		onionTransport, err = oniontp.NewOnionTransport("tcp4", torControl, torPw, nil, repoPath, (usingTor && usingClearnet))
+		onionTransport, err = oniontp.NewOnionTransport("tcp4", torControl, torPw, nil, repoPath, usingTor && usingClearnet)
 		if err != nil {
 			PrintError(err.Error())
 			return err

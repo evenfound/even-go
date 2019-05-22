@@ -7,10 +7,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/evenfound/even-go/repo"
 	"github.com/OpenBazaar/wallet-interface"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/wire"
+	"github.com/evenfound/even-go/repo"
 )
 
 type UtxoDB struct {

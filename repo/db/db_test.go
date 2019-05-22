@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/evenfound/even-go/schema"
 	"github.com/OpenBazaar/wallet-interface"
+	"github.com/evenfound/even-go/schema"
 )
 
 func buildNewDatastore() (*SQLiteDatastore, func(), error) {

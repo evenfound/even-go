@@ -2,13 +2,13 @@ package repo
 
 import (
 	"database/sql"
-	peer "gx/ipfs/QmZoWKhxUmZ2seW4BzX6fJkNR8hh9PsGModr7q171yq2SS/go-libp2p-peer"
+	"github.com/libp2p/go-libp2p-peer"
 	"time"
 
-	"github.com/evenfound/even-go/ipfs"
-	"github.com/evenfound/even-go/pb"
 	"github.com/OpenBazaar/wallet-interface"
 	btc "github.com/btcsuite/btcutil"
+	"github.com/evenfound/even-go/ipfs"
+	"github.com/evenfound/even-go/pb"
 )
 
 type Datastore interface {

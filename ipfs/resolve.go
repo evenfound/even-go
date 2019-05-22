@@ -2,16 +2,18 @@ package ipfs
 
 import (
 	"context"
-	dshelp "gx/ipfs/QmTmqJGRQfuH8eKWD1FjThwPRipt1QhqJQNZ8MpzmfAAxo/go-ipfs-ds-help"
-	ds "gx/ipfs/QmXRKBQA4wXP7xWbFiZsR1GP4HV6wMDQ1aWFxZZ4uBcPX9/go-datastore"
-	proto "gx/ipfs/QmZ4Qi3GaRbjcx28Sme5eMH7RQjGkt8wHxt2a65oLaeFEV/gogo-protobuf/proto"
-	"gx/ipfs/QmZoWKhxUmZ2seW4BzX6fJkNR8hh9PsGModr7q171yq2SS/go-libp2p-peer"
+	//"github.com/gogo/protobuf/proto"
+	ds "github.com/ipfs/go-datastore"
+	//dshelp "github.com/ipfs/go-ipfs-ds-help"
+	"github.com/libp2p/go-libp2p-peer"
+	//"github.com/onsi/gomega/gstruct/errors"
+	"errors"
 	"time"
 
 	"github.com/ipfs/go-ipfs/core"
-	"github.com/ipfs/go-ipfs/namesys"
-	pb "github.com/ipfs/go-ipfs/namesys/pb"
-	path "github.com/ipfs/go-ipfs/path"
+	//"github.com/ipfs/go-ipfs/namesys"
+	//pb "github.com/ipfs/go-ipfs/namesys"
+	"github.com/ipfs/go-path"
 )
 
 // Resolve an IPNS record. This is a multi-step process.
@@ -60,22 +62,27 @@ func ResolveAltRoot(n *core.IpfsNode, p peer.ID, altRoot string, timeout time.Du
 
 func getFromDatastore(datastore ds.Datastore, name string) (path.Path, error) {
 	// resolve to what we may already have in the datastore
-	dsval, err := datastore.Get(dshelp.NewKeyFromBinary([]byte(name)))
-	if err != nil {
-		if err == ds.ErrNotFound {
-			return "", namesys.ErrResolveFailed
-		}
-		return "", err
-	}
 
-	data := dsval.([]byte)
-	entry := new(pb.IpnsEntry)
+	// TODO: commented mode refactoring
 
-	err = proto.Unmarshal(data, entry)
-	if err != nil {
-		return "", err
-	}
+	//dsval, err := datastore.Get(dshelp.NewKeyFromBinary([]byte(name)))
+	//if err != nil {
+	//	if err == ds.ErrNotFound {
+	//		return "", namesys.ErrResolveFailed
+	//	}
+	//	return "", err
+	//}
+	//
+	//data := dsval.([]byte)
+	//entry := new(pb.IpnsEntry)
+	//
+	//err = proto.Unmarshal(data, entry)
+	//if err != nil {
+	//	return "", err
+	//}
+	//
+	//value, err := path.ParsePath(string(entry.GetValue()))
+	//return value, err
 
-	value, err := path.ParsePath(string(entry.GetValue()))
-	return value, err
+	return "", errors.New("getFromDatastore not implemented")
 }

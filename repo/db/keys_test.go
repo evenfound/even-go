@@ -8,9 +8,9 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/evenfound/even-go/repo"
 	"github.com/OpenBazaar/wallet-interface"
 	"github.com/btcsuite/btcd/btcec"
+	"github.com/evenfound/even-go/repo"
 )
 
 var kdb repo.KeyStore

@@ -3,9 +3,7 @@ package hdwallet
 import (
 	"bytes"
 	"errors"
-	"gx/ipfs/QmcZfnkapfECQGcLZaf9B79NRg7cRa9EnZh4LSbkCzwNvY/go-cid"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -109,32 +107,39 @@ func userHomeDir() string {
 }
 
 func notifyAllPeers(hash string) error {
-	id, err := cid.Decode(hash)
-	if err != nil {
-		return err
-	}
 
-	if core.Node == nil {
-		return errors.New("no core.Node")
-	}
+	// TODO: commented mode refactoring
 
-	if core.Node.IpfsNode == nil {
-		return errors.New("no core.Node.IpfsNode")
-	}
+	//id, err := cid.Decode(hash)
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//if core.Node == nil {
+	//	return errors.New("no core.Node")
+	//}
+	//
+	//if core.Node.IpfsNode == nil {
+	//	return errors.New("no core.Node.IpfsNode")
+	//}
+	//
+	//if core.Node.IpfsNode.Peerstore == nil {
+	//	return errors.New("no core.Node.IpfsNode.Peerstore")
+	//}
+	//
+	//
+	//graph := []cid.Cid{id}
+	//for _, p := range core.Node.IpfsNode.Peerstore.Peers() {
+	//	pid := p.Pretty()
+	//
+	//	if err := core.Node.SendStore(pid, graph); err != nil {
+	//		log.Println("Error: " + err.Error())
+	//	}
+	//}
 
-	if core.Node.IpfsNode.Peerstore == nil {
-		return errors.New("no core.Node.IpfsNode.Peerstore")
-	}
+	//return nil
 
-	graph := []cid.Cid{*id}
-	for _, p := range core.Node.IpfsNode.Peerstore.Peers() {
-		pid := p.Pretty()
-		if err := core.Node.SendStore(pid, graph); err != nil {
-			log.Println("Error: " + err.Error())
-		}
-	}
-
-	return nil
+	return errors.New("notifyAllPeers not implemented")
 }
 
 /** unused

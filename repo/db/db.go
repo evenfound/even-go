@@ -6,9 +6,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/OpenBazaar/wallet-interface"
 	"github.com/evenfound/even-go/repo"
 	"github.com/evenfound/even-go/schema"
-	"github.com/OpenBazaar/wallet-interface"
 	_ "github.com/mutecomm/go-sqlcipher"
 	"github.com/op/go-logging"
 )

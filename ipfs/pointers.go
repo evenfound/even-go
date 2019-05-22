@@ -5,13 +5,13 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 	"encoding/hex"
-	routing "gx/ipfs/QmRaVcGchmC1stHHK7YhcgEuTk5k1JiGS568pfYWMgT91H/go-libp2p-kad-dht"
-	dhtpb "gx/ipfs/QmRaVcGchmC1stHHK7YhcgEuTk5k1JiGS568pfYWMgT91H/go-libp2p-kad-dht/pb"
-	ma "gx/ipfs/QmWWQ2Txc2c6tqjsBpzg5Ar652cHPGNsQQp2SejkNmkUMb/go-multiaddr"
-	ps "gx/ipfs/QmXauCuJzmzapetmC6W4TuDJLL1yFFrVzSHoWv8YdbmnxH/go-libp2p-peerstore"
-	peer "gx/ipfs/QmZoWKhxUmZ2seW4BzX6fJkNR8hh9PsGModr7q171yq2SS/go-libp2p-peer"
-	multihash "gx/ipfs/QmZyZDi491cCNTLfAhwcaDii2Kg4pwKRkhqQzURGDvY6ua/go-multihash"
-	cid "gx/ipfs/QmcZfnkapfECQGcLZaf9B79NRg7cRa9EnZh4LSbkCzwNvY/go-cid"
+	cid "github.com/ipfs/go-cid"
+	routing "github.com/libp2p/go-libp2p-kad-dht"
+	//dhtpb "github.com/libp2p/go-libp2p-kad-dht/pb"
+	peer "github.com/libp2p/go-libp2p-peer"
+	ps "github.com/libp2p/go-libp2p-peerstore"
+	ma "github.com/multiformats/go-multiaddr"
+	multihash "github.com/multiformats/go-multihash"
 	"sync"
 	"time"
 
@@ -59,7 +59,7 @@ func NewPointer(mhKey multihash.Multihash, prefixLen int, addr ma.Multiaddr, ent
 		ID:    magicID,
 		Addrs: []ma.Multiaddr{addr},
 	}
-	return Pointer{Cid: k, Value: pi}, nil
+	return Pointer{Cid: &k, Value: pi}, nil
 }
 
 func PublishPointer(node *core.IpfsNode, ctx context.Context, pointer Pointer) error {
@@ -89,13 +89,15 @@ func PutPointerToPeer(node *core.IpfsNode, ctx context.Context, peer peer.ID, po
 }
 
 func GetPointersFromPeer(node *core.IpfsNode, ctx context.Context, p peer.ID, key *cid.Cid) ([]*ps.PeerInfo, error) {
-	dht := node.Routing.(*routing.IpfsDHT)
-	pmes := dhtpb.NewMessage(dhtpb.Message_GET_PROVIDERS, key.KeyString(), 0)
-	resp, err := dht.SendRequest(ctx, p, pmes)
-	if err != nil {
-		return []*ps.PeerInfo{}, err
-	}
-	return dhtpb.PBPeersToPeerInfos(resp.GetProviderPeers()), nil
+	// TODO: commented mode refactoring
+	//dht := node.Routing.(*routing.IpfsDHT)
+	//pmes := dhtpb.NewMessage(dhtpb.Message_GET_PROVIDERS, key.Bytes(), 0)
+	//resp, err := dht.SendRequest(ctx, p, pmes)
+	//if err != nil {
+	//	return []*ps.PeerInfo{}, err
+	//}
+	//return dhtpb.PBPeersToPeerInfos(resp.GetProviderPeers()), nil
+	return []*ps.PeerInfo{}, nil
 }
 
 func addPointer(node *core.IpfsNode, ctx context.Context, k *cid.Cid, pi ps.PeerInfo) error {
@@ -117,13 +119,15 @@ func addPointer(node *core.IpfsNode, ctx context.Context, k *cid.Cid, pi ps.Peer
 }
 
 func putPointer(ctx context.Context, dht *routing.IpfsDHT, p peer.ID, pi ps.PeerInfo, skey string) error {
-	pmes := dhtpb.NewMessage(dhtpb.Message_ADD_PROVIDER, skey, 0)
-	pmes.ProviderPeers = dhtpb.RawPeerInfosToPBPeers([]ps.PeerInfo{pi})
-
-	err := dht.SendMessage(ctx, p, pmes)
-	if err != nil {
-		return err
-	}
+	// TODO: commented mode refactoring
+	//pmes := dhtpb.NewMessage(dhtpb.Message_ADD_PROVIDER, []byte(skey), 0)
+	//pmes.ProviderPeers = dhtpb.RawPeerInfosToPBPeers([]ps.PeerInfo{pi})
+	//
+	//err := dht.SendMessage(ctx, p, pmes)
+	//if err != nil {
+	//	return err
+	//}
+	//return nil
 	return nil
 }
 

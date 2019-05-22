@@ -9,10 +9,10 @@ import (
 	"time"
 
 	"github.com/OpenBazaar/jsonpb"
-	"github.com/evenfound/even-go/pb"
-	"github.com/evenfound/even-go/repo"
 	"github.com/OpenBazaar/wallet-interface"
 	btc "github.com/btcsuite/btcutil"
+	"github.com/evenfound/even-go/pb"
+	"github.com/evenfound/even-go/repo"
 )
 
 type SalesDB struct {

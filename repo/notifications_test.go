@@ -118,27 +118,27 @@ func TestLegacyNotificationMarshalling(t *testing.T) {
 
 func createNotificationExamples() []repo.Notifier {
 	return append([]repo.Notifier{
-		repo.ModeratorDisputeExpiry{
+		{
 			ID:     "disputeNotificationID",
 			Type:   repo.NotifierTypeModeratorDisputeExpiry,
 			CaseID: repo.NewNotificationID(),
 		},
-		repo.BuyerDisputeTimeout{
+		{
 			ID:      "buyerDisputeTimeoutID",
 			Type:    repo.NotifierTypeBuyerDisputeTimeout,
 			OrderID: repo.NewNotificationID(),
 		},
-		repo.BuyerDisputeExpiry{
+		{
 			ID:      "buyerDisputeExpiryID",
 			Type:    repo.NotifierTypeBuyerDisputeExpiry,
 			OrderID: repo.NewNotificationID(),
 		},
-		repo.VendorDisputeTimeout{
+		{
 			ID:      "saleAgingID",
 			Type:    repo.NotifierTypeVendorDisputeTimeout,
 			OrderID: repo.NewNotificationID(),
 		},
-		repo.VendorFinalizedPayment{
+		{
 			ID:      "vendorFinalizedPayment",
 			Type:    repo.NotifierTypeVendorFinalizedPayment,
 			OrderID: repo.NewNotificationID(),
@@ -149,87 +149,87 @@ func createNotificationExamples() []repo.Notifier {
 
 func createLegacyNotificationExamples() []repo.Notifier {
 	return []repo.Notifier{
-		repo.CompletionNotification{
+		{
 			ID:      "orderCompletionID",
 			Type:    repo.NotifierTypeCompletionNotification,
 			OrderId: repo.NewNotificationID(),
 		},
-		repo.DisputeAcceptedNotification{
+		{
 			ID:      "disputeAcceptedID",
 			Type:    repo.NotifierTypeDisputeAcceptedNotification,
 			OrderId: repo.NewNotificationID(),
 		},
-		repo.DisputeCloseNotification{
+		{
 			ID:      "disputeCloseID",
 			Type:    repo.NotifierTypeDisputeCloseNotification,
 			OrderId: repo.NewNotificationID(),
 		},
-		repo.DisputeOpenNotification{
+		{
 			ID:      "disputeOpenID",
 			Type:    repo.NotifierTypeDisputeOpenNotification,
 			OrderId: repo.NewNotificationID(),
 		},
-		repo.DisputeUpdateNotification{
+		{
 			ID:      "disputeUpdateID",
 			Type:    repo.NotifierTypeDisputeUpdateNotification,
 			OrderId: repo.NewNotificationID(),
 		},
-		repo.FollowNotification{
+		{
 			ID:     "followID",
 			Type:   repo.NotifierTypeFollowNotification,
 			PeerId: repo.NewNotificationID(),
 		},
-		repo.FulfillmentNotification{
+		{
 			ID:      "fulfillmentID",
 			Type:    repo.NotifierTypeFulfillmentNotification,
 			OrderId: repo.NewNotificationID(),
 		},
-		repo.ModeratorAddNotification{
+		{
 			ID:     "moderatorAddID",
 			Type:   repo.NotifierTypeModeratorAddNotification,
 			PeerId: repo.NewNotificationID(),
 		},
-		repo.ModeratorRemoveNotification{
+		{
 			ID:     "moderatorRemoveID",
 			Type:   repo.NotifierTypeModeratorRemoveNotification,
 			PeerId: repo.NewNotificationID(),
 		},
-		repo.OrderCancelNotification{
+		{
 			ID:      "orderCancelID",
 			Type:    repo.NotifierTypeOrderCancelNotification,
 			OrderId: repo.NewNotificationID(),
 		},
-		repo.OrderConfirmationNotification{
+		{
 			ID:      "orderConfirmID",
 			Type:    repo.NotifierTypeOrderConfirmationNotification,
 			OrderId: repo.NewNotificationID(),
 		},
-		repo.OrderDeclinedNotification{
+		{
 			ID:      "orderDeclinedID",
 			Type:    repo.NotifierTypeOrderDeclinedNotification,
 			OrderId: repo.NewNotificationID(),
 		},
-		repo.OrderNotification{
+		{
 			ID:      "orderNotificationID",
 			Type:    repo.NotifierTypeOrderNewNotification,
 			BuyerID: repo.NewNotificationID(),
 		},
-		repo.PaymentNotification{
+		{
 			ID:      "paymentID",
 			Type:    repo.NotifierTypePaymentNotification,
 			OrderId: repo.NewNotificationID(),
 		},
-		repo.ProcessingErrorNotification{
+		{
 			ID:      "processingErrorID",
 			Type:    repo.NotifierTypeProcessingErrorNotification,
 			OrderId: repo.NewNotificationID(),
 		},
-		repo.RefundNotification{
+		{
 			ID:      "refundID",
 			Type:    repo.NotifierTypeRefundNotification,
 			OrderId: repo.NewNotificationID(),
 		},
-		repo.UnfollowNotification{
+		{
 			ID:     "unfollowID",
 			Type:   repo.NotifierTypeUnfollowNotification,
 			PeerId: repo.NewNotificationID(),

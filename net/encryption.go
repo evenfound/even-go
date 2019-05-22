@@ -8,8 +8,9 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 	"errors"
-	libp2p "gx/ipfs/QmaPbCnUMBohSGo3KnxEa2bHqyJVVeEEcwtqJAYxerieBo/go-libp2p-crypto"
+	libp2p "github.com/libp2p/go-libp2p-crypto"
 	"io"
+	//"unsafe"
 
 	"golang.org/x/crypto/hkdf"
 	"golang.org/x/crypto/nacl/box"
@@ -77,7 +78,7 @@ func encryptCurve25519(pubKey *libp2p.Ed25519PublicKey, plaintext []byte) ([]byt
 		return nil, err
 	}
 	// Convert recipient's key into curve25519
-	pk, err := pubKey.ToCurve25519()
+	pk, err := pubKey.Raw()
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +94,10 @@ func encryptCurve25519(pubKey *libp2p.Ed25519PublicKey, plaintext []byte) ([]byt
 	for i := 0; i < 24; i++ {
 		nonce[i] = n[i]
 	}
-	ciphertext = box.Seal(ciphertext, plaintext, &nonce, pk, ephemPriv)
+
+	var tmpPk [32]byte
+	copy(tmpPk[:], pk)
+	ciphertext = box.Seal(ciphertext, plaintext, &nonce, &tmpPk, ephemPriv)
 
 	// Prepend the ephemeral public key
 	ciphertext = append(ephemPub[:], ciphertext...)
@@ -177,7 +181,7 @@ func Decrypt(privKey libp2p.PrivKey, ciphertext []byte) ([]byte, error) {
 }
 
 func decryptCurve25519(privKey *libp2p.Ed25519PrivateKey, ciphertext []byte) ([]byte, error) {
-	curve25519Privkey := privKey.ToCurve25519()
+	curve25519Privkey, _ := privKey.Raw()
 	var plaintext []byte
 
 	n := ciphertext[:NonceBytes]
@@ -194,7 +198,9 @@ func decryptCurve25519(privKey *libp2p.Ed25519PrivateKey, ciphertext []byte) ([]
 		nonce[i] = n[i]
 	}
 
-	plaintext, success := box.Open(plaintext, ct, &nonce, &ephemPubkey, curve25519Privkey)
+	var tmpPrivKey [32]byte
+	copy(tmpPrivKey[:32], curve25519Privkey)
+	plaintext, success := box.Open(plaintext, ct, &nonce, &ephemPubkey, &tmpPrivKey)
 	if !success {
 		return nil, BoxDecryptionError
 	}

@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/evenfound/even-go/repo/migrations"
+	//"github.com/evenfound/even-go/repo/migrations"
 )
 
 type Migration interface {
@@ -19,25 +19,27 @@ type Migration interface {
 var (
 	ErrUnknownSchema = errors.New("unable to migrate unknown schema")
 
-	Migrations = []Migration{
-		migrations.Migration000{},
-		migrations.Migration001{},
-		migrations.Migration002{},
-		migrations.Migration003{},
-		migrations.Migration004{},
-		migrations.Migration005{},
-		migrations.Migration006{},
-		migrations.Migration007{},
-		migrations.Migration008{},
-		migrations.Migration009{},
-		migrations.Migration010{},
-		migrations.Migration011{},
-		migrations.Migration012{},
-		migrations.Migration013{},
-		migrations.Migration014{},
-		migrations.Migration015{},
-		migrations.Migration016{},
-	}
+	// TODO: commented mode refactoring
+
+	Migrations = [17]Migration{} //{
+		//Migration{},
+		//Migration{},
+		//Migration{},
+		//Migration{},
+		//Migration{},
+		//Migration{},
+		//Migration{},
+		//Migration{},
+		//Migration{},
+		//Migration{},
+		//Migration{},
+		//Migration{},
+		//Migration{},
+		//Migration{},
+		//Migration{},
+		//Migration{},
+		//Migration{},
+	//}
 )
 
 // MigrateUp looks at the currently active migration version

@@ -5,9 +5,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/evenfound/even-go/repo"
 	"github.com/OpenBazaar/wallet-interface"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
+	"github.com/evenfound/even-go/repo"
 )
 
 type TxnsDB struct {

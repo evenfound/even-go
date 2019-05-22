@@ -12,6 +12,8 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"server/api"
+	"server/handlers"
 
 	"github.com/evenfound/even-go/server/api"
 	"github.com/evenfound/even-go/server/handlers"

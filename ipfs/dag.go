@@ -2,13 +2,13 @@ package ipfs
 
 import (
 	"context"
-	"gx/ipfs/QmZoWKhxUmZ2seW4BzX6fJkNR8hh9PsGModr7q171yq2SS/go-libp2p-peer"
-	"gx/ipfs/QmcZfnkapfECQGcLZaf9B79NRg7cRa9EnZh4LSbkCzwNvY/go-cid"
+	"github.com/ipfs/go-cid"
+	"github.com/libp2p/go-libp2p-peer"
 	"sync"
 	"time"
 
 	"github.com/ipfs/go-ipfs/core"
-	"github.com/ipfs/go-ipfs/merkledag"
+	"github.com/ipfs/go-merkledag"
 )
 
 // This function takes a Cid directory object and walks it returning each linked cid in the graph
@@ -28,7 +28,7 @@ func FetchGraph(n *core.IpfsNode, id *cid.Cid) ([]cid.Cid, error) {
 			if err != nil {
 				return ret, err
 			}
-			ret = append(ret, *c)
+			ret = append(ret, c)
 			links, err := dag.GetLinks(ctx, c)
 			if err != nil {
 				return ret, err
@@ -57,12 +57,12 @@ func RemoveAll(nd *core.IpfsNode, peerID string) error {
 	if err != nil {
 		return err
 	}
-	graph, err := FetchGraph(nd, c)
+	graph, err := FetchGraph(nd, &c)
 	if err != nil {
 		return err
 	}
 	for _, id := range graph {
-		nd.DAG.Remove(context.Background(), &id)
+		nd.DAG.Remove(context.Background(), id)
 	}
 	return nil
 }

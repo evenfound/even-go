@@ -146,10 +146,12 @@ func initializeIpnsKeyspace(repoRoot string, privKeyBytes []byte) error {
 	}
 	defer nd.Close()
 
-	err = nd.SetupOfflineRouting()
-	if err != nil {
-		return err
-	}
+	// TODO: commented mode refactoring
+	//err = nd.SetupOfflineRouting()
+	//if err != nil {
+	//	return err
+	//}
+	return errors.New("initializeIpnsKeyspace not implemented")
 
 	return namesys.InitializeKeyspace(ctx, nd.Namesys, nd.Pinning, nd.PrivateKey)
 }

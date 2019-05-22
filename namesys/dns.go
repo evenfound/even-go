@@ -3,8 +3,8 @@ package namesys
 import (
 	"context"
 	"errors"
-	isd "gx/ipfs/QmZmmuAXgX73UQmX1jRKjTGmjzq24Jinqkq8vzkBtno4uX/go-is-domain"
-	peer "gx/ipfs/QmZoWKhxUmZ2seW4BzX6fJkNR8hh9PsGModr7q171yq2SS/go-libp2p-peer"
+	isd "github.com/jbenet/go-is-domain"
+	peer "github.com/libp2p/go-libp2p-peer"
 	"net"
 )
 

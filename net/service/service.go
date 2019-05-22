@@ -16,7 +16,7 @@ import (
 	"github.com/evenfound/even-go/core"
 	"github.com/evenfound/even-go/pb"
 	"github.com/evenfound/even-go/repo"
-	ctxio "github.com/jbenet/go-context/io"
+	"github.com/jbenet/go-context/io"
 	"github.com/op/go-logging"
 )
 

@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/OpenBazaar/wallet-interface"
 	obnet "github.com/evenfound/even-go/net"
 	"github.com/evenfound/even-go/repo"
 	"github.com/evenfound/even-go/repo/db"
-	"github.com/OpenBazaar/wallet-interface"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
 )
 

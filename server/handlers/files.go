@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/evenfound/even-go/core"
 	"github.com/evenfound/even-go/server/api"
-	"gx/ipfs/QmVmDhyTTUcQXFD1rRQ64fGLMSAoaQvNH3hwuaCFAPq2hy/errors"
+	"errors"
 	"io"
 	"io/ioutil"
 	"os"

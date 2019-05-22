@@ -15,12 +15,12 @@ import (
 	"time"
 
 	"github.com/OpenBazaar/jsonpb"
+	"github.com/OpenBazaar/wallet-interface"
 	"github.com/evenfound/even-go/core"
 	"github.com/evenfound/even-go/ipfs"
 	"github.com/evenfound/even-go/pb"
 	"github.com/evenfound/even-go/repo"
 	"github.com/evenfound/even-go/repo/db"
-	"github.com/OpenBazaar/wallet-interface"
 	"github.com/golang/protobuf/proto"
 	ipfscore "github.com/ipfs/go-ipfs/core"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"

@@ -8,14 +8,14 @@ import (
 	"time"
 
 	"github.com/OpenBazaar/jsonpb"
+	"github.com/OpenBazaar/wallet-interface"
+	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/btcsuite/btcutil"
 	"github.com/evenfound/even-go/pb"
 	"github.com/evenfound/even-go/repo"
 	"github.com/evenfound/even-go/repo/db"
 	"github.com/evenfound/even-go/schema"
 	"github.com/evenfound/even-go/test/factory"
-	"github.com/OpenBazaar/wallet-interface"
-	"github.com/btcsuite/btcd/chaincfg"
-	"github.com/btcsuite/btcutil"
 	"github.com/golang/protobuf/ptypes"
 )
 

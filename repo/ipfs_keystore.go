@@ -4,17 +4,18 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"gx/ipfs/QmZoWKhxUmZ2seW4BzX6fJkNR8hh9PsGModr7q171yq2SS/go-libp2p-peer"
+	"github.com/libp2p/go-libp2p-peer"
 	"io/ioutil"
 	"os"
 	"path"
 	"sync"
 	"time"
+	"errors"
 
 	"github.com/evenfound/even-go/ipfs"
 	"github.com/ipfs/go-ipfs/core"
-	"github.com/ipfs/go-ipfs/namesys"
-	ipfsPath "github.com/ipfs/go-ipfs/path"
+	//"github.com/ipfs/go-ipfs/namesys"
+	//ipfsPath "github.com/ipfs/go-path"
 )
 
 var (
@@ -40,16 +41,19 @@ func PublishObjectToIPFS(ipfsNode *core.IpfsNode, tempDir string, name string, d
 	if err != nil {
 		return "", err
 	}
-	hash, err := ipfs.AddFile(ipfsNode, tmpPath)
-	if err != nil {
-		return "", err
-	}
-	err = os.Remove(tmpPath)
-	if err != nil {
-		return "", err
-	}
 
-	return hash, ipfs.PublishAltRoot(ipfsNode, name, ipfsPath.FromString("/ipfs/"+hash), time.Now().Add(namesys.DefaultPublishLifetime))
+	// TODO: commented mode refactoring
+	//hash, err := ipfs.AddFile(ipfsNode, tmpPath)
+	//if err != nil {
+	//	return "", err
+	//}
+	//err = os.Remove(tmpPath)
+	//if err != nil {
+	//	return "", err
+	//}
+
+	//return hash, ipfs.PublishAltRoot(ipfsNode, name, ipfsPath.FromString("/ipfs/"+hash), time.Now().Add(namesys.DefaultPublishLifetime))
+	return "", errors.New("PublishObjectToIPFS not implemented")
 }
 
 // GetObjectFromIPFS gets the requested name from ipfs or the local cache

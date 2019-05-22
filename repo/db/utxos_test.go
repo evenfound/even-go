@@ -7,10 +7,10 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/OpenBazaar/wallet-interface"
 	"github.com/evenfound/even-go/repo"
 	"github.com/evenfound/even-go/schema"
 	"github.com/evenfound/even-go/test/factory"
-	"github.com/OpenBazaar/wallet-interface"
 )
 
 func buildNewUnspentTransactionOutputStore() (repo.UnspentTransactionOutputStore, func(), error) {

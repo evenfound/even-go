@@ -7,11 +7,11 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/evenfound/even-go/repo"
-	"github.com/evenfound/even-go/schema"
 	"github.com/OpenBazaar/wallet-interface"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/wire"
+	"github.com/evenfound/even-go/repo"
+	"github.com/evenfound/even-go/schema"
 )
 
 func mustNewStxo() wallet.Stxo {

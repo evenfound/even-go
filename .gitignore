@@ -4,3 +4,4 @@ build/
 _backup/
 gx-packages.list
 packages.txt
+*.sum
